@@ -288,7 +288,7 @@ nav.main-nav a.active::after {
 .hero {
   position: relative;
   background-color: #0E2C22;
-  background-image: url("../assets/hero-bg.jpg");
+  background-image: url("../assets/hero-bg.png");
   background-position: center 35%;
   background-size: cover;
   background-repeat: no-repeat;
@@ -658,10 +658,15 @@ table.data-table td.cap-col {
   width: 100%;
   aspect-ratio: 1;
   border-radius: var(--radius);
+  overflow: hidden;
   background: linear-gradient(160deg, var(--forest) 0%, var(--forest-deep) 100%);
-  display: flex; align-items: center; justify-content: center;
 }
-.director-photo svg { width: 64%; height: 64%; }
+.director-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 .director-block blockquote {
   font-family: var(--display);
   font-size: 21px;
@@ -678,7 +683,7 @@ table.data-table td.cap-col {
 .director-block .attribution b { color: var(--forest); display: block; font-family: var(--body); font-size: 15px; margin-bottom: 2px; }
 
 @media (max-width: 700px) {
-  .director-block > .director-photo { flex-basis: 100%; max-width: 160px; }
+  .director-block > .director-photo { flex-basis: 100%; max-width: 260px; margin-left: auto; margin-right: auto; }
 }
 
 /* ============================ PARTNER / LOGO STRIP ============================ */
