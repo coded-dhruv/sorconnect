@@ -288,7 +288,7 @@ nav.main-nav a.active::after {
 .hero {
   position: relative;
   background-color: #0E2C22;
-  background-image: url("../assets/hero-bg.png");
+  background-image: url("../assets/hero-bg.jpg");
   background-position: center 35%;
   background-size: cover;
   background-repeat: no-repeat;
