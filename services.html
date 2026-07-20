@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#173F31">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -43,7 +43,16 @@
     </a>
     <nav class="main-nav">
       <a href="index.html">Home</a>
-      <a href="services.html" class="active">Services</a>
+      <div class="nav-item-dropdown">
+        <a href="services.html" class="dropdown-trigger active">Services <svg class="chevron-down" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></a>
+        <div class="dropdown-menu">
+          <a href="services.html#epc">EPC Services</a>
+          <a href="services.html#installation">Installation &amp; Commissioning</a>
+          <a href="services.html#om">Operation &amp; Maintenance</a>
+          <a href="services.html#design">Solar Designing</a>
+          <a href="services.html#kusum">PM-KUSUM Consultation</a>
+        </div>
+      </div>
       <a href="projects.html">Projects</a>
       <a href="about.html">About Us</a>
       <a href="contact.html">Contact</a>
@@ -58,14 +67,10 @@
 <main>
 
   <section class="page-hero">
-    <svg class="hero-grid-bg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="opacity:0.35;">
-      <g stroke="#3E8F5C" stroke-width="1">
-        <line x1="0" y1="300" x2="1200" y2="300"/>
-        <line x1="0" y1="260" x2="1200" y2="260"/>
-        <line x1="0" y1="220" x2="1200" y2="220"/>
-        <line x1="100" y1="180" x2="1100" y2="180"/>
-      </g>
-    </svg>
+    <video autoplay loop muted playsinline class="page-hero-video">
+      <source src="assets/covervideo.mp4" type="video/mp4">
+    </video>
+    <div class="page-hero-overlay"></div>
     <div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> / Services</div>
       <span class="eyebrow on-dark">What We Do</span>
@@ -74,188 +79,746 @@
     </div>
   </section>
 
-  <!-- ============ SERVICE OVERVIEW STRIP ============ -->
-  <section class="section">
+  <!-- ============ SERVICE SIDEBAR & CONTENT LAYOUT ============ -->
+  <section class="section" style="padding-top: 40px;">
     <div class="container">
-      <div class="card-grid cols-4 fade-up">
-        <a href="#epc" class="card" style="text-decoration:none;">
-          <div class="icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="1"/><path d="M8 7V4h8v3"/></svg></div>
-          <h3>EPC Services</h3>
-          <p>Tier-1 materials, on-time execution.</p>
-        </a>
-        <a href="#installation" class="card" style="text-decoration:none;">
-          <div class="icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 3 14h7l-1 8 11-12h-7l1-8z"/></svg></div>
-          <h3>Installation &amp; Commissioning</h3>
-          <p>Powering your plant with precision.</p>
-        </a>
-        <a href="#om" class="card" style="text-decoration:none;">
-          <div class="icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-          <h3>Operation &amp; Maintenance</h3>
-          <p>We protect your investment for 25+ years.</p>
-        </a>
-        <a href="#design" class="card" style="text-decoration:none;">
-          <div class="icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l3 9 4-18 3 9h4"/></svg></div>
-          <h3>Solar Designing</h3>
-          <p>Engineering excellence, simulated before it's built.</p>
-        </a>
-      </div>
-    </div>
-  </section>
+      <div class="services-layout-container">
+        
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="services-sidebar">
+          
+          <!-- Sidebar Menu -->
+          <nav class="sidebar-nav-menu">
+            <a href="#epc" class="active">
+              <span>EPC Services</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a href="#installation">
+              <span>Installation &amp; Commissioning</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a href="#om">
+              <span>Operation &amp; Maintenance (O&amp;M)</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a href="#design">
+              <span>Solar Designing</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a href="#kusum">
+              <span>PM-KUSUM Consultation</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+          </nav>
 
-  <!-- ============ 1. DISCOVERY / FEASIBILITY ============ -->
-  <section class="section section-sage" id="discovery">
-    <div class="container">
-      <div class="hero-inner" style="align-items: flex-start;">
-        <div class="fade-up">
-          <span class="tag-pill">Phase 1</span>
-          <h2 style="font-size: 30px; margin-top:16px; line-height:1.2;">Discovery &amp; Consultation</h2>
-          <p style="margin-top: 14px; color: var(--ink-soft); font-size:15.5px; line-height:1.7;">Understanding your solar needs. We begin by evaluating your site, energy goals, and eligibility for subsidies like PM-KUSUM Yojana.</p>
-        </div>
-        <div class="card fade-up" style="background:var(--white);">
-          <ul class="checklist-2col">
-            <li>Site &amp; energy audit</li>
-            <li>Feasibility &amp; ROI analysis</li>
-            <li>Government scheme assistance</li>
-            <li>Customized solar planning</li>
-            <li>Bill, load &amp; wind load analysis</li>
-            <li>PERT chart &amp; project scheduling</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+          <!-- Sidebar Contact Card -->
+          <div class="sidebar-contact-card">
+            <div class="contact-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <h4>Solar Solutions</h4>
+            <p>Need help? Call our engineers directly to discuss your solar plant specifications.</p>
+            <a href="tel:9928993000" class="phone-num">99289 93000</a>
+            <a href="tel:9548234569" class="phone-num">95482 34569</a>
+          </div>
 
-  <!-- ============ 2. DESIGN ============ -->
-  <section class="section" id="design">
-    <div class="container">
-      <div class="hero-inner" style="align-items: flex-start;">
-        <div class="fade-up">
-          <span class="tag-pill">Phase 2</span>
-          <h2 style="font-size: 30px; margin-top:16px; line-height:1.2;">Solar Designing &amp; Approvals</h2>
-          <p style="margin-top: 14px; color: var(--ink-soft); font-size:15.5px; line-height:1.7;">Engineering excellence with complete compliance. We handle all technical designs and regulatory liaisoning to ensure a smooth start.</p>
-        </div>
-        <div class="card fade-up" style="background:var(--white);">
-          <ul class="checklist-2col">
-            <li>EPC system design &amp; layout</li>
-            <li>Load &amp; structural analysis</li>
-            <li>DISCOM registration</li>
-            <li>Net metering &amp; scheme approvals</li>
-            <li>Yield analysis &amp; electrical design</li>
-            <li>Full plant simulation</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+        </aside>
 
-  <!-- ============ 3. EPC / PROCUREMENT & INSTALLATION ============ -->
-  <section class="section section-sage" id="epc">
-    <div class="container">
-      <div class="hero-inner" style="align-items: flex-start;">
-        <div class="fade-up">
-          <span class="tag-pill">Phase 3</span>
-          <h2 style="font-size: 30px; margin-top:16px; line-height:1.2;">Procurement &amp; Installation (EPC)</h2>
-          <p style="margin-top: 14px; color: var(--ink-soft); font-size:15.5px; line-height:1.7;">On-time execution with top-tier materials. Our experienced team handles end-to-end procurement and quality-focused installation.</p>
-        </div>
-        <div class="card fade-up" style="background:var(--white);">
-          <ul class="checklist-2col">
-            <li>Tier-1 modules &amp; inverters (Adani, TATA &amp; more)</li>
-            <li>Civil &amp; electrical work</li>
-            <li>Rooftop, on-ground &amp; hybrid systems</li>
-            <li>A.C./D.C. distribution box setup</li>
-            <li>Complete mechanical installation</li>
-            <li>Cabling, meter &amp; BOS</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+        <!-- ============ MAIN CONTENT AREA ============ -->
+        <div class="services-content-main">
+          
+          <!-- ==================== TAB 1: EPC SERVICES ==================== -->
+          <div id="epc" class="svc-tab-content active">
+            <h2 class="svc-content-title">EPC Services</h2>
+            <div class="svc-content-subtitle">Complete Turnkey Solar Power Solutions, Built for Maximum Efficiency.</div>
+            <p class="svc-content-desc">We deliver end-to-end EPC (Engineering, Procurement, and Construction) services for industrial, commercial, residential, and agricultural solar power installations. By partnering with Tier-1 component manufactures and executing all civil and electrical processes in-house, we construct highly optimized solar systems that generate clean power reliably for over 25 years.</p>
+            
+            <div class="svc-img-row">
+              <div class="svc-img-item">
+                <img src="assets/svc-epc-1.jpg" alt="EPC Services" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">EPC Services</span>
+                </div>
+              </div>
+              <div class="svc-img-item">
+                <img src="assets/svc-epc-2.jpg" alt="EPC Services" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">EPC Project</span>
+                </div>
+              </div>
+            </div>
 
-  <!-- ============ 4. COMMISSIONING ============ -->
-  <section class="section" id="installation">
-    <div class="container">
-      <div class="hero-inner" style="align-items: flex-start;">
-        <div class="fade-up">
-          <span class="tag-pill">Phase 4</span>
-          <h2 style="font-size: 30px; margin-top:16px; line-height:1.2;">Installation &amp; Commissioning</h2>
-          <p style="margin-top: 14px; color: var(--ink-soft); font-size:15.5px; line-height:1.7;">Powering your plant with precision. Once installed, we test, synchronise, and energise your plant for optimal performance — evacuating power into your LT panel.</p>
-        </div>
-        <div class="card fade-up" style="background:var(--white);">
-          <ul class="checklist-2col">
-            <li>Safety &amp; performance testing</li>
-            <li>Grid synchronisation</li>
-            <li>Final documentation &amp; handover</li>
-            <li>PM-KUSUM &amp; MNRE certification</li>
-            <li>Full system testing to design parameters</li>
-            <li>Evacuation into client's LT panel</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+            <div class="svc-offer-box">
+              <h3>⚙️ What We Offer</h3>
+              <div class="svc-offer-grid">
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Comprehensive Engineering:</strong> Custom structural calculation, yield analysis, and detailed cable schedules.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Tier-1 Sourcing:</strong> Official channel connections for premium panels, inverters, and galvanized structures.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Turnkey Construction:</strong> Piling foundation, hot-dip structures mounting, panel wiring, and AC/DC box setups.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Quality &amp; Compliance:</strong> Standardized test reports (string, earthing, insulation) ensuring full DISCOM eligibility.</span>
+                </div>
+              </div>
+            </div>
 
-  <!-- ============ 5. O&M ============ -->
-  <section class="section section-sage" id="om">
-    <div class="container">
-      <div class="section-head fade-up">
-        <span class="tag-pill">Phase 5</span>
-        <h2 style="margin-top:16px;">Operation &amp; Maintenance</h2>
-        <p>Commissioning is only the beginning. Ongoing care keeps your system at maximum capacity for 25+ years — backed by a dedicated O&amp;M team and 12 free engineer visits in year one.</p>
-      </div>
-      <div class="card-grid cols-3 fade-up">
-        <div class="card">
-          <div class="icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
-          <h3>Monthly / Annual Maintenance</h3>
-          <p>Module cleaning, system checkups, wear &amp; tear repairs, inverter servicing and monitoring calibration.</p>
-        </div>
-        <div class="card">
-          <div class="icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="13" rx="1"/><path d="M8 21h8M12 17v4"/></svg></div>
-          <h3>24/7 Monitor &amp; Report</h3>
-          <p>Alert response, monthly production reports, web portal access, email alerts and component monitoring.</p>
-        </div>
-        <div class="card">
-          <div class="icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-          <h3>Advanced Tools &amp; Repair</h3>
-          <p>De-ionised water cleaning, water reclamation, a dedicated O&amp;M team, and full troubleshoot &amp; repair support.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+            <div class="svc-standout-box">
+              <h3>🌟 Why Our EPC Services Stand Out</h3>
+              <div class="svc-index-list">
+                <div class="svc-index-item">
+                  <div class="svc-index-num">1</div>
+                  <div class="svc-index-content">
+                    <h4>No Subcontracting</h4>
+                    <p>Unlike other installers, Sor Connect utilizes 130+ in-house field engineers and technicians. This guarantees quality control, clear accountability, and adherence to project timelines.</p>
+                  </div>
+                </div>
+                <div class="svc-index-item">
+                  <div class="svc-index-num">2</div>
+                  <div class="svc-index-content">
+                    <h4>High-Wind Load Mounts</h4>
+                    <p>We supply hot-dip galvanized mounting structures tested to survive extreme wind speeds up to 150 km/h, securing your plant against severe weather events.</p>
+                  </div>
+                </div>
+                <div class="svc-index-item">
+                  <div class="svc-index-num">3</div>
+                  <div class="svc-index-content">
+                    <h4>Tier-1 Brand Affiliation</h4>
+                    <p>We maintain direct commercial relationships with top-tier panel brands (Tata, Adani, Waaree) and inverter giants (Hitachi, Solis, Growatt) to preserve manufacturer warranties.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-  <!-- ============ PM-KUSUM & ENGINEERING ============ -->
-  <section class="section" id="kusum">
-    <div class="container">
-      <div class="section-head fade-up">
-        <span class="eyebrow">Specialised Solutions</span>
-        <h2>Project Construction, Engineering &amp; Government Liaisoning</h2>
-        <p>Beyond standard EPC and O&amp;M, our teams cover specialised engineering work and full PM-KUSUM Yojana facilitation for agricultural and institutional clients.</p>
-      </div>
-      <div class="card-grid cols-2 fade-up">
-        <div class="card">
-          <div class="icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-          <h3>Turnkey Solutions</h3>
-          <ul>
-            <li>Grid-tied solar power</li>
-            <li>Off-grid solar power</li>
-            <li>System monitoring</li>
-            <li>Energy efficiency consulting</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
-          <h3>Engineering Design</h3>
-          <ul>
-            <li>Lender's / Owner's Engineer services</li>
-            <li>Full plant engineering</li>
-            <li>Design review services</li>
-            <li>System verification &amp; audit</li>
-          </ul>
-        </div>
-      </div>
+            <div class="svc-faq-box">
+              <h3>📚 Frequently Asked Questions (FAQs)</h3>
+              <div class="faq-accordion">
+                <div class="faq-item">
+                  <button class="faq-trigger">
+                    <span>What is included in your solar EPC contract?</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      Our EPC contract covers feasibility studies, structural and electrical design, component sourcing, site preparation, complete mechanical and electrical installation, safety testing, and utility grid interconnection.
+                    </div>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <button class="faq-trigger">
+                    <span>How do you handle structural safety for rooftop installations?</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      Our design engineers run Staad Pro simulations to check wind loads and load-bearing capacities. We utilize chemical anchors for structural columns and apply double waterproofing coats to prevent roof leakages.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-      <div class="card mt-48 fade-up" style="background: var(--sage); border: none;">
-        <h3 style="font-size:20px;">PM-KUSUM Yojana Consultation</h3>
-        <p style="margin-top:8px;">Sor Connect is a PM-KUSUM implementation partner, helping farms and institutions navigate subsidy eligibility, DISCOM registration, and national solar programs like PM Surya Ghar — so clients maximise energy savings while contributing to a sustainable future.</p>
+            <!-- In-page form -->
+            <div class="svc-form-box">
+              <div class="svc-form-info">
+                <span class="sub">EPC Consultation</span>
+                <h3>Get a Turnkey Quote for Your Project</h3>
+                <p>Submit your site requirements and contact details. Our engineering division will analyze your details and share a custom quotation within 24 hours.</p>
+              </div>
+              <div class="svc-form-inputs">
+                <form class="contact-form" style="padding:0; border:none;" onsubmit="event.preventDefault(); alert('Thank you! Your request has been sent.'); this.reset();">
+                  <div class="form-row">
+                    <label>Your Name <span class="req">*</span></label>
+                    <input type="text" required placeholder="Enter full name">
+                  </div>
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label>Mobile Number <span class="req">*</span></label>
+                      <input type="tel" required placeholder="Enter 10-digit number">
+                    </div>
+                    <div class="form-row">
+                      <label>Email Address</label>
+                      <input type="email" placeholder="name@domain.com">
+                    </div>
+                  </div>
+                  <div class="form-row" style="margin-top:20px;">
+                    <label>Rooftop Area or Land Size</label>
+                    <input type="text" placeholder="e.g. 5,000 sq ft or 2 Acres">
+                  </div>
+                  <div class="form-row">
+                    <label>Comment / Special Requests</label>
+                    <textarea placeholder="Tell us about your power load or site details..."></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ==================== TAB 2: INSTALLATION & COMMISSIONING ==================== -->
+          <div id="installation" class="svc-tab-content">
+            <h2 class="svc-content-title">Installation &amp; Commissioning</h2>
+            <div class="svc-content-subtitle">Seamless Setup. Maximum Performance. Long-Term Assurance.</div>
+            <p class="svc-content-desc">Our Installation &amp; Commissioning service goes beyond basic mechanical setup. It forms the core foundation of a safe, efficient solar system. We handle mechanical frame mounting, panel alignment, inverter integration, routing protection, DISCOM net-metering synchronization, and power evacuation to your LT panel with zero downtime transition.</p>
+            
+            <div class="svc-img-row">
+              <div class="svc-img-item">
+                <img src="assets/svc-inst-1.jpg" alt="Installation & Commissioning" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">Installation</span>
+                </div>
+              </div>
+              <div class="svc-img-item">
+                <img src="assets/svc-inst-2.jpg" alt="Installation & Commissioning" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">Commissioning</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-offer-box">
+              <h3>⚙️ What We Offer</h3>
+              <div class="svc-offer-grid">
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Optimal Angle Mounts:</strong> Structural positioning calibrated using geo-mapping to maximize year-round solar capture.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Secure Cabling Setup:</strong> Outdoor-rated, UV-protected copper and aluminum cables routed in protective conduits.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Grid Synchronization:</strong> NET-meter configuration, solar meter integration, and DISCOM test coordination.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Safety Earthing:</strong> Dedicated maintenance-free chemical earth pits for AC/DC loops and lightning arresters.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-standout-box">
+              <h3>🌟 Why Our Installation Services Stand Out</h3>
+              <div class="svc-index-list">
+                <div class="svc-index-item">
+                  <div class="svc-index-num">1</div>
+                  <div class="svc-index-content">
+                    <h4>Precision Engineering</h4>
+                    <p>We use laser alignment and torque wrenches to mount panel structures. Certified technicians follow clear manufacturer guidelines to ensure mechanical fits do not stress modules.</p>
+                  </div>
+                </div>
+                <div class="svc-index-item">
+                  <div class="svc-index-num">2</div>
+                  <div class="svc-index-content">
+                    <h4>Safety-First Grounding</h4>
+                    <p>We install copper-bonded earth rods and chemical fillings to guarantee earth resistance under 2 Ohms, protecting panels, inverters, and human personnel from ground surges.</p>
+                  </div>
+                </div>
+                <div class="svc-index-item">
+                  <div class="svc-index-num">3</div>
+                  <div class="svc-index-content">
+                    <h4>Zero Downtime Transition</h4>
+                    <p>We plan LT panel linkages systematically. Power cutovers are scheduled at off-peak hours, ensuring zero disruption to industrial lines or operations during connection.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-faq-box">
+              <h3>📚 Frequently Asked Questions (FAQs)</h3>
+              <div class="faq-accordion">
+                <div class="faq-item">
+                  <button class="faq-trigger">
+                    <span>How long does the installation and commissioning process take?</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      For a standard rooftop system (10kW - 100kW), installation takes 5 to 10 days. Commissioning approvals and net meter swap by the DISCOM can take an additional 15 to 30 days depending on department processes.
+                    </div>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <button class="faq-trigger">
+                    <span>What testing is performed before the system goes live?</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      We perform Open Circuit Voltage (Voc), Short Circuit Current (Isc), insulation resistance checks, earth resistance verification, polarity mapping, thermal hot-spot check, and anti-islanding safety tests.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- In-page form -->
+            <div class="svc-form-box">
+              <div class="svc-form-info">
+                <span class="sub">Grid Sync</span>
+                <h3>Setup Net-Metering for Your Solar Plant</h3>
+                <p>Do you have a solar plant ready that needs DISCOM approvals and commissioning? Fill out the details below and our team will get back to you.</p>
+              </div>
+              <div class="svc-form-inputs">
+                <form class="contact-form" style="padding:0; border:none;" onsubmit="event.preventDefault(); alert('Thank you! Your request has been sent.'); this.reset();">
+                  <div class="form-row">
+                    <label>Your Name <span class="req">*</span></label>
+                    <input type="text" required placeholder="Enter full name">
+                  </div>
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label>Mobile Number <span class="req">*</span></label>
+                      <input type="tel" required placeholder="Enter 10-digit number">
+                    </div>
+                    <div class="form-row">
+                      <label>Email Address</label>
+                      <input type="email" placeholder="name@domain.com">
+                    </div>
+                  </div>
+                  <div class="form-row" style="margin-top:20px;">
+                    <label>Existing Plant Capacity (if installed)</label>
+                    <input type="text" placeholder="e.g. 50 kWp, 100 kWp, etc.">
+                  </div>
+                  <div class="form-row">
+                    <label>Current Status / Message</label>
+                    <textarea placeholder="e.g. Panels mounted, awaiting net-metering and test report execution..."></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Connect with Engineers</button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ==================== TAB 3: O&M ==================== -->
+          <div id="om" class="svc-tab-content">
+            <h2 class="svc-content-title">Operation &amp; Maintenance (O&amp;M)</h2>
+            <div class="svc-content-subtitle">Proactive Asset Care and 24/7 Monitoring to Protect Your Yield.</div>
+            <p class="svc-content-desc">Solar plants are 25-year income assets. Without systematic panel washing, wiring checks, and thermal monitoring, generation can drop by up to 25% due to soilage and hotspots. We offer daily remote performance tracking, chemical-free panel washing, string audits, and instant on-site troubleshooting to ensure maximum uptime.</p>
+            
+            <div class="svc-img-row">
+              <div class="svc-img-item">
+                <img src="assets/svc-om-1.jpg" alt="Operation & Maintenance" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">O & M Services</span>
+                </div>
+              </div>
+              <div class="svc-img-item">
+                <img src="assets/svc-om-2.jpg" alt="Operation & Maintenance" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">Asset Monitor</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-offer-box">
+              <h3>⚙️ What We Offer</h3>
+              <div class="svc-offer-grid">
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Panel Soiling Audits:</strong> Periodic panel washing scheduled using local environmental dusting indices.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>SCADA Cloud Monitoring:</strong> Daily logs, alarm alerts, and inverter performance telemetry via mobile apps.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Thermal Imagery Scan:</strong> Infrared inspections to identify faulty modules, micro-cracks, and micro-hotspots.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>On-Site Repairs:</strong> Fast spare replacements, wiring fixes, inverter calibrations, and fuse changes.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-standout-box">
+              <h3>🌟 Why Our O&amp;M Services Stand Out</h3>
+              <div class="svc-index-list">
+                <div class="svc-index-item">
+                  <div class="svc-index-num">1</div>
+                  <div class="svc-index-content">
+                    <h4>SCADA Remote Analytics</h4>
+                    <p>Our centralized desk monitors inverter parameters. If generation dips at a particular inverter string, our team receives an immediate warning, triggering a priority inspection visit.</p>
+                  </div>
+                </div>
+                <div class="svc-index-item">
+                  <div class="svc-index-num">2</div>
+                  <div class="svc-index-content">
+                    <h4>De-Ionized Water Wash</h4>
+                    <p>We wash panel structures with soft, de-mineralized water. This prevents calcium scale scaling on glass surfaces, preserving light absorption coefficients.</p>
+                  </div>
+                </div>
+                <div class="svc-index-item">
+                  <div class="svc-index-num">3</div>
+                  <div class="svc-index-content">
+                    <h4>Guaranteed Plant Uptime</h4>
+                    <p>By stocking spare parts locally at our Jaipur and Agra warehouses, we fix inverter faults and component issues in less than 24 hours, keeping plant downtime minimal.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-faq-box">
+              <h3>📚 Frequently Asked Questions (FAQs)</h3>
+              <div class="faq-accordion">
+                <div class="faq-item">
+                  <button class="faq-trigger">
+                    <span>How frequently should solar panels be cleaned?</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      For cities and dry regions, cleaning panels every 12 to 15 days is recommended to prevent dust layers from blocking sunlight. High-dust regions near quarries or dry land may require a weekly wash.
+                    </div>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <button class="faq-trigger">
+                    <span>Do you offer AMC (Annual Maintenance Contracts) for plants built by other companies?</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      Yes. We conduct a complete health audit of your existing plant, correct any initial cable/structural defects, and take over the system under standard monthly or quarterly O&amp;M plans.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- In-page form -->
+            <div class="svc-form-box">
+              <div class="svc-form-info">
+                <span class="sub">Asset Care</span>
+                <h3>Request an O&amp;M Health Audit</h3>
+                <p>Let our specialists test your plant performance. Submit details below to schedule an on-site testing session and inverter diagnostics report.</p>
+              </div>
+              <div class="svc-form-inputs">
+                <form class="contact-form" style="padding:0; border:none;" onsubmit="event.preventDefault(); alert('Thank you! Your request has been sent.'); this.reset();">
+                  <div class="form-row">
+                    <label>Your Name <span class="req">*</span></label>
+                    <input type="text" required placeholder="Enter full name">
+                  </div>
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label>Mobile Number <span class="req">*</span></label>
+                      <input type="tel" required placeholder="Enter 10-digit number">
+                    </div>
+                    <div class="form-row">
+                      <label>Email Address</label>
+                      <input type="email" placeholder="name@domain.com">
+                    </div>
+                  </div>
+                  <div class="form-row" style="margin-top:20px;">
+                    <label>Total Installed Capacity</label>
+                    <input type="text" placeholder="e.g. 20 kWp, 250 kWp, etc.">
+                  </div>
+                  <div class="form-row">
+                    <label>Notes / Issue Faced</label>
+                    <textarea placeholder="e.g. High generation drop, inverter showing faults, need regular cleaning service..."></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Book Plant Audit</button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ==================== TAB 4: SOLAR DESIGNING ==================== -->
+          <div id="design" class="svc-tab-content">
+            <h2 class="svc-content-title">Solar Designing</h2>
+            <div class="svc-content-subtitle">Advanced Yield Simulation and Custom Engineering Before Installation.</div>
+            <p class="svc-content-desc">Engineering is the blueprint of solar viability. Poor structural designs fail in storms, while wrong electrical sizing creates unsafe wiring runs. We perform 3D shadings simulations, string matching checks, electrical single-line diagram layout drafting, and wind stability analysis reports using global design software.</p>
+            
+            <div class="svc-img-row">
+              <div class="svc-img-item">
+                <img src="assets/svc-design-1.jpg" alt="Solar Designing" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">Solar Engineering</span>
+                </div>
+              </div>
+              <div class="svc-img-item">
+                <img src="assets/svc-design-2.jpg" alt="Solar Designing" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">CAD Design</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-offer-box">
+              <h3>⚙️ What We Offer</h3>
+              <div class="svc-offer-grid">
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>3D Shade Simulations:</strong> SketchUp and PVsyst shade maps outlining shadow projections throughout the year.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Staad Pro Structure Design:</strong> Stress analyses calculating anchor weights and purlin requirements.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Cable Routing Layout:</strong> Wiring path design prioritizing minimum length to keep loop losses below 1.5%.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Electrical SLDs:</strong> Full single-line schematics specifying protection levels, DCDB/ACDB fuses, and breaker values.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-standout-box">
+              <h3>🌟 Why Our Solar Designing Stands Out</h3>
+              <div class="svc-index-list">
+                <div class="svc-index-item">
+                  <div class="svc-index-num">1</div>
+                  <div class="svc-index-content">
+                    <h4>PVsyst Yield Verification</h4>
+                    <p>We generate precise PVsyst simulations using coordinates and solar irradiation database inputs. This gives clients realistic generation numbers to check ROI before spending.</p>
+                  </div>
+                </div>
+                <div class="svc-index-item">
+                  <div class="svc-index-num">2</div>
+                  <div class="svc-index-content">
+                    <h4>Wind-Resilient Structure Models</h4>
+                    <p>Mount designs conform strictly to IS-875 wind code parameters. Structures are engineered to withstand region-specific storm drafts, ensuring safety on high buildings.</p>
+                  </div>
+                </div>
+                <div class="svc-index-item">
+                  <div class="svc-index-num">3</div>
+                  <div class="svc-index-content">
+                    <h4>Optimized Materials Lists</h4>
+                    <p>Detailed engineering drawing packages outline cut lengths and terminal counts. This helps clients purchase exact component quantities, saving on wastage.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-faq-box">
+              <h3>📚 Frequently Asked Questions (FAQs)</h3>
+              <div class="faq-accordion">
+                <div class="faq-item">
+                  <button class="faq-trigger">
+                    <span>What software package do you use for modeling?</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      We execute energy simulations in PVsyst and Helioscope, mechanical modeling in AutoCAD and SolidWorks, and structural stress validations using Bentley Staad Pro.
+                    </div>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <button class="faq-trigger">
+                    <span>Why is 3D shading analysis critical?</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      Even small shade spots on single panels can drag down string generation via panel mismatch. A 3D model identifies parapet or tree shadows, placing strings outside blocked sectors.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- In-page form -->
+            <div class="svc-form-box">
+              <div class="svc-form-info">
+                <span class="sub">Engineering</span>
+                <h3>Order Custom Solar Layout Designs</h3>
+                <p>Hire our engineering desk to model your rooftop layout and simulate yearly solar yields. Enter details below to begin.</p>
+              </div>
+              <div class="svc-form-inputs">
+                <form class="contact-form" style="padding:0; border:none;" onsubmit="event.preventDefault(); alert('Thank you! Your request has been sent.'); this.reset();">
+                  <div class="form-row">
+                    <label>Your Name <span class="req">*</span></label>
+                    <input type="text" required placeholder="Enter full name">
+                  </div>
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label>Mobile Number <span class="req">*</span></label>
+                      <input type="tel" required placeholder="Enter 10-digit number">
+                    </div>
+                    <div class="form-row">
+                      <label>Email Address</label>
+                      <input type="email" placeholder="name@domain.com">
+                    </div>
+                  </div>
+                  <div class="form-row" style="margin-top:20px;">
+                    <label>Design Target Capacity</label>
+                    <input type="text" placeholder="e.g. 15 kW, 200 kW, 1 MW etc.">
+                  </div>
+                  <div class="form-row">
+                    <label>Requirement / Message</label>
+                    <textarea placeholder="e.g. Need PVsyst report and layout drawing for standard industrial shed roof..."></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Layout Design</button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ==================== TAB 5: PM-KUSUM CONSULTATION ==================== -->
+          <div id="kusum" class="svc-tab-content">
+            <h2 class="svc-content-title">PM-KUSUM Consultation</h2>
+            <div class="svc-content-subtitle">Grid-Connected Agriculture Solar Schemes and Government Subsidy Processing.</div>
+            <p class="svc-content-desc">The Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan (PM-KUSUM) scheme helps agricultural landholders and farming groups secure up to 60% government subsidy to install solar water pumps and grid-connected mini solar plants. We provide complete administrative, legal, and operational coordination to help you clear applications, secure clearances, and construct plants safely.</p>
+            
+            <div class="svc-img-row">
+              <div class="svc-img-item">
+                <img src="assets/svc-kusum-1.jpg" alt="PM-KUSUM Consultation" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">PM-KUSUM Scheme</span>
+                </div>
+              </div>
+              <div class="svc-img-item">
+                <img src="assets/svc-kusum-2.jpg" alt="PM-KUSUM Consultation" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">Farmer Subsidy</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-offer-box">
+              <h3>⚙️ What We Offer</h3>
+              <div class="svc-offer-grid">
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Component A/B/C Support:</strong> Complete application assistance for mini grid-tied plants and solar pump set conversions.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Documentation &amp; Filing:</strong> Land coordinate mapping, water level verification, and applicant folder generation.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Turnkey Construction:</strong> Subsidy-compliant equipment installation, water flow checks, and structure setups.</span>
+                </div>
+                <div class="svc-offer-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span><strong>Liaison Support:</strong> Coordinating with state energy departments, MNRE, and local DISCOMs for quick file clearings.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-standout-box">
+              <h3>🌟 Why Our Consultation Services Stand Out</h3>
+              <div class="svc-index-list">
+                <div class="svc-index-item">
+                  <div class="svc-index-num">1</div>
+                  <div class="svc-index-content">
+                    <h4>Scheme-Compliant Equipment</h4>
+                    <p>We source pumps and module components that match strict MNRE quality criteria. This guarantees that your installation passes department reviews and secures funding approvals.</p>
+                  </div>
+                </div>
+                <div class="svc-index-item">
+                  <div class="svc-index-num">2</div>
+                  <div class="svc-index-content">
+                    <h4>Subsidy Clearing Liaison</h4>
+                    <p>Our dedicated operations division works directly with local department officers in Rajasthan and Uttar Pradesh to resolve documentation issues and expedite pump approvals.</p>
+                  </div>
+                </div>
+                <div class="svc-index-item">
+                  <div class="svc-index-num">3</div>
+                  <div class="svc-index-content">
+                    <h4>Comprehensive Farm Feasibility</h4>
+                    <p>We verify nearby grid lines and test water tables before starting. This ensures we install the correct pump capacity (HP) and panel tilt for optimal daily irrigation.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-faq-box">
+              <h3>📚 Frequently Asked Questions (FAQs)</h3>
+              <div class="faq-accordion">
+                <div class="faq-item">
+                  <button class="faq-trigger">
+                    <span>What is the farmer share of cost under the KUSUM scheme?</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      Under PM-KUSUM, the central and state governments cover 60% of the cost as direct subsidies. The farmer pays 40%, which can often be split into a 10% cash contribution and 30% secured via bank loan.
+                    </div>
+                  </div>
+                </div>
+                <div class="faq-item">
+                  <button class="faq-trigger">
+                    <span>What is the difference between KUSUM Component B and Component C?</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      Component B focuses on installing stand-alone off-grid solar agricultural pumps. Component C provides support to solarize existing grid-connected agriculture pumps, allowing farmers to sell excess power to utility lines.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- In-page form -->
+            <div class="svc-form-box">
+              <div class="svc-form-info">
+                <span class="sub">KUSUM Scheme</span>
+                <h3>Check Your KUSUM Scheme Eligibility</h3>
+                <p>Do you own agricultural land and want to register under the national solar subsidy program? Fill out your details and our team will check your eligibility.</p>
+              </div>
+              <div class="svc-form-inputs">
+                <form class="contact-form" style="padding:0; border:none;" onsubmit="event.preventDefault(); alert('Thank you! Your request has been sent.'); this.reset();">
+                  <div class="form-row">
+                    <label>Your Name <span class="req">*</span></label>
+                    <input type="text" required placeholder="Enter full name">
+                  </div>
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label>Mobile Number <span class="req">*</span></label>
+                      <input type="tel" required placeholder="Enter 10-digit number">
+                    </div>
+                    <div class="form-row">
+                      <label>Email Address</label>
+                      <input type="email" placeholder="name@domain.com">
+                    </div>
+                  </div>
+                  <div class="form-row" style="margin-top:20px;">
+                    <label>Land District / Location</label>
+                    <input type="text" placeholder="e.g. Jaipur District, Rajasthan">
+                  </div>
+                  <div class="form-row">
+                    <label>Pump Specifications / Message</label>
+                    <textarea placeholder="e.g. Want to solarize 5HP grid-connected pump, land coordinate details..."></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Check Subsidy Status</button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
     </div>
   </section>
@@ -274,6 +837,7 @@
       </div>
     </div>
   </section>
+
 
 </main>
 
@@ -310,18 +874,96 @@
       <div class="footer-col">
         <h5>Reach Us</h5>
         <span class="office-name">Jaipur — Head Office</span>
-        <span class="office-detail">F-02, P.No. 3/410, Sector 3, Chitrakoot, Vaishali Nagar, Jaipur, Rajasthan 302021<br><a href="tel:9928993000">99289 93000</a> · <a href="tel:9116992229">91169 92229</a></span>
+        <span class="office-detail">F-02, P.No. 3/410, Sector 3, Chitrakoot, Vaishali Nagar, Jaipur, Rajasthan 302021<br><a href="tel:9928993000">99289 93000</a> Â· <a href="tel:9116992229">91169 92229</a></span>
         <span class="office-name">Agra — Branch Office</span>
         <span class="office-detail">163, Jaipur House Complex, Opp. Bhanu Media, Jaipur House, Agra, Uttar Pradesh 282002<br><a href="tel:9548234569">95482 34569</a></span>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Sor Connect. All rights reserved.</span>
+      <span>Â© 2026 Sor Connect. All rights reserved.</span>
       <span><a href="contact.html">Careers — Apply Now</a></span>
     </div>
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const sidebarLinks = document.querySelectorAll('.sidebar-nav-menu a');
+  const tabs = document.querySelectorAll('.svc-tab-content');
+
+  function switchTab(targetId) {
+    if (!targetId) return;
+    const id = targetId.replace('#', '');
+    const activeTab = document.getElementById(id);
+    const activeLink = document.querySelector(`.sidebar-nav-menu a[href="#${id}"]`);
+    
+    if (activeTab && activeLink) {
+      // Deactivate all
+      sidebarLinks.forEach(link => link.classList.remove('active'));
+      tabs.forEach(tab => tab.classList.remove('active'));
+      
+      // Activate target
+      activeLink.classList.add('active');
+      activeTab.classList.add('active');
+      
+      // Scroll to content container top on mobile
+      if (window.innerWidth < 992) {
+        document.querySelector('.services-content-main').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }
+
+  // Sidebar link clicks
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      switchTab(targetId);
+      history.pushState(null, null, targetId);
+    });
+  });
+
+  // Handle URL hash on load
+  if (window.location.hash) {
+    switchTab(window.location.hash);
+  } else {
+    const firstLink = sidebarLinks[0];
+    if (firstLink) {
+      switchTab(firstLink.getAttribute('href'));
+    }
+  }
+
+  // Handle browser back/forward buttons
+  window.addEventListener('hashchange', function() {
+    switchTab(window.location.hash);
+  });
+
+  // Accordion (FAQ) triggers
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item => {
+    const trigger = item.querySelector('.faq-trigger');
+    const content = item.querySelector('.faq-content');
+    
+    trigger.addEventListener('click', function() {
+      const isActive = item.classList.contains('active');
+      
+      // Close all first
+      faqItems.forEach(el => {
+        el.classList.remove('active');
+        el.querySelector('.faq-content').style.maxHeight = null;
+      });
+      
+      // Open clicked if it wasn't open
+      if (!isActive) {
+        item.classList.add('active');
+        content.style.maxHeight = content.scrollHeight + 'px';
+      }
+    });
+  });
+});
+</script>
 </body>
 </html>

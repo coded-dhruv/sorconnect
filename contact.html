@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#173F31">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -43,7 +43,16 @@
     </a>
     <nav class="main-nav">
       <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
+      <div class="nav-item-dropdown">
+        <a href="services.html" class="dropdown-trigger">Services <svg class="chevron-down" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></a>
+        <div class="dropdown-menu">
+          <a href="services.html#epc">EPC Services</a>
+          <a href="services.html#installation">Installation &amp; Commissioning</a>
+          <a href="services.html#om">Operation &amp; Maintenance</a>
+          <a href="services.html#design">Solar Designing</a>
+          <a href="services.html#kusum">PM-KUSUM Consultation</a>
+        </div>
+      </div>
       <a href="projects.html">Projects</a>
       <a href="about.html">About Us</a>
       <a href="contact.html" class="active">Contact</a>
@@ -58,14 +67,10 @@
 <main>
 
   <section class="page-hero">
-    <svg class="hero-grid-bg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="opacity:0.35;">
-      <g stroke="#3E8F5C" stroke-width="1">
-        <line x1="0" y1="300" x2="1200" y2="300"/>
-        <line x1="0" y1="260" x2="1200" y2="260"/>
-        <line x1="0" y1="220" x2="1200" y2="220"/>
-        <line x1="100" y1="180" x2="1100" y2="180"/>
-      </g>
-    </svg>
+    <video autoplay loop muted playsinline class="page-hero-video">
+      <source src="assets/covervideo.mp4" type="video/mp4">
+    </video>
+    <div class="page-hero-overlay"></div>
     <div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> / Contact</div>
       <span class="eyebrow on-dark">Let's Power Your Future</span>
@@ -75,86 +80,118 @@
   </section>
 
   <!-- ============ CONTACT GRID ============ -->
+  <!-- ============ CONTACT FORM ============ -->
   <section class="section">
+    <div class="container" style="max-width: 740px;">
+      <div class="fade-up">
+        <form class="contact-form" id="contact-form">
+          <h3 style="font-size: 21px; margin-bottom: 6px;">Send us a message</h3>
+          <p style="font-size: 14.5px; color: var(--ink-soft); margin-bottom: 26px;">Fields marked <span style="color:var(--gold);">*</span> are required.</p>
+
+          <div class="form-two">
+            <div class="form-row">
+              <label for="name">Name <span class="req">*</span></label>
+              <input type="text" id="name" name="name" placeholder="Your full name" required>
+            </div>
+            <div class="form-row">
+              <label for="mobile">Mobile Number <span class="req">*</span></label>
+              <input type="tel" id="mobile" name="mobile" placeholder="+91 00000 00000" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@company.com">
+          </div>
+
+          <div class="form-row">
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" placeholder="Site location / city">
+          </div>
+
+          <div class="form-row">
+            <label for="message">Comment or Message</label>
+            <textarea id="message" name="message" placeholder="Tell us about your rooftop, land, or current electricity bill..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Submit Message</button>
+          <p id="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; color: var(--leaf); font-weight: 600;"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICE LOCATIONS SECTION ============ -->
+  <section class="section office-locations-section">
     <div class="container">
-      <div class="contact-grid">
+      <div class="section-head center fade-up" style="text-align: center;">
+        <span class="eyebrow" style="background: var(--leaf); color: var(--white); padding: 5px 12px; border-radius: 3px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; display: inline-flex; align-items: center; gap: 6px;">✦ CONTACT US ✦</span>
+        <h2 style="font-family: var(--heading); font-weight: 700; color: var(--forest-deep); font-size: clamp(24px, 3.5vw, 32px); margin-top: 16px; margin-bottom: 50px;">Our Offices</h2>
+      </div>
 
-        <!-- FORM -->
-        <div class="fade-up">
-          <form class="contact-form" id="contact-form">
-            <h3 style="font-size: 21px; margin-bottom: 6px;">Send us a message</h3>
-            <p style="font-size: 14.5px; color: var(--ink-soft); margin-bottom: 26px;">Fields marked <span style="color:var(--gold);">*</span> are required.</p>
-
-            <div class="form-two">
-              <div class="form-row">
-                <label for="name">Name <span class="req">*</span></label>
-                <input type="text" id="name" name="name" placeholder="Your full name" required>
-              </div>
-              <div class="form-row">
-                <label for="mobile">Mobile Number <span class="req">*</span></label>
-                <input type="tel" id="mobile" name="mobile" placeholder="+91 00000 00000" required>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <label for="email">Email</label>
-              <input type="email" id="email" name="email" placeholder="you@company.com">
-            </div>
-
-            <div class="form-row">
-              <label for="address">Address</label>
-              <input type="text" id="address" name="address" placeholder="Site location / city">
-            </div>
-
-            <div class="form-row">
-              <label for="message">Comment or Message</label>
-              <textarea id="message" name="message" placeholder="Tell us about your rooftop, land, or current electricity bill..."></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-block">Submit</button>
-            <p id="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; color: var(--leaf); font-weight: 600;"></p>
-          </form>
-        </div>
-
-        <!-- OFFICES -->
-        <div class="fade-up">
-          <div class="office-card">
-            <div class="office-tag">Head Office</div>
-            <h4>Jaipur</h4>
-            <div class="office-row">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <div class="offices-grid fade-up">
+        
+        <!-- Office 1: Head Office Jaipur -->
+        <div class="office-col-card">
+          <div class="office-badge">HEAD OFFICE</div>
+          <h3>Jaipur</h3>
+          <div class="office-details-list">
+            <div class="office-detail-row">
+              <span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
               <span>F&nbsp;–&nbsp;02, P.No.&nbsp;–&nbsp;3/410, Sector 3, Chitrakoot, Vaishali Nagar, Jaipur, Rajasthan 302021</span>
             </div>
-            <div class="office-row">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>
-              <span><a href="tel:9928993000">99289 93000</a> &nbsp;·&nbsp; <a href="tel:9116992229">91169 92229</a></span>
+            <div class="office-detail-row">
+              <span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg></span>
+              <span><a href="tel:9928993000">99289 93000</a></span>
+            </div>
+            <div class="office-detail-row">
+              <span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg></span>
+              <span><a href="tel:9116992229">91169 92229</a></span>
             </div>
           </div>
+          <!-- Embedded Map -->
+          <div class="office-map-wrapper" style="width: 100%; height: 200px; margin-top: 24px; border-radius: 8px; overflow: hidden; border: 1px solid var(--sage-line);">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3557.8563419264037!2d75.74240107543929!3d26.908053976649846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjbCsDU0JzI5LjAiTiA3NcKwNDQnNDEuOSJF!5e0!3m2!1sen!2sin!4v1784372841722!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+        </div>
 
-          <div class="office-card">
-            <div class="office-tag">Branch Office</div>
-            <h4>Agra</h4>
-            <div class="office-row">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <!-- Office 2: Branch Office Agra -->
+        <div class="office-col-card">
+          <div class="office-badge">BRANCH OFFICE</div>
+          <h3>Agra</h3>
+          <div class="office-details-list">
+            <div class="office-detail-row">
+              <span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
               <span>163, Jaipur House Complex, Opp. Bhanu Media, Jaipur House, Agra, Uttar Pradesh 282002</span>
             </div>
-            <div class="office-row">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>
-              <span><a href="tel:9548234569">95482 34569</a> &nbsp;·&nbsp; <a href="tel:9928993000">99289 93000</a></span>
+            <div class="office-detail-row">
+              <span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg></span>
+              <span><a href="tel:9548234569">95482 34569</a></span>
             </div>
-          </div>
-
-          <div class="office-card" style="background: var(--sage); border: none;">
-            <div class="office-tag">Direct Contact</div>
-            <h4>Vivek Jain — Founder &amp; Managing Director</h4>
-            <div class="office-row">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>
+            <div class="office-detail-row">
+              <span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg></span>
               <span><a href="tel:9928993000">99289 93000</a></span>
             </div>
           </div>
-
-          <a href="#" class="btn btn-outline-dark btn-block">Careers — Apply Now</a>
+          <!-- Embedded Map -->
+          <div class="office-map-wrapper" style="width: 100%; height: 200px; margin-top: 24px; border-radius: 8px; overflow: hidden; border: 1px solid var(--sage-line);">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3548.9685361471707!2d77.98615857586081!3d27.18872567648373!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3974773cc052faf5%3A0x7317bf6d70e7ad98!2sSor%20Connect!5e0!3m2!1sen!2sin!4v1784372875732!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
         </div>
+
+        <!-- Office 3: Direct Contact Vivek Jain -->
+        <div class="office-col-card">
+          <div class="office-badge">DIRECT CONTACT</div>
+          <h3>Vivek Jain</h3>
+          <div style="font-family: var(--label); font-size: 13px; font-weight: 700; color: var(--leaf); margin-top: -18px; margin-bottom: 22px;">Founder &amp; Managing Director</div>
+          <div class="office-details-list">
+            <div class="office-detail-row">
+              <span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg></span>
+              <span><a href="tel:9928993000">99289 93000</a></span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -221,18 +258,20 @@
       <div class="footer-col">
         <h5>Reach Us</h5>
         <span class="office-name">Jaipur — Head Office</span>
-        <span class="office-detail">F-02, P.No. 3/410, Sector 3, Chitrakoot, Vaishali Nagar, Jaipur, Rajasthan 302021<br><a href="tel:9928993000">99289 93000</a> · <a href="tel:9116992229">91169 92229</a></span>
+        <span class="office-detail">F-02, P.No. 3/410, Sector 3, Chitrakoot, Vaishali Nagar, Jaipur, Rajasthan 302021<br><a href="tel:9928993000">99289 93000</a> Â· <a href="tel:9116992229">91169 92229</a></span>
         <span class="office-name">Agra — Branch Office</span>
         <span class="office-detail">163, Jaipur House Complex, Opp. Bhanu Media, Jaipur House, Agra, Uttar Pradesh 282002<br><a href="tel:9548234569">95482 34569</a></span>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Sor Connect. All rights reserved.</span>
+      <span>Â© 2026 Sor Connect. All rights reserved.</span>
       <span><a href="contact.html">Careers — Apply Now</a></span>
     </div>
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
