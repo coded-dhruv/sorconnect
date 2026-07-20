@@ -214,12 +214,30 @@ document.addEventListener('DOMContentLoaded', function () {
           this.classList.add('active');
           targetTab.classList.add('active');
 
-          // Smoothly crossfade image
-          processActiveImg.style.opacity = '0';
-          setTimeout(() => {
-            processActiveImg.src = targetImgSrc;
-            processActiveImg.style.opacity = '1';
-          }, 150);
+          // Smoothly crossfade image with GSAP or fallback
+          if (typeof gsap !== 'undefined') {
+            gsap.to(processActiveImg, {
+              opacity: 0,
+              scale: 0.95,
+              y: 10,
+              duration: 0.2,
+              ease: 'power2.in',
+              onComplete: () => {
+                processActiveImg.src = targetImgSrc;
+                gsap.fromTo(processActiveImg, 
+                  { opacity: 0, scale: 1.05, y: -10 },
+                  { opacity: 1, scale: 1, y: 0, duration: 0.4, ease: 'back.out(1.2)' }
+                );
+              }
+            });
+          } else {
+            // Fallback basic fade
+            processActiveImg.style.opacity = '0';
+            setTimeout(() => {
+              processActiveImg.src = targetImgSrc;
+              processActiveImg.style.opacity = '1';
+            }, 150);
+          }
         }
       });
     });
