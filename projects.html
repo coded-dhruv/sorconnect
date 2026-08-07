@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -116,7 +116,7 @@
             <thead>
               <tr><th>Client</th><th>Location</th><th>Capacity</th><th>Sector</th></tr>
             </thead>
-            <tbody>
+            <tbody id="epc-projects-list">
               <tr><td>Vishwaraj Environment Ltd</td><td>Agra</td><td class="cap-col">2315 KW</td><td>STP</td></tr>
               <tr><td>Rana Bai Marble &amp; Granite</td><td>Kishangarh, Ajmer</td><td class="cap-col">324 KW</td><td>Marble</td></tr>
               <tr><td>KGK Dia Processing</td><td>Jasdan, Rajkot</td><td class="cap-col">250 KW</td><td>Diamond</td></tr>
@@ -143,7 +143,7 @@
             <thead>
               <tr><th>Client</th><th>Location</th><th>Capacity</th><th>Type</th></tr>
             </thead>
-            <tbody>
+            <tbody id="ic-om-projects-list">
               <tr><td>Shreej Solar Solution</td><td>Surat</td><td class="cap-col">1300 KW</td><td>I&amp;C</td></tr>
               <tr><td>Yutaka Autoparts Pvt Ltd</td><td>Bhiwadi</td><td class="cap-col">736 KW</td><td>I&amp;C</td></tr>
               <tr><td>Krishna Ishizaki Auto Ltd</td><td>Binola</td><td class="cap-col">514 KW</td><td>I&amp;C</td></tr>
@@ -254,5 +254,55 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+  
+  const epcTbody = document.getElementById('epc-projects-list');
+  const icomTbody = document.getElementById('ic-om-projects-list');
+  
+  if (epcTbody && icomTbody) {
+    fetch(`${SUPABASE_URL}/rest/v1/projects?select=*,categories(slug)&order=id.asc`, {
+      method: 'GET',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Supabase request failed');
+      return res.json();
+    })
+    .then(data => {
+      if (data && data.length > 0) {
+        // Clear static placeholders
+        epcTbody.innerHTML = '';
+        icomTbody.innerHTML = '';
+        
+        data.forEach(project => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${project.client}</td>
+            <td>${project.location}</td>
+            <td class="cap-col">${project.capacity}</td>
+            <td>${project.sector_or_type}</td>
+          `;
+          
+          const slug = project.categories ? project.categories.slug : '';
+          if (slug === 'epc') {
+            epcTbody.appendChild(row);
+          } else if (slug === 'ic_om') {
+            icomTbody.appendChild(row);
+          }
+        });
+      }
+    })
+    .catch(err => {
+      console.warn("Supabase fetch failed, displaying cache local fallback data:", err);
+    });
+  }
+});
+</script>
 </body>
 </html>
