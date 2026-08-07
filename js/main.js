@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Bind all 5 Quick Quote Services Forms
-  const quickQuoteFormIds = ['svc-epc-form', 'svc-inst-form', 'svc-om-form', 'svc-design-form', 'svc-kusum-form'];
+  const quickQuoteFormIds = ['svc-epc-form', 'svc-inst-form', 'svc-om-form', 'svc-design-form', 'svc-kusum-form', 'svc-surya-form'];
   quickQuoteFormIds.forEach(id => {
     const formEl = document.getElementById(id);
     if (formEl) {
