@@ -173,24 +173,105 @@ document.addEventListener('DOMContentLoaded', function () {
     onScroll();
   }
 
-  // Contact form (static demo — no backend wired up)
-  var form = document.getElementById('contact-form');
-  if (form) {
-    form.addEventListener('submit', function (e) {
+  // ===================== WEB3FORMS EMAIL INTEGRATION =====================
+  // Replace this placeholder value with your actual Web3Forms Access Key to receive emails
+  const WEB3FORMS_ACCESS_KEY = "YOUR_ACCESS_KEY_HERE";
+
+  function handleFormSubmit(formEl, noteEl, buttonEl, defaultSuccessText) {
+    if (!formEl || !buttonEl) return;
+    
+    formEl.addEventListener('submit', function(e) {
       e.preventDefault();
-      var btn = form.querySelector('button[type="submit"]');
-      var note = document.getElementById('form-note');
-      if (btn) {
-        btn.textContent = 'Message sent';
-        btn.disabled = true;
+      
+      const originalBtnText = buttonEl.textContent;
+      buttonEl.textContent = 'Sending...';
+      buttonEl.disabled = true;
+      
+      if (noteEl) {
+        noteEl.style.display = 'none';
+        noteEl.className = noteEl.className || 'form-note';
+        noteEl.style.color = '';
       }
-      if (note) {
-        note.textContent = "Thanks — our team will get back to you within one business day.";
-        note.style.display = 'block';
+      
+      const formData = new FormData(formEl);
+      
+      // Dynamic fallback/simulation mode if key is unconfigured
+      if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY === "YOUR_ACCESS_KEY_HERE") {
+        console.warn("Web3Forms Access Key is not configured. Simulating form submission...");
+        setTimeout(() => {
+          buttonEl.textContent = 'Message Sent';
+          if (noteEl) {
+            noteEl.textContent = "Simulation Mode: " + defaultSuccessText + " (Please insert your Web3Forms Access Key in js/main.js to make it active).";
+            noteEl.style.color = 'var(--leaf)';
+            noteEl.style.display = 'block';
+          }
+          formEl.reset();
+        }, 800);
+        return;
       }
-      form.reset();
+      
+      // Append required parameters for Web3Forms service
+      formData.append('access_key', WEB3FORMS_ACCESS_KEY);
+      formData.append('from_name', 'Sor Connect website');
+      
+      // Determine custom subject line based on form ID
+      const formId = formEl.id || '';
+      let subject = 'New Contact Inquiry - Sor Connect';
+      if (formId.startsWith('svc-')) {
+        const serviceType = formId.replace('svc-', '').replace('-form', '').toUpperCase();
+        subject = `Quick Quote Request [${serviceType}] - Sor Connect`;
+      }
+      formData.append('subject', subject);
+      
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          buttonEl.textContent = 'Message Sent';
+          if (noteEl) {
+            noteEl.textContent = defaultSuccessText;
+            noteEl.style.color = 'var(--leaf)';
+            noteEl.style.display = 'block';
+          }
+          formEl.reset();
+        } else {
+          throw new Error(data.message || 'Submission failed');
+        }
+      })
+      .catch(err => {
+        console.error("Web3Forms submission error:", err);
+        buttonEl.textContent = originalBtnText;
+        buttonEl.disabled = false;
+        if (noteEl) {
+          noteEl.textContent = "Unable to send your inquiry. Please try again or call us directly.";
+          noteEl.style.color = '#B20F03';
+          noteEl.style.display = 'block';
+        }
+      });
     });
   }
+
+  // Bind Main Contact Form
+  const contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    const btn = contactForm.querySelector('button[type="submit"]');
+    const note = document.getElementById('form-note');
+    handleFormSubmit(contactForm, note, btn, "Thanks — our team will get back to you within one business day.");
+  }
+
+  // Bind all 5 Quick Quote Services Forms
+  const quickQuoteFormIds = ['svc-epc-form', 'svc-inst-form', 'svc-om-form', 'svc-design-form', 'svc-kusum-form'];
+  quickQuoteFormIds.forEach(id => {
+    const formEl = document.getElementById(id);
+    if (formEl) {
+      const btn = formEl.querySelector('button[type="submit"]');
+      const note = formEl.querySelector('.form-note');
+      handleFormSubmit(formEl, note, btn, "Thank you! Your quote request has been received. Our team will contact you shortly.");
+    }
+  });
 
   // Home page process tab switcher
   const processBtns = document.querySelectorAll('.process-nav-btn');

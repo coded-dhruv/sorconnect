@@ -235,30 +235,31 @@
                 <p>Submit your site requirements and contact details. Our engineering division will analyze your details and share a custom quotation within 24 hours.</p>
               </div>
               <div class="svc-form-inputs">
-                <form class="contact-form" style="padding:0; border:none;" onsubmit="event.preventDefault(); alert('Thank you! Your request has been sent.'); this.reset();">
+                <form class="contact-form" id="svc-epc-form" style="padding:0; border:none;">
                   <div class="form-row">
-                    <label>Your Name <span class="req">*</span></label>
-                    <input type="text" required placeholder="Enter full name">
+                    <label for="epc-name">Your Name <span class="req">*</span></label>
+                    <input type="text" id="epc-name" name="name" required placeholder="Enter full name">
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label>Mobile Number <span class="req">*</span></label>
-                      <input type="tel" required placeholder="Enter 10-digit number">
+                      <label for="epc-mobile">Mobile Number <span class="req">*</span></label>
+                      <input type="tel" id="epc-mobile" name="mobile" required placeholder="Enter 10-digit number">
                     </div>
                     <div class="form-row">
-                      <label>Email Address</label>
-                      <input type="email" placeholder="name@domain.com">
+                      <label for="epc-email">Email Address</label>
+                      <input type="email" id="epc-email" name="email" placeholder="name@domain.com">
                     </div>
                   </div>
                   <div class="form-row" style="margin-top:20px;">
-                    <label>Rooftop Area or Land Size</label>
-                    <input type="text" placeholder="e.g. 5,000 sq ft or 2 Acres">
+                    <label for="epc-size">Rooftop Area or Land Size</label>
+                    <input type="text" id="epc-size" name="site_size" placeholder="e.g. 5,000 sq ft or 2 Acres">
                   </div>
                   <div class="form-row">
-                    <label>Comment / Special Requests</label>
-                    <textarea placeholder="Tell us about your power load or site details..."></textarea>
+                    <label for="epc-msg">Comment / Special Requests</label>
+                    <textarea id="epc-msg" name="message" placeholder="Tell us about your power load or site details..."></textarea>
                   </div>
                   <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                  <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
             </div>
@@ -373,30 +374,31 @@
                 <p>Do you have a solar plant ready that needs DISCOM approvals and commissioning? Fill out the details below and our team will get back to you.</p>
               </div>
               <div class="svc-form-inputs">
-                <form class="contact-form" style="padding:0; border:none;" onsubmit="event.preventDefault(); alert('Thank you! Your request has been sent.'); this.reset();">
+                <form class="contact-form" id="svc-inst-form" style="padding:0; border:none;">
                   <div class="form-row">
-                    <label>Your Name <span class="req">*</span></label>
-                    <input type="text" required placeholder="Enter full name">
+                    <label for="inst-name">Your Name <span class="req">*</span></label>
+                    <input type="text" id="inst-name" name="name" required placeholder="Enter full name">
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label>Mobile Number <span class="req">*</span></label>
-                      <input type="tel" required placeholder="Enter 10-digit number">
+                      <label for="inst-mobile">Mobile Number <span class="req">*</span></label>
+                      <input type="tel" id="inst-mobile" name="mobile" required placeholder="Enter 10-digit number">
                     </div>
                     <div class="form-row">
-                      <label>Email Address</label>
-                      <input type="email" placeholder="name@domain.com">
+                      <label for="inst-email">Email Address</label>
+                      <input type="email" id="inst-email" name="email" placeholder="name@domain.com">
                     </div>
                   </div>
                   <div class="form-row" style="margin-top:20px;">
-                    <label>Existing Plant Capacity (if installed)</label>
-                    <input type="text" placeholder="e.g. 50 kWp, 100 kWp, etc.">
+                    <label for="inst-capacity">Existing Plant Capacity (if installed)</label>
+                    <input type="text" id="inst-capacity" name="site_size" placeholder="e.g. 50 kWp, 100 kWp, etc.">
                   </div>
                   <div class="form-row">
-                    <label>Current Status / Message</label>
-                    <textarea placeholder="e.g. Panels mounted, awaiting net-metering and test report execution..."></textarea>
+                    <label for="inst-msg">Comment / Message</label>
+                    <textarea id="inst-msg" name="message" placeholder="Tell us about your plant or target date..."></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Connect with Engineers</button>
+                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                  <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
             </div>
@@ -427,7 +429,7 @@
             </div>
 
             <div class="svc-offer-box">
-              <h3>⚙️ What We Offer</h3>
+              <h3>⚙️  What We Offer</h3>
               <div class="svc-offer-grid">
                 <div class="svc-offer-item">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
@@ -511,30 +513,31 @@
                 <p>Let our specialists test your plant performance. Submit details below to schedule an on-site testing session and inverter diagnostics report.</p>
               </div>
               <div class="svc-form-inputs">
-                <form class="contact-form" style="padding:0; border:none;" onsubmit="event.preventDefault(); alert('Thank you! Your request has been sent.'); this.reset();">
+                <form class="contact-form" id="svc-om-form" style="padding:0; border:none;">
                   <div class="form-row">
-                    <label>Your Name <span class="req">*</span></label>
-                    <input type="text" required placeholder="Enter full name">
+                    <label for="om-name">Your Name <span class="req">*</span></label>
+                    <input type="text" id="om-name" name="name" required placeholder="Enter full name">
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label>Mobile Number <span class="req">*</span></label>
-                      <input type="tel" required placeholder="Enter 10-digit number">
+                      <label for="om-mobile">Mobile Number <span class="req">*</span></label>
+                      <input type="tel" id="om-mobile" name="mobile" required placeholder="Enter 10-digit number">
                     </div>
                     <div class="form-row">
-                      <label>Email Address</label>
-                      <input type="email" placeholder="name@domain.com">
+                      <label for="om-email">Email Address</label>
+                      <input type="email" id="om-email" name="email" placeholder="name@domain.com">
                     </div>
                   </div>
                   <div class="form-row" style="margin-top:20px;">
-                    <label>Total Installed Capacity</label>
-                    <input type="text" placeholder="e.g. 20 kWp, 250 kWp, etc.">
+                    <label for="om-capacity">Total Installed Capacity</label>
+                    <input type="text" id="om-capacity" name="site_size" placeholder="e.g. 20 kWp, 250 kWp, etc.">
                   </div>
                   <div class="form-row">
-                    <label>Notes / Issue Faced</label>
-                    <textarea placeholder="e.g. High generation drop, inverter showing faults, need regular cleaning service..."></textarea>
+                    <label for="om-msg">Notes / Issue Faced</label>
+                    <textarea id="om-msg" name="message" placeholder="e.g. High generation drop, inverter showing faults, need regular cleaning service..."></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Book Plant Audit</button>
+                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                  <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
             </div>
@@ -565,7 +568,7 @@
             </div>
 
             <div class="svc-offer-box">
-              <h3>⚙️ What We Offer</h3>
+              <h3>⚙️  What We Offer</h3>
               <div class="svc-offer-grid">
                 <div class="svc-offer-item">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
@@ -649,30 +652,31 @@
                 <p>Hire our engineering desk to model your rooftop layout and simulate yearly solar yields. Enter details below to begin.</p>
               </div>
               <div class="svc-form-inputs">
-                <form class="contact-form" style="padding:0; border:none;" onsubmit="event.preventDefault(); alert('Thank you! Your request has been sent.'); this.reset();">
+                <form class="contact-form" id="svc-design-form" style="padding:0; border:none;">
                   <div class="form-row">
-                    <label>Your Name <span class="req">*</span></label>
-                    <input type="text" required placeholder="Enter full name">
+                    <label for="design-name">Your Name <span class="req">*</span></label>
+                    <input type="text" id="design-name" name="name" required placeholder="Enter full name">
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label>Mobile Number <span class="req">*</span></label>
-                      <input type="tel" required placeholder="Enter 10-digit number">
+                      <label for="design-mobile">Mobile Number <span class="req">*</span></label>
+                      <input type="tel" id="design-mobile" name="mobile" required placeholder="Enter 10-digit number">
                     </div>
                     <div class="form-row">
-                      <label>Email Address</label>
-                      <input type="email" placeholder="name@domain.com">
+                      <label for="design-email">Email Address</label>
+                      <input type="email" id="design-email" name="email" placeholder="name@domain.com">
                     </div>
                   </div>
                   <div class="form-row" style="margin-top:20px;">
-                    <label>Design Target Capacity</label>
-                    <input type="text" placeholder="e.g. 15 kW, 200 kW, 1 MW etc.">
+                    <label for="design-capacity">Design Target Capacity</label>
+                    <input type="text" id="design-capacity" name="site_size" placeholder="e.g. 15 kW, 200 kW, 1 MW etc.">
                   </div>
                   <div class="form-row">
-                    <label>Requirement / Message</label>
-                    <textarea placeholder="e.g. Need PVsyst report and layout drawing for standard industrial shed roof..."></textarea>
+                    <label for="design-msg">Site Boundary Coordinates or Dimensions</label>
+                    <textarea id="design-msg" name="message" placeholder="e.g. Google Maps pin coordinates or land plot dimensions..."></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Layout Design</button>
+                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                  <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
             </div>
@@ -703,7 +707,7 @@
             </div>
 
             <div class="svc-offer-box">
-              <h3>⚙️ What We Offer</h3>
+              <h3>⚙️  What We Offer</h3>
               <div class="svc-offer-grid">
                 <div class="svc-offer-item">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
@@ -787,30 +791,31 @@
                 <p>Do you own agricultural land and want to register under the national solar subsidy program? Fill out your details and our team will check your eligibility.</p>
               </div>
               <div class="svc-form-inputs">
-                <form class="contact-form" style="padding:0; border:none;" onsubmit="event.preventDefault(); alert('Thank you! Your request has been sent.'); this.reset();">
+                <form class="contact-form" id="svc-kusum-form" style="padding:0; border:none;">
                   <div class="form-row">
-                    <label>Your Name <span class="req">*</span></label>
-                    <input type="text" required placeholder="Enter full name">
+                    <label for="kusum-name">Your Name <span class="req">*</span></label>
+                    <input type="text" id="kusum-name" name="name" required placeholder="Enter full name">
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label>Mobile Number <span class="req">*</span></label>
-                      <input type="tel" required placeholder="Enter 10-digit number">
+                      <label for="kusum-mobile">Mobile Number <span class="req">*</span></label>
+                      <input type="tel" id="kusum-mobile" name="mobile" required placeholder="Enter 10-digit number">
                     </div>
                     <div class="form-row">
-                      <label>Email Address</label>
-                      <input type="email" placeholder="name@domain.com">
+                      <label for="kusum-email">Email Address</label>
+                      <input type="email" id="kusum-email" name="email" placeholder="name@domain.com">
                     </div>
                   </div>
                   <div class="form-row" style="margin-top:20px;">
-                    <label>Land District / Location</label>
-                    <input type="text" placeholder="e.g. Jaipur District, Rajasthan">
+                    <label for="kusum-location">Land District / Location</label>
+                    <input type="text" id="kusum-location" name="site_size" placeholder="e.g. Jaipur District, Rajasthan">
                   </div>
                   <div class="form-row">
-                    <label>Pump Specifications / Message</label>
-                    <textarea placeholder="e.g. Want to solarize 5HP grid-connected pump, land coordinate details..."></textarea>
+                    <label for="kusum-msg">Pump Specifications / Message</label>
+                    <textarea id="kusum-msg" name="message" placeholder="e.g. Need 7.5 HP solar water pump, dry land, sub-surface water level details..."></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Check Subsidy Status</button>
+                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                  <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
             </div>
