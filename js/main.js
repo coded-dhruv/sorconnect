@@ -150,26 +150,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Once topbar scrolls off, navbar glides up and becomes white pill
+  // Header scroll state handler
   var header = document.querySelector('.site-header');
   if (header) {
-    var topbar = document.querySelector('.topbar');
     var onScroll = function () {
-      var topbarH = topbar ? topbar.offsetHeight : 0;
-      if (window.scrollY > topbarH) {
+      if (window.scrollY > 40) {
         header.classList.add('scrolled');
-        header.style.top = '';
       } else {
         header.classList.remove('scrolled');
-        if (topbarH > 0) {
-          header.style.top = (topbarH + 10) + 'px';
-        } else {
-          header.style.top = '10px';
-        }
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
     onScroll();
   }
 

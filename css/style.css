@@ -131,32 +131,30 @@ select:focus-visible {
 }
 
 /* ===================== HEADER — floating overlay ===================== */
+/* ===================== HEADER — Floating Capsule Navbar ===================== */
 header.site-header {
-  position: fixed;
-  top: 50px;       /* starts below topbar (~40px) + 10px gap */
-  left: 20px;
-  right: 20px;
-  z-index: 200;
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.22);
+  position: sticky;
+  top: 12px;
+  z-index: 1000;
+  margin: 10px auto;
+  max-width: var(--container);
+  width: calc(100% - 32px);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--sage-line);
   border-radius: 14px;
-  box-shadow: none;
+  box-shadow: 0 6px 28px rgba(14, 44, 34, 0.12), 0 1px 4px rgba(14, 44, 34, 0.07);
   transition:
-    top 0.4s var(--ease),
+    transform var(--dur) var(--ease),
     background var(--dur) var(--ease),
     border-color var(--dur) var(--ease),
     box-shadow var(--dur) var(--ease);
 }
-/* Once topbar scrolls away, navbar glides up and becomes white pill */
 header.site-header.scrolled {
-  top: 12px;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-color: var(--sage-line);
-  box-shadow: 0 6px 28px rgba(14,44,34,0.12), 0 1px 4px rgba(14,44,34,0.07);
+  box-shadow: 0 10px 32px rgba(14, 44, 34, 0.16);
 }
-/* No body padding-top — topbar is in normal flow */
+
 body { padding-top: 0; }
 .nav-row {
   display: flex;
@@ -184,12 +182,11 @@ body { padding-top: 0; }
   flex-direction: column;
   line-height: 1.15;
 }
-/* Brand — white over hero, dark once scrolled */
 .brand-text .name {
   font-family: var(--heading);
   font-weight: 700;
   font-size: 19px;
-  color: var(--white);
+  color: var(--forest-deep);
   letter-spacing: -0.02em;
   transition: color var(--dur) var(--ease);
 }
@@ -198,27 +195,25 @@ body { padding-top: 0; }
   font-size: 10.5px;
   font-weight: 500;
   letter-spacing: 0.03em;
-  color: rgba(255,255,255,0.75);
+  color: var(--leaf);
   text-transform: uppercase;
   transition: color var(--dur) var(--ease);
 }
-header.site-header.scrolled .brand-text .name { color: var(--forest-deep); }
-header.site-header.scrolled .brand-text .tag  { color: var(--leaf); }
 
-/* Nav links — white over hero, dark once scrolled */
+/* Nav links */
 nav.main-nav a {
   font-family: var(--body);
   font-size: 14.5px;
   font-weight: 500;
-  color: rgba(255,255,255,0.88);
+  color: var(--ink-soft);
   padding: 24px 18px;
   position: relative;
   transition: color var(--dur) var(--ease);
 }
 nav.main-nav a.nav-cta { padding: 0; margin-left: 16px; }
-nav.main-nav a:hover { color: var(--white); }
+nav.main-nav a:hover { color: var(--forest-deep); }
 nav.main-nav a.active {
-  color: var(--white);
+  color: var(--forest-deep);
   font-weight: 700;
 }
 nav.main-nav a.active::after {
@@ -228,13 +223,8 @@ nav.main-nav a.active::after {
   left: 18px;
   right: 18px;
   height: 3px;
-  background: var(--white);
+  background: var(--leaf);
 }
-/* Scrolled state — restore dark colours */
-header.site-header.scrolled nav.main-nav a          { color: var(--ink-soft); }
-header.site-header.scrolled nav.main-nav a:hover    { color: var(--forest-deep); }
-header.site-header.scrolled nav.main-nav a.active   { color: var(--forest); }
-header.site-header.scrolled nav.main-nav a.active::after { background: var(--leaf); }
 
 /* Dropdown Menu system */
 .nav-item-dropdown {
