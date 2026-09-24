@@ -636,14 +636,24 @@ header.site-header.scrolled .nav-toggle span { background: var(--forest-deep); }
   flex-wrap: wrap;
   gap: 50px;
   align-items: center;
+  justify-content: flex-start;
   padding-bottom: 60px;
+  text-align: left;
 }
-.hero-inner > * { flex: 1 1 420px; }
+.hero-inner > * { flex: 1 1 420px; text-align: left; }
 .hero-inner-single {
   padding-top: 130px;  /* push content below topbar + floating nav */
   padding-bottom: 60px;
+  justify-content: flex-start;
+  text-align: left;
 }
-.hero-inner-single > * { flex: 1 1 100%; max-width: 620px; }
+.hero-inner-single > * {
+  flex: 0 1 100%;
+  max-width: 680px;
+  margin-left: 0;
+  margin-right: auto;
+  text-align: left;
+}
 
 /* Reference heading: Montserrat 700, very large, tight tracking */
 .hero h1 {
@@ -653,6 +663,7 @@ header.site-header.scrolled .nav-toggle span { background: var(--forest-deep); }
   font-size: clamp(36px, 4.5vw, 53px);
   line-height: 1.06;
   letter-spacing: -0.035em;
+  text-align: left;
 }
 .hero h1 em {
   font-style: normal;
@@ -664,20 +675,25 @@ header.site-header.scrolled .nav-toggle span { background: var(--forest-deep); }
   font-size: 18px;
   font-weight: 400;
   color: rgba(255,255,255,0.72);
-  max-width: 494px;
+  max-width: 540px;
   line-height: 1.55;
   letter-spacing: -0.02em;
+  text-align: left;
 }
 .hero-actions {
   margin-top: 38px;
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 @media (max-width: 900px) {
-  .hero-inner { padding-bottom: 40px; }
-  .hero-inner-single { padding-top: 130px; }
+  .hero-inner { padding-bottom: 40px; justify-content: flex-start; text-align: left; }
+  .hero-inner-single { padding-top: 130px; text-align: left; }
+  .hero-inner-single > * { text-align: left; }
+  .hero-actions { justify-content: flex-start; }
 }
 
 /* ===================== READOUT / STAT TICKER ===================== */
