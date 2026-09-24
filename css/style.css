@@ -629,6 +629,14 @@ header.site-header.scrolled .nav-toggle span { background: var(--forest-deep); }
     linear-gradient(101deg, rgba(8,20,15,0.94) 22%, rgba(8,20,15,0.00) 80%),
     linear-gradient(to top, rgba(8,20,15,0.88) 0%, rgba(8,20,15,0.18) 40%, rgba(8,20,15,0.05) 70%);
 }
+.hero > .container {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: auto;
+  padding-left: clamp(24px, 7vw, 120px);
+  padding-right: clamp(20px, 4vw, 40px);
+}
 .hero-inner {
   position: relative;
   z-index: 2;
@@ -639,20 +647,24 @@ header.site-header.scrolled .nav-toggle span { background: var(--forest-deep); }
   justify-content: flex-start;
   padding-bottom: 60px;
   text-align: left;
+  width: 100%;
 }
 .hero-inner > * { flex: 1 1 420px; text-align: left; }
 .hero-inner-single {
-  padding-top: 130px;  /* push content below topbar + floating nav */
+  padding-top: 145px;  /* push content below topbar + floating nav */
   padding-bottom: 60px;
+  display: flex;
   justify-content: flex-start;
+  align-items: flex-start;
   text-align: left;
+  width: 100%;
 }
 .hero-inner-single > * {
   flex: 0 1 100%;
   max-width: 680px;
-  margin-left: 0;
-  margin-right: auto;
-  text-align: left;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  text-align: left !important;
 }
 
 /* Reference heading: Montserrat 700, very large, tight tracking */
@@ -2338,16 +2350,6 @@ footer.site-footer .container { position: relative; }
   transform: translateY(0);
 }
 
-/* ===================== ABOUT / HERO INNER LAYOUT ===================== */
-.hero-inner {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 52px;
-  align-items: center;
-}
-.hero-inner > * { flex: 1 1 400px; }
 
 /* ===================== CONTACT PAGE OFFICES REDESIGN ===================== */
 .office-locations-section {
