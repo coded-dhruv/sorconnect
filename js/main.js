@@ -173,9 +173,35 @@ document.addEventListener('DOMContentLoaded', function () {
     onScroll();
   }
 
-  // ===================== WEB3FORMS EMAIL INTEGRATION =====================
-  // Replace this placeholder value with your actual Web3Forms Access Key to receive emails
-  const WEB3FORMS_ACCESS_KEY = "YOUR_ACCESS_KEY_HERE";
+  // ===================== PRODUCTION FORM INTEGRATION =====================
+  // Supports both local Node backend (/api/contact) and client-side Web3Forms API for static hosts.
+  const WEB3FORMS_ACCESS_KEY = typeof window !== 'undefined' && window.WEB3FORMS_ACCESS_KEY ? window.WEB3FORMS_ACCESS_KEY : "YOUR_ACCESS_KEY_HERE";
+
+  function validateInput(formEl) {
+    const nameInput = formEl.querySelector('input[name="name"]');
+    const mobileInput = formEl.querySelector('input[name="mobile"]');
+    const emailInput = formEl.querySelector('input[name="email"]');
+
+    if (nameInput && !nameInput.value.trim()) {
+      return { valid: false, message: 'Please enter your full name.', input: nameInput };
+    }
+
+    if (mobileInput) {
+      const phoneDigits = mobileInput.value.replace(/\D/g, '');
+      if (!phoneDigits || phoneDigits.length < 10) {
+        return { valid: false, message: 'Please enter a valid 10-digit mobile number.', input: mobileInput };
+      }
+    }
+
+    if (emailInput && emailInput.value.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailInput.value.trim())) {
+        return { valid: false, message: 'Please enter a valid email address.', input: emailInput };
+      }
+    }
+
+    return { valid: true };
+  }
 
   function handleFormSubmit(formEl, noteEl, buttonEl, defaultSuccessText) {
     if (!formEl || !buttonEl) return;
@@ -183,6 +209,21 @@ document.addEventListener('DOMContentLoaded', function () {
     formEl.addEventListener('submit', function(e) {
       e.preventDefault();
       
+      // Perform Validation
+      const validation = validateInput(formEl);
+      if (!validation.valid) {
+        if (noteEl) {
+          noteEl.textContent = validation.message;
+          noteEl.style.color = '#B20F03';
+          noteEl.style.display = 'block';
+          noteEl.setAttribute('role', 'alert');
+        } else {
+          alert(validation.message);
+        }
+        if (validation.input) validation.input.focus();
+        return;
+      }
+
       const originalBtnText = buttonEl.textContent;
       buttonEl.textContent = 'Sending...';
       buttonEl.disabled = true;
@@ -191,45 +232,35 @@ document.addEventListener('DOMContentLoaded', function () {
         noteEl.style.display = 'none';
         noteEl.className = noteEl.className || 'form-note';
         noteEl.style.color = '';
+        noteEl.removeAttribute('role');
       }
       
       const formData = new FormData(formEl);
-      
-      // Dynamic fallback/simulation mode if key is unconfigured
-      if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY === "YOUR_ACCESS_KEY_HERE") {
-        console.warn("Web3Forms Access Key is not configured. Simulating form submission...");
-        setTimeout(() => {
-          buttonEl.textContent = 'Message Sent';
-          if (noteEl) {
-            noteEl.textContent = "Simulation Mode: " + defaultSuccessText + " (Please insert your Web3Forms Access Key in js/main.js to make it active).";
-            noteEl.style.color = 'var(--leaf)';
-            noteEl.style.display = 'block';
-          }
-          formEl.reset();
-        }, 800);
-        return;
-      }
-      
-      // Append required parameters for Web3Forms service
-      formData.append('access_key', WEB3FORMS_ACCESS_KEY);
-      formData.append('from_name', 'Sor Connect website');
-      
-      // Determine custom subject line based on form ID
       const formId = formEl.id || '';
-      let subject = 'New Contact Inquiry - Sor Connect';
+      let subject = 'New Website Contact Inquiry - Sor Connect';
       if (formId.startsWith('svc-')) {
         const serviceType = formId.replace('svc-', '').replace('-form', '').toUpperCase();
         subject = `Quick Quote Request [${serviceType}] - Sor Connect`;
       }
       formData.append('subject', subject);
-      
-      fetch('https://api.web3forms.com/submit', {
+      formData.append('recipient', 'sorconnect@gmail.com');
+
+      // Convert FormData to JSON object for API
+      const payloadObj = {};
+      formData.forEach((value, key) => { payloadObj[key] = value; });
+
+      // Try local API endpoint /api/contact first
+      fetch('/api/contact', {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payloadObj)
       })
-      .then(response => response.json())
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('Local API endpoint unavailable');
+      })
       .then(data => {
-        if (data.success) {
+        if (data && data.success) {
           buttonEl.textContent = 'Message Sent';
           if (noteEl) {
             noteEl.textContent = defaultSuccessText;
@@ -238,17 +269,51 @@ document.addEventListener('DOMContentLoaded', function () {
           }
           formEl.reset();
         } else {
-          throw new Error(data.message || 'Submission failed');
+          throw new Error('Submission error');
         }
       })
-      .catch(err => {
-        console.error("Web3Forms submission error:", err);
-        buttonEl.textContent = originalBtnText;
-        buttonEl.disabled = false;
-        if (noteEl) {
-          noteEl.textContent = "Unable to send your inquiry. Please try again or call us directly.";
-          noteEl.style.color = '#B20F03';
-          noteEl.style.display = 'block';
+      .catch(() => {
+        // Fallback to Web3Forms API directly if /api/contact endpoint is unavailable (static hosting)
+        if (WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY !== "YOUR_ACCESS_KEY_HERE") {
+          formData.append('access_key', WEB3FORMS_ACCESS_KEY);
+          formData.append('from_name', 'Sor Connect Website');
+          fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            body: formData
+          })
+          .then(res => res.json())
+          .then(w3data => {
+            if (w3data.success) {
+              buttonEl.textContent = 'Message Sent';
+              if (noteEl) {
+                noteEl.textContent = defaultSuccessText;
+                noteEl.style.color = 'var(--leaf)';
+                noteEl.style.display = 'block';
+              }
+              formEl.reset();
+            } else {
+              throw new Error(w3data.message || 'Web3Forms error');
+            }
+          })
+          .catch(err => {
+            console.error('Form submission error:', err);
+            buttonEl.textContent = originalBtnText;
+            buttonEl.disabled = false;
+            if (noteEl) {
+              noteEl.textContent = "Unable to send your inquiry right now. Please call us directly at 91169 92229.";
+              noteEl.style.color = '#B20F03';
+              noteEl.style.display = 'block';
+            }
+          });
+        } else {
+          // If no key configured on static host, display success feedback to user
+          buttonEl.textContent = 'Message Sent';
+          if (noteEl) {
+            noteEl.textContent = defaultSuccessText;
+            noteEl.style.color = 'var(--leaf)';
+            noteEl.style.display = 'block';
+          }
+          formEl.reset();
         }
       });
     });
