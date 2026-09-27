@@ -497,37 +497,11 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Clean URL handling: /home or / -> index.html
-  if (urlPath === '/' || urlPath === '/home') {
-    const indexPath = path.join(__dirname, 'index.html');
-    fs.readFile(indexPath, (err, content) => {
-      if (!err) {
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end(content);
-      } else {
-        res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end('<h1>404 Not Found</h1>', 'utf-8');
-      }
-    });
-    return;
-  }
+  // Static file serving with React SPA fallback
+  const isDistPresent = fs.existsSync(path.join(__dirname, 'dist'));
+  const staticRoot = isDistPresent ? path.join(__dirname, 'dist') : __dirname;
 
-  // Redirect /index.html to /home
-  if (urlPath === '/index.html') {
-    res.writeHead(301, { 'Location': '/home' });
-    res.end();
-    return;
-  }
-
-  // Redirect *.html to clean route (e.g. /about.html -> /about)
-  if (urlPath.endsWith('.html') && urlPath !== '/admprtl.html') {
-    const cleanUrl = urlPath.slice(0, -5);
-    res.writeHead(301, { 'Location': cleanUrl });
-    res.end();
-    return;
-  }
-
-  let filePath = path.join(__dirname, urlPath);
+  let filePath = path.join(staticRoot, urlPath);
 
   // If path is a directory, look for index.html
   fs.stat(filePath, (err, stats) => {
@@ -540,26 +514,17 @@ const server = http.createServer(async (req, res) => {
 
     fs.readFile(filePath, (error, content) => {
       if (error) {
-        if (error.code === 'ENOENT') {
-          if (!path.extname(filePath)) {
-            const fallbackPath = filePath + '.html';
-            fs.readFile(fallbackPath, (fallbackError, fallbackContent) => {
-              if (!fallbackError) {
-                res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-                res.end(fallbackContent);
-              } else {
-                res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
-                res.end('<h1>404 Not Found</h1>', 'utf-8');
-              }
-            });
+        // SPA Fallback: Serve dist/index.html or root index.html for client-side routing
+        const spaIndex = isDistPresent ? path.join(__dirname, 'dist', 'index.html') : path.join(__dirname, 'index.html');
+        fs.readFile(spaIndex, (spaErr, spaContent) => {
+          if (!spaErr) {
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end(spaContent);
           } else {
             res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
             res.end('<h1>404 Not Found</h1>', 'utf-8');
           }
-        } else {
-          res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
-          res.end('Internal Server Error: ' + error.code);
-        }
+        });
       } else {
         res.writeHead(200, { 'Content-Type': contentType });
         res.end(content);
@@ -570,6 +535,6 @@ const server = http.createServer(async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Sor Connect Server running at http://localhost:${PORT}/`);
+  console.log(`Sor Connect React App & Server running at http://localhost:${PORT}/`);
   console.log(`Admin Portal available at http://localhost:${PORT}/admprtl`);
 });
