@@ -189,12 +189,14 @@ document.addEventListener('DOMContentLoaded', function () {
   const processBtns = document.querySelectorAll('.process-nav-btn');
   const processTabs = document.querySelectorAll('.process-tab-content');
   const processActiveImg = document.getElementById('process-active-img');
+  const processCurrentStep = document.getElementById('process-current-step');
 
   if (processBtns.length > 0 && processActiveImg) {
     processBtns.forEach(btn => {
       btn.addEventListener('click', function() {
         const targetTabId = this.getAttribute('data-tab');
         const targetImgSrc = this.getAttribute('data-img');
+        const targetStep = this.getAttribute('data-step') || '01';
         const targetTab = document.getElementById(targetTabId);
 
         if (targetTab) {
@@ -203,6 +205,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
           this.classList.add('active');
           targetTab.classList.add('active');
+
+          if (processCurrentStep) {
+            processCurrentStep.textContent = targetStep;
+          }
 
           if (typeof gsap !== 'undefined') {
             gsap.to(processActiveImg, {
