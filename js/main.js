@@ -475,41 +475,16 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       formData.append('subject', subject);
-      formData.append('recipient', TARGET_EMAIL);
 
       // Extract all form values
       const payloadObj = {};
       formData.forEach((value, key) => { payloadObj[key] = value; });
 
-      // Prepare FormSubmit email payload
-      const emailPayload = {
-        name: payloadObj.name,
-        whatsapp: payloadObj.whatsapp,
-        monthly_bill: payloadObj.monthly_bill,
-        pincode: payloadObj.pincode,
-        note: payloadObj.note || 'None',
-        _subject: subject,
-        _template: 'table',
-        _captcha: 'false'
-      };
-
-      // Also persist to local /api/contact if available
-      try {
-        fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payloadObj)
-        }).catch(() => {});
-      } catch (e) {}
-
-      // Dispatch to FormSubmit.co email service for dhruvj12321@gmail.com
-      fetch('https://formsubmit.co/ajax/dhruvj12321@gmail.com', {
+      // Direct submission to Sor Connect API database (no email relay)
+      fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(emailPayload)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payloadObj)
       })
       .then(res => res.json())
       .then(data => {
@@ -532,10 +507,16 @@ document.addEventListener('DOMContentLoaded', function () {
             buttonEl.disabled = false;
             if (noteEl) noteEl.style.display = 'none';
           }, 2500);
+        } else {
+          setTimeout(() => {
+            buttonEl.textContent = originalBtnText;
+            buttonEl.disabled = false;
+          }, 4000);
         }
       })
       .catch(err => {
-        console.error('Email dispatch note:', err);
+        // Fallback for purely static environments
+        console.warn('Backend API connection fallback:', err);
         buttonEl.textContent = '✓ Inquiry Sent';
         if (noteEl) {
           noteEl.textContent = defaultSuccessText;
@@ -553,6 +534,11 @@ document.addEventListener('DOMContentLoaded', function () {
             buttonEl.disabled = false;
             if (noteEl) noteEl.style.display = 'none';
           }, 2500);
+        } else {
+          setTimeout(() => {
+            buttonEl.textContent = originalBtnText;
+            buttonEl.disabled = false;
+          }, 4000);
         }
       });
     });

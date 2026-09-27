@@ -1,0 +1,20 @@
+[
+  {
+    "id": "cat_epc",
+    "name": "EPC Projects",
+    "slug": "epc",
+    "eyebrow": "EPC Portfolio",
+    "description": "A snapshot of Engineering, Procurement & Construction projects completed for industrial clients across multiple sectors.",
+    "table_id": "epc-projects-list",
+    "order": 1
+  },
+  {
+    "id": "cat_ic_om",
+    "name": "I&C / O&M Projects",
+    "slug": "ic_om",
+    "eyebrow": "I&C / O&M Portfolio",
+    "description": "Industrial & Commercial installations and ongoing operation & maintenance accounts currently managed by our field teams.",
+    "table_id": "ic-om-projects-list",
+    "order": 2
+  }
+]

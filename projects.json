@@ -1,0 +1,92 @@
+[
+  {
+    "id": "proj_1",
+    "client": "Vishwaraj Environment Ltd",
+    "location": "Agra",
+    "capacity": "2315 KW",
+    "sector_or_type": "STP",
+    "category_slug": "epc",
+    "created_at": "2024-01-15T10:00:00.000Z"
+  },
+  {
+    "id": "proj_2",
+    "client": "Rana Bai Marble & Granite",
+    "location": "Kishangarh, Ajmer",
+    "capacity": "324 KW",
+    "sector_or_type": "Marble",
+    "category_slug": "epc",
+    "created_at": "2024-02-10T10:00:00.000Z"
+  },
+  {
+    "id": "proj_3",
+    "client": "KGK Dia Processing",
+    "location": "Jasdan, Rajkot",
+    "capacity": "250 KW",
+    "sector_or_type": "Diamond",
+    "category_slug": "epc",
+    "created_at": "2024-03-05T10:00:00.000Z"
+  },
+  {
+    "id": "proj_4",
+    "client": "Arihant Oil & Mills Ltd",
+    "location": "Sri Ganganagar",
+    "capacity": "240 KW",
+    "sector_or_type": "Oil",
+    "category_slug": "epc",
+    "created_at": "2024-03-20T10:00:00.000Z"
+  },
+  {
+    "id": "proj_5",
+    "client": "Quality Marble Export",
+    "location": "Jalore",
+    "capacity": "200 KW",
+    "sector_or_type": "Marble",
+    "category_slug": "epc",
+    "created_at": "2024-04-12T10:00:00.000Z"
+  },
+  {
+    "id": "proj_6",
+    "client": "Shreej Solar Solution",
+    "location": "Surat",
+    "capacity": "1300 KW",
+    "sector_or_type": "I&C",
+    "category_slug": "ic_om",
+    "created_at": "2024-05-18T10:00:00.000Z"
+  },
+  {
+    "id": "proj_7",
+    "client": "Yutaka Autoparts Pvt Ltd",
+    "location": "Bhiwadi",
+    "capacity": "736 KW",
+    "sector_or_type": "I&C",
+    "category_slug": "ic_om",
+    "created_at": "2024-06-01T10:00:00.000Z"
+  },
+  {
+    "id": "proj_8",
+    "client": "Krishna Ishizaki Auto Ltd",
+    "location": "Binola",
+    "capacity": "514 KW",
+    "sector_or_type": "I&C",
+    "category_slug": "ic_om",
+    "created_at": "2024-06-25T10:00:00.000Z"
+  },
+  {
+    "id": "proj_9",
+    "client": "Fine Vibes Pvt Ltd",
+    "location": "Raipur, C.G.",
+    "capacity": "500 KW",
+    "sector_or_type": "I&C",
+    "category_slug": "ic_om",
+    "created_at": "2024-07-14T10:00:00.000Z"
+  },
+  {
+    "id": "proj_10",
+    "client": "Green Energy",
+    "location": "Kishangarh, Ajmer",
+    "capacity": "420 KW",
+    "sector_or_type": "O&M",
+    "category_slug": "ic_om",
+    "created_at": "2024-08-02T10:00:00.000Z"
+  }
+]

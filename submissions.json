@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1727429100000,
+    "timestamp": "2026-09-27T10:15:00.000Z",
+    "name": "Rajesh Sharma",
+    "whatsapp": "9829012345",
+    "monthly_bill": "₹4000-₹8000",
+    "pincode": "302021",
+    "note": "Looking for 5 kW rooftop solar for residential villa in Vaishali Nagar.",
+    "status": "New",
+    "subject": "Solar Quote Request - Home",
+    "source_url": "https://sorconnect.com/home"
+  },
+  {
+    "id": 1727429800000,
+    "timestamp": "2026-09-27T11:30:00.000Z",
+    "name": "Anil Agarwal",
+    "whatsapp": "9414098765",
+    "monthly_bill": "More than ₹8000",
+    "pincode": "282002",
+    "note": "Commercial factory roof in Agra. Interested in 50 kW on-grid setup.",
+    "status": "Contacted",
+    "subject": "Commercial EPC Inquiry",
+    "source_url": "https://sorconnect.com/services"
+  }
+]
