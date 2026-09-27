@@ -1621,54 +1621,6 @@ table.data-table td.cap-col {
   flex-shrink: 0;
 }
 
-/* Trust Banner below partner cards */
-.partner-trust-banner {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  background: #ffffff;
-  border: 1px solid var(--sage-line);
-  border-radius: 16px;
-  padding: 24px 32px;
-  margin-top: 40px;
-  box-shadow: 0 6px 20px rgba(14, 44, 34, 0.04);
-}
-
-@media (max-width: 850px) {
-  .partner-trust-banner {
-    grid-template-columns: 1fr;
-    gap: 18px;
-    padding: 22px;
-  }
-}
-
-.trust-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.trust-icon {
-  font-size: 26px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.trust-item strong {
-  display: block;
-  font-family: var(--heading);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--forest-deep);
-}
-
-.trust-item span {
-  display: block;
-  font-family: var(--body);
-  font-size: 13px;
-  color: var(--ink-soft);
-  margin-top: 2px;
-}
 
 /* ===================== CTA BAND ===================== */
 /* Reference: dark bg, striped texture overlay at low opacity */
