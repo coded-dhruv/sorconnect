@@ -579,4 +579,119 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // Bind Home Page Showcase Form
+  const homeContactForm = document.getElementById('home-contact-form');
+  if (homeContactForm) {
+    const btn = homeContactForm.querySelector('button[type="submit"]');
+    const note = homeContactForm.querySelector('.form-note');
+    handleRevampedSubmit(homeContactForm, note, btn, "Thank you! Our engineers will review your bill details and send a customized proposal to your WhatsApp.");
+  }
+
+  // ===================== CERTIFICATES & AWARDS AUTO-SLIDING SLIDESHOW =====================
+  const certSlideshow = document.getElementById('homeCertSlideshow');
+  if (certSlideshow) {
+    const slides = certSlideshow.querySelectorAll('.cert-slide');
+    const dotsContainer = document.getElementById('certDotsContainer');
+    const dots = dotsContainer ? dotsContainer.querySelectorAll('.cert-dot') : [];
+    const prevBtn = document.getElementById('certPrevBtn');
+    const nextBtn = document.getElementById('certNextBtn');
+    let currentIndex = 0;
+    let autoSlideTimer = null;
+    const intervalTime = 3800;
+
+    function goToSlide(index) {
+      if (index < 0) {
+        currentIndex = slides.length - 1;
+      } else if (index >= slides.length) {
+        currentIndex = 0;
+      } else {
+        currentIndex = index;
+      }
+
+      slides.forEach((slide, idx) => {
+        if (idx === currentIndex) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      dots.forEach((dot, idx) => {
+        if (idx === currentIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1);
+    }
+
+    function startAutoSlide() {
+      stopAutoSlide();
+      autoSlideTimer = setInterval(nextSlide, intervalTime);
+    }
+
+    function stopAutoSlide() {
+      if (autoSlideTimer) {
+        clearInterval(autoSlideTimer);
+        autoSlideTimer = null;
+      }
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        nextSlide();
+        startAutoSlide();
+      });
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        prevSlide();
+        startAutoSlide();
+      });
+    }
+
+    dots.forEach((dot, idx) => {
+      dot.addEventListener('click', function () {
+        goToSlide(idx);
+        startAutoSlide();
+      });
+    });
+
+    const wrapper = certSlideshow.closest('.cert-slideshow-wrapper');
+    if (wrapper) {
+      wrapper.addEventListener('mouseenter', stopAutoSlide);
+      wrapper.addEventListener('mouseleave', startAutoSlide);
+      wrapper.addEventListener('touchstart', stopAutoSlide, { passive: true });
+      wrapper.addEventListener('touchend', startAutoSlide, { passive: true });
+    }
+
+    // Touch swipe support
+    let touchStartX = 0;
+    certSlideshow.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    certSlideshow.addEventListener('touchend', function(e) {
+      let touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 50) {
+        nextSlide();
+        startAutoSlide();
+      } else if (touchEndX - touchStartX > 50) {
+        prevSlide();
+        startAutoSlide();
+      }
+    }, { passive: true });
+
+    startAutoSlide();
+  }
+
 });
