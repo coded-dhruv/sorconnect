@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contact Us — Sor Connect | Jaipur Head Office &amp; Agra Branch</title>
+<title>Contact Us | Sor Connect — Get In Touch &amp; Office Locations</title>
 <meta name="description" content="Get in touch with Sor Connect for a free solar feasibility assessment. Reach our Jaipur head office or Agra branch office, or send us a message directly.">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Contact Us — Sor Connect | Jaipur Head Office &amp; Agra Branch">
+<meta property="og:title" content="Contact Us | Sor Connect — Get In Touch &amp; Office Locations">
 <meta property="og:description" content="Get in touch with Sor Connect for a free solar feasibility assessment. Call 91169 92229 or visit our Jaipur &amp; Agra offices.">
 <meta property="og:image" content="assets/logo.png">
 <meta property="og:site_name" content="Sor Connect">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Contact Us — Sor Connect">
+<meta name="twitter:title" content="Contact Us | Sor Connect — Get In Touch &amp; Office Locations">
 <meta name="twitter:description" content="Get in touch with Sor Connect for a free solar feasibility quote.">
 <meta name="twitter:image" content="assets/logo.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
@@ -43,7 +43,7 @@
 
 <header class="site-header">
   <div class="container nav-row">
-    <a href="index.html" class="brand">
+    <a href="home" class="brand">
       <img src="assets/logo.png" alt="Sor Connect logo" class="brand-mark">
       <span class="brand-text">
         <span class="name">Sor Connect</span>
@@ -51,22 +51,22 @@
       </span>
     </a>
     <nav class="main-nav">
-      <a href="index.html">Home</a>
+      <a href="home">Home</a>
       <div class="nav-item-dropdown">
-        <a href="services.html" class="dropdown-trigger">Services <svg class="chevron-down" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></a>
+        <a href="services" class="dropdown-trigger">Services <svg class="chevron-down" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></a>
         <div class="dropdown-menu">
-          <a href="services.html#epc">EPC Services</a>
-          <a href="services.html#installation">Installation &amp; Commissioning</a>
-          <a href="services.html#om">Operation &amp; Maintenance</a>
-          <a href="services.html#design">Solar Designing</a>
-          <a href="services.html#kusum">PM-KUSUM Consultation</a>
-          <a href="services.html#surya-ghar">PM Surya Ghar Yojana</a>
+          <a href="services#epc">EPC Services</a>
+          <a href="services#installation">Installation &amp; Commissioning</a>
+          <a href="services#om">Operation &amp; Maintenance</a>
+          <a href="services#design">Solar Designing</a>
+          <a href="services#kusum">PM-KUSUM Consultation</a>
+          <a href="services#surya-ghar">PM Surya Ghar Yojana</a>
         </div>
       </div>
-      <a href="projects.html">Projects</a>
-      <a href="about.html">About Us</a>
-      <a href="contact.html" class="active">Contact</a>
-      <a href="contact.html" class="nav-cta">Get a Free Quote</a>
+      <a href="projects">Projects</a>
+      <a href="about">About Us</a>
+      <a href="contact" class="active">Contact</a>
+      <a href="javascript:void(0)" class="nav-cta" data-open-modal="quote">Get a Free Quote</a>
     </nav>
     <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -82,50 +82,64 @@
     </video>
     <div class="page-hero-overlay"></div>
     <div class="container">
-      <div class="breadcrumb"><a href="index.html">Home</a> / Contact</div>
+      <div class="breadcrumb"><a href="home">Home</a> / Contact</div>
       <span class="eyebrow on-dark">Let's Power Your Future</span>
       <h1>Ready to make the switch to solar?</h1>
       <p>Tell us about your site and energy needs — our engineering team will get back to you with a feasibility assessment within one business day.</p>
     </div>
   </section>
 
-  <!-- ============ CONTACT GRID ============ -->
   <!-- ============ CONTACT FORM ============ -->
   <section class="section">
-    <div class="container" style="max-width: 740px;">
+    <div class="container" style="max-width: 660px;">
       <div class="fade-up">
         <form class="contact-form" id="contact-form">
-          <h3 style="font-size: 21px; margin-bottom: 6px;">Send us a message</h3>
-          <p style="font-size: 14.5px; color: var(--ink-soft); margin-bottom: 26px;">Fields marked <span style="color:var(--gold);">*</span> are required.</p>
+          <h3 style="font-size: 22px; margin-bottom: 6px;">Request a Customized Solar Quote</h3>
+          <p style="font-size: 14px; color: var(--ink-soft); margin-bottom: 24px;">Fill out the details below to receive your customized solar assessment &amp; subsidy calculation.</p>
 
           <div class="form-two">
             <div class="form-row">
-              <label for="name">Name <span class="req">*</span></label>
-              <input type="text" id="name" name="name" placeholder="Your full name" required>
+              <label for="contact-name">Name <span class="req">*</span></label>
+              <input type="text" id="contact-name" name="name" placeholder="Enter your full name" required>
             </div>
             <div class="form-row">
-              <label for="mobile">Mobile Number <span class="req">*</span></label>
-              <input type="tel" id="mobile" name="mobile" placeholder="+91 00000 00000" required>
+              <label for="contact-whatsapp">WhatsApp Number <span class="req">*</span></label>
+              <input type="tel" id="contact-whatsapp" name="whatsapp" placeholder="10-digit WhatsApp number" required pattern="[0-9]{10}" maxlength="10">
+            </div>
+          </div>
+
+          <div class="form-two">
+            <div class="form-row">
+              <label for="contact-bill">Monthly Electricity Bill <span class="req">*</span></label>
+              <select id="contact-bill" name="monthly_bill" required>
+                <option value="" disabled selected>Select Monthly Bill</option>
+                <option value="Under ₹1500">Under ₹1500</option>
+                <option value="₹1500-₹2000">₹1500 - ₹2000</option>
+                <option value="₹2500-₹4000">₹2500 - ₹4000</option>
+                <option value="₹4000-₹8000">₹4000 - ₹8000</option>
+                <option value="More than ₹8000">More than ₹8000</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="contact-pincode">PIN Code <span class="req">*</span></label>
+              <input type="text" id="contact-pincode" name="pincode" placeholder="6-digit PIN code" required pattern="[0-9]{6}" maxlength="6">
             </div>
           </div>
 
           <div class="form-row">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="you@company.com">
+            <label for="contact-note">Additional Note <span class="opt">(Optional)</span></label>
+            <textarea id="contact-note" name="note" rows="3" placeholder="Tell us about your rooftop area, connection type, or any specific questions..."></textarea>
           </div>
 
-          <div class="form-row">
-            <label for="address">Address</label>
-            <input type="text" id="address" name="address" placeholder="Site location / city">
+          <div class="form-terms-row">
+            <label class="terms-label">
+              <input type="checkbox" name="agree_terms" checked required onclick="return false;" onkeydown="return false;">
+              <span class="terms-text">I agree to the <a href="javascript:void(0)" class="terms-link">Terms of Use</a> &amp; <a href="javascript:void(0)" class="terms-link">Privacy Policy</a> and authorize Sor Connect to contact me via WhatsApp/Call.</span>
+            </label>
           </div>
 
-          <div class="form-row">
-            <label for="message">Comment or Message</label>
-            <textarea id="message" name="message" placeholder="Tell us about your rooftop, land, or current electricity bill..."></textarea>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-block">Submit Message</button>
-          <p id="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; color: var(--leaf); font-weight: 600;"></p>
+          <button type="submit" class="btn btn-primary btn-block">Get Free Proposal</button>
+          <p id="form-note" class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; color: var(--leaf); font-weight: 600;"></p>
         </form>
       </div>
     </div>
@@ -239,22 +253,22 @@
       <div class="footer-col">
         <h5>Sitemap</h5>
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="projects.html">Projects</a></li>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="home">Home</a></li>
+          <li><a href="services">Services</a></li>
+          <li><a href="projects">Projects</a></li>
+          <li><a href="about">About Us</a></li>
+          <li><a href="contact">Contact</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h5>Services</h5>
         <ul>
-          <li><a href="services.html#design">Solar Designing</a></li>
-          <li><a href="services.html#epc">EPC Services</a></li>
-          <li><a href="services.html#installation">Installation &amp; Commissioning</a></li>
-          <li><a href="services.html#om">Operation &amp; Maintenance</a></li>
-          <li><a href="services.html#kusum">PM-KUSUM Consultation</a></li>
-          <li><a href="services.html#surya-ghar">PM Surya Ghar Yojana</a></li>
+          <li><a href="services#design">Solar Designing</a></li>
+          <li><a href="services#epc">EPC Services</a></li>
+          <li><a href="services#installation">Installation &amp; Commissioning</a></li>
+          <li><a href="services#om">Operation &amp; Maintenance</a></li>
+          <li><a href="services#kusum">PM-KUSUM Consultation</a></li>
+          <li><a href="services#surya-ghar">PM Surya Ghar Yojana</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -266,8 +280,8 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>Â© 2026 Sor Connect. All rights reserved.</span>
-      <span><a href="contact.html">Careers — Apply Now</a></span>
+      <span>© 2026 Sor Connect. All rights reserved.</span>
+      <span><a href="contact">Careers — Apply Now</a></span>
     </div>
   </div>
 </footer>

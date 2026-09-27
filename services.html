@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Services — Sor Connect | EPC, O&amp;M, Solar Design &amp; PM-KUSUM Consultation</title>
+<title>Services | Sor Connect — EPC, Rooftop Solar, KUSUM &amp; O&amp;M</title>
 <meta name="description" content="Explore Sor Connect's full range of solar services: Solar Designing, EPC, Installation &amp; Commissioning, Operation &amp; Maintenance, PM-KUSUM Yojana consultation, and PM Surya Ghar Yojana.">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Services — Sor Connect | EPC, O&amp;M, Solar Design &amp; Government Schemes">
+<meta property="og:title" content="Services | Sor Connect — EPC, Rooftop Solar, KUSUM &amp; O&amp;M">
 <meta property="og:description" content="Explore Sor Connect's full range of solar services: Solar Designing, EPC, Installation &amp; Commissioning, Operation &amp; Maintenance, PM-KUSUM, and PM Surya Ghar.">
 <meta property="og:image" content="assets/logo.png">
 <meta property="og:site_name" content="Sor Connect">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Services — Sor Connect">
+<meta name="twitter:title" content="Services | Sor Connect — EPC, Rooftop Solar, KUSUM &amp; O&amp;M">
 <meta name="twitter:description" content="Comprehensive solar solutions: EPC, O&amp;M, Solar Design, PM-KUSUM, and PM Surya Ghar.">
 <meta name="twitter:image" content="assets/logo.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
@@ -43,7 +43,7 @@
 
 <header class="site-header">
   <div class="container nav-row">
-    <a href="index.html" class="brand">
+    <a href="home" class="brand">
       <img src="assets/logo.png" alt="Sor Connect logo" class="brand-mark">
       <span class="brand-text">
         <span class="name">Sor Connect</span>
@@ -51,22 +51,22 @@
       </span>
     </a>
     <nav class="main-nav">
-      <a href="index.html">Home</a>
+      <a href="home">Home</a>
       <div class="nav-item-dropdown">
-        <a href="services.html" class="dropdown-trigger active">Services <svg class="chevron-down" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></a>
+        <a href="services" class="dropdown-trigger active">Services <svg class="chevron-down" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></a>
         <div class="dropdown-menu">
-          <a href="services.html#epc">EPC Services</a>
-          <a href="services.html#installation">Installation &amp; Commissioning</a>
-          <a href="services.html#om">Operation &amp; Maintenance</a>
-          <a href="services.html#design">Solar Designing</a>
-          <a href="services.html#kusum">PM-KUSUM Consultation</a>
-          <a href="services.html#surya-ghar">PM Surya Ghar Yojana</a>
+          <a href="services#epc">EPC Services</a>
+          <a href="services#installation">Installation &amp; Commissioning</a>
+          <a href="services#om">Operation &amp; Maintenance</a>
+          <a href="services#design">Solar Designing</a>
+          <a href="services#kusum">PM-KUSUM Consultation</a>
+          <a href="services#surya-ghar">PM Surya Ghar Yojana</a>
         </div>
       </div>
-      <a href="projects.html">Projects</a>
-      <a href="about.html">About Us</a>
-      <a href="contact.html">Contact</a>
-      <a href="contact.html" class="nav-cta">Get a Free Quote</a>
+      <a href="projects">Projects</a>
+      <a href="about">About Us</a>
+      <a href="contact">Contact</a>
+      <a href="javascript:void(0)" class="nav-cta" data-open-modal="quote">Get a Free Quote</a>
     </nav>
     <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -82,7 +82,7 @@
     </video>
     <div class="page-hero-overlay"></div>
     <div class="container">
-      <div class="breadcrumb"><a href="index.html">Home</a> / Services</div>
+      <div class="breadcrumb"><a href="home">Home</a> / Services</div>
       <span class="eyebrow on-dark">What We Do</span>
       <h1>Solar EPC &amp; O&amp;M, end to end.</h1>
       <p>Solar Designing, EPC, Installation &amp; Commissioning, Operation &amp; Maintenance, PM-KUSUM Yojana consultation, and PM Surya Ghar Yojana — every service your plant needs across its 25-year life, under one roof.</p>
@@ -249,29 +249,44 @@
               </div>
               <div class="svc-form-inputs">
                 <form class="contact-form" id="svc-epc-form" style="padding:0; border:none;">
-                  <div class="form-row">
-                    <label for="epc-name">Your Name <span class="req">*</span></label>
-                    <input type="text" id="epc-name" name="name" required placeholder="Enter full name">
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label for="epc-name">Name <span class="req">*</span></label>
+                      <input type="text" id="epc-name" name="name" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-row">
+                      <label for="epc-whatsapp">WhatsApp Number <span class="req">*</span></label>
+                      <input type="tel" id="epc-whatsapp" name="whatsapp" required placeholder="10-digit WhatsApp number" pattern="[0-9]{10}" maxlength="10">
+                    </div>
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label for="epc-mobile">Mobile Number <span class="req">*</span></label>
-                      <input type="tel" id="epc-mobile" name="mobile" required placeholder="Enter 10-digit number">
+                      <label for="epc-bill">Monthly Electricity Bill <span class="req">*</span></label>
+                      <select id="epc-bill" name="monthly_bill" required>
+                        <option value="" disabled selected>Select Monthly Bill</option>
+                        <option value="Under ₹1500">Under ₹1500</option>
+                        <option value="₹1500-₹2000">₹1500 - ₹2000</option>
+                        <option value="₹2500-₹4000">₹2500 - ₹4000</option>
+                        <option value="₹4000-₹8000">₹4000 - ₹8000</option>
+                        <option value="More than ₹8000">More than ₹8000</option>
+                      </select>
                     </div>
                     <div class="form-row">
-                      <label for="epc-email">Email Address</label>
-                      <input type="email" id="epc-email" name="email" placeholder="name@domain.com">
+                      <label for="epc-pincode">PIN Code <span class="req">*</span></label>
+                      <input type="text" id="epc-pincode" name="pincode" required placeholder="6-digit PIN code" pattern="[0-9]{6}" maxlength="6">
                     </div>
                   </div>
-                  <div class="form-row" style="margin-top:20px;">
-                    <label for="epc-size">Rooftop Area or Land Size</label>
-                    <input type="text" id="epc-size" name="site_size" placeholder="e.g. 5,000 sq ft or 2 Acres">
-                  </div>
                   <div class="form-row">
-                    <label for="epc-msg">Comment / Special Requests</label>
-                    <textarea id="epc-msg" name="message" placeholder="Tell us about your power load or site details..."></textarea>
+                    <label for="epc-note">Additional Note <span class="opt">(Optional)</span></label>
+                    <textarea id="epc-note" name="note" rows="2" placeholder="Tell us about your rooftop area, connection type, or special requirements..."></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                  <div class="form-terms-row">
+                    <label class="terms-label">
+                      <input type="checkbox" name="agree_terms" checked required onclick="return false;" onkeydown="return false;">
+                      <span class="terms-text">I agree to the <a href="javascript:void(0)" class="terms-link">Terms of Use</a> &amp; <a href="javascript:void(0)" class="terms-link">Privacy Policy</a> and authorize Sor Connect to contact me via WhatsApp/Call.</span>
+                    </label>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Get EPC Quotation</button>
                   <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
@@ -388,29 +403,44 @@
               </div>
               <div class="svc-form-inputs">
                 <form class="contact-form" id="svc-inst-form" style="padding:0; border:none;">
-                  <div class="form-row">
-                    <label for="inst-name">Your Name <span class="req">*</span></label>
-                    <input type="text" id="inst-name" name="name" required placeholder="Enter full name">
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label for="inst-name">Name <span class="req">*</span></label>
+                      <input type="text" id="inst-name" name="name" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-row">
+                      <label for="inst-whatsapp">WhatsApp Number <span class="req">*</span></label>
+                      <input type="tel" id="inst-whatsapp" name="whatsapp" required placeholder="10-digit WhatsApp number" pattern="[0-9]{10}" maxlength="10">
+                    </div>
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label for="inst-mobile">Mobile Number <span class="req">*</span></label>
-                      <input type="tel" id="inst-mobile" name="mobile" required placeholder="Enter 10-digit number">
+                      <label for="inst-bill">Monthly Electricity Bill <span class="req">*</span></label>
+                      <select id="inst-bill" name="monthly_bill" required>
+                        <option value="" disabled selected>Select Monthly Bill</option>
+                        <option value="Under ₹1500">Under ₹1500</option>
+                        <option value="₹1500-₹2000">₹1500 - ₹2000</option>
+                        <option value="₹2500-₹4000">₹2500 - ₹4000</option>
+                        <option value="₹4000-₹8000">₹4000 - ₹8000</option>
+                        <option value="More than ₹8000">More than ₹8000</option>
+                      </select>
                     </div>
                     <div class="form-row">
-                      <label for="inst-email">Email Address</label>
-                      <input type="email" id="inst-email" name="email" placeholder="name@domain.com">
+                      <label for="inst-pincode">PIN Code <span class="req">*</span></label>
+                      <input type="text" id="inst-pincode" name="pincode" required placeholder="6-digit PIN code" pattern="[0-9]{6}" maxlength="6">
                     </div>
                   </div>
-                  <div class="form-row" style="margin-top:20px;">
-                    <label for="inst-capacity">Existing Plant Capacity (if installed)</label>
-                    <input type="text" id="inst-capacity" name="site_size" placeholder="e.g. 50 kWp, 100 kWp, etc.">
-                  </div>
                   <div class="form-row">
-                    <label for="inst-msg">Comment / Message</label>
-                    <textarea id="inst-msg" name="message" placeholder="Tell us about your plant or target date..."></textarea>
+                    <label for="inst-note">Additional Note <span class="opt">(Optional)</span></label>
+                    <textarea id="inst-note" name="note" rows="2" placeholder="Tell us about your plant capacity or DISCOM connection status..."></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                  <div class="form-terms-row">
+                    <label class="terms-label">
+                      <input type="checkbox" name="agree_terms" checked required onclick="return false;" onkeydown="return false;">
+                      <span class="terms-text">I agree to the <a href="javascript:void(0)" class="terms-link">Terms of Use</a> &amp; <a href="javascript:void(0)" class="terms-link">Privacy Policy</a> and authorize Sor Connect to contact me via WhatsApp/Call.</span>
+                    </label>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Request Setup Assistance</button>
                   <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
@@ -520,29 +550,44 @@
               </div>
               <div class="svc-form-inputs">
                 <form class="contact-form" id="svc-om-form" style="padding:0; border:none;">
-                  <div class="form-row">
-                    <label for="om-name">Your Name <span class="req">*</span></label>
-                    <input type="text" id="om-name" name="name" required placeholder="Enter full name">
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label for="om-name">Name <span class="req">*</span></label>
+                      <input type="text" id="om-name" name="name" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-row">
+                      <label for="om-whatsapp">WhatsApp Number <span class="req">*</span></label>
+                      <input type="tel" id="om-whatsapp" name="whatsapp" required placeholder="10-digit WhatsApp number" pattern="[0-9]{10}" maxlength="10">
+                    </div>
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label for="om-mobile">Mobile Number <span class="req">*</span></label>
-                      <input type="tel" id="om-mobile" name="mobile" required placeholder="Enter 10-digit number">
+                      <label for="om-bill">Monthly Electricity Bill <span class="req">*</span></label>
+                      <select id="om-bill" name="monthly_bill" required>
+                        <option value="" disabled selected>Select Monthly Bill</option>
+                        <option value="Under ₹1500">Under ₹1500</option>
+                        <option value="₹1500-₹2000">₹1500 - ₹2000</option>
+                        <option value="₹2500-₹4000">₹2500 - ₹4000</option>
+                        <option value="₹4000-₹8000">₹4000 - ₹8000</option>
+                        <option value="More than ₹8000">More than ₹8000</option>
+                      </select>
                     </div>
                     <div class="form-row">
-                      <label for="om-email">Email Address</label>
-                      <input type="email" id="om-email" name="email" placeholder="name@domain.com">
+                      <label for="om-pincode">PIN Code <span class="req">*</span></label>
+                      <input type="text" id="om-pincode" name="pincode" required placeholder="6-digit PIN code" pattern="[0-9]{6}" maxlength="6">
                     </div>
                   </div>
-                  <div class="form-row" style="margin-top:20px;">
-                    <label for="om-capacity">Total Installed Capacity</label>
-                    <input type="text" id="om-capacity" name="site_size" placeholder="e.g. 20 kWp, 250 kWp, etc.">
-                  </div>
                   <div class="form-row">
-                    <label for="om-msg">Notes / Issue Faced</label>
-                    <textarea id="om-msg" name="message" placeholder="e.g. High generation drop, inverter showing faults, need regular cleaning service..."></textarea>
+                    <label for="om-note">Additional Note <span class="opt">(Optional)</span></label>
+                    <textarea id="om-note" name="note" rows="2" placeholder="Tell us about your plant issue, cleaning requirement, or AMC inquiry..."></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                  <div class="form-terms-row">
+                    <label class="terms-label">
+                      <input type="checkbox" name="agree_terms" checked required onclick="return false;" onkeydown="return false;">
+                      <span class="terms-text">I agree to the <a href="javascript:void(0)" class="terms-link">Terms of Use</a> &amp; <a href="javascript:void(0)" class="terms-link">Privacy Policy</a> and authorize Sor Connect to contact me via WhatsApp/Call.</span>
+                    </label>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Schedule O&amp;M Audit</button>
                   <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
@@ -659,29 +704,44 @@
               </div>
               <div class="svc-form-inputs">
                 <form class="contact-form" id="svc-design-form" style="padding:0; border:none;">
-                  <div class="form-row">
-                    <label for="design-name">Your Name <span class="req">*</span></label>
-                    <input type="text" id="design-name" name="name" required placeholder="Enter full name">
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label for="design-name">Name <span class="req">*</span></label>
+                      <input type="text" id="design-name" name="name" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-row">
+                      <label for="design-whatsapp">WhatsApp Number <span class="req">*</span></label>
+                      <input type="tel" id="design-whatsapp" name="whatsapp" required placeholder="10-digit WhatsApp number" pattern="[0-9]{10}" maxlength="10">
+                    </div>
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label for="design-mobile">Mobile Number <span class="req">*</span></label>
-                      <input type="tel" id="design-mobile" name="mobile" required placeholder="Enter 10-digit number">
+                      <label for="design-bill">Monthly Electricity Bill <span class="req">*</span></label>
+                      <select id="design-bill" name="monthly_bill" required>
+                        <option value="" disabled selected>Select Monthly Bill</option>
+                        <option value="Under ₹1500">Under ₹1500</option>
+                        <option value="₹1500-₹2000">₹1500 - ₹2000</option>
+                        <option value="₹2500-₹4000">₹2500 - ₹4000</option>
+                        <option value="₹4000-₹8000">₹4000 - ₹8000</option>
+                        <option value="More than ₹8000">More than ₹8000</option>
+                      </select>
                     </div>
                     <div class="form-row">
-                      <label for="design-email">Email Address</label>
-                      <input type="email" id="design-email" name="email" placeholder="name@domain.com">
+                      <label for="design-pincode">PIN Code <span class="req">*</span></label>
+                      <input type="text" id="design-pincode" name="pincode" required placeholder="6-digit PIN code" pattern="[0-9]{6}" maxlength="6">
                     </div>
                   </div>
-                  <div class="form-row" style="margin-top:20px;">
-                    <label for="design-capacity">Design Target Capacity</label>
-                    <input type="text" id="design-capacity" name="site_size" placeholder="e.g. 15 kW, 200 kW, 1 MW etc.">
-                  </div>
                   <div class="form-row">
-                    <label for="design-msg">Site Boundary Coordinates or Dimensions</label>
-                    <textarea id="design-msg" name="message" placeholder="e.g. Google Maps pin coordinates or land plot dimensions..."></textarea>
+                    <label for="design-note">Additional Note <span class="opt">(Optional)</span></label>
+                    <textarea id="design-note" name="note" rows="2" placeholder="Tell us about your target capacity, CAD layout need, or PVsyst simulation..."></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                  <div class="form-terms-row">
+                    <label class="terms-label">
+                      <input type="checkbox" name="agree_terms" checked required onclick="return false;" onkeydown="return false;">
+                      <span class="terms-text">I agree to the <a href="javascript:void(0)" class="terms-link">Terms of Use</a> &amp; <a href="javascript:void(0)" class="terms-link">Privacy Policy</a> and authorize Sor Connect to contact me via WhatsApp/Call.</span>
+                    </label>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Order Solar Design Proposal</button>
                   <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
@@ -798,29 +858,44 @@
               </div>
               <div class="svc-form-inputs">
                 <form class="contact-form" id="svc-kusum-form" style="padding:0; border:none;">
-                  <div class="form-row">
-                    <label for="kusum-name">Your Name <span class="req">*</span></label>
-                    <input type="text" id="kusum-name" name="name" required placeholder="Enter full name">
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label for="kusum-name">Name <span class="req">*</span></label>
+                      <input type="text" id="kusum-name" name="name" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-row">
+                      <label for="kusum-whatsapp">WhatsApp Number <span class="req">*</span></label>
+                      <input type="tel" id="kusum-whatsapp" name="whatsapp" required placeholder="10-digit WhatsApp number" pattern="[0-9]{10}" maxlength="10">
+                    </div>
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label for="kusum-mobile">Mobile Number <span class="req">*</span></label>
-                      <input type="tel" id="kusum-mobile" name="mobile" required placeholder="Enter 10-digit number">
+                      <label for="kusum-bill">Monthly Electricity Bill <span class="req">*</span></label>
+                      <select id="kusum-bill" name="monthly_bill" required>
+                        <option value="" disabled selected>Select Monthly Bill</option>
+                        <option value="Under ₹1500">Under ₹1500</option>
+                        <option value="₹1500-₹2000">₹1500 - ₹2000</option>
+                        <option value="₹2500-₹4000">₹2500 - ₹4000</option>
+                        <option value="₹4000-₹8000">₹4000 - ₹8000</option>
+                        <option value="More than ₹8000">More than ₹8000</option>
+                      </select>
                     </div>
                     <div class="form-row">
-                      <label for="kusum-email">Email Address</label>
-                      <input type="email" id="kusum-email" name="email" placeholder="name@domain.com">
+                      <label for="kusum-pincode">PIN Code <span class="req">*</span></label>
+                      <input type="text" id="kusum-pincode" name="pincode" required placeholder="6-digit PIN code" pattern="[0-9]{6}" maxlength="6">
                     </div>
                   </div>
-                  <div class="form-row" style="margin-top:20px;">
-                    <label for="kusum-location">Land District / Location</label>
-                    <input type="text" id="kusum-location" name="site_size" placeholder="e.g. Jaipur District, Rajasthan">
-                  </div>
                   <div class="form-row">
-                    <label for="kusum-msg">Pump Specifications / Message</label>
-                    <textarea id="kusum-msg" name="message" placeholder="e.g. Need 7.5 HP solar water pump, dry land, sub-surface water level details..."></textarea>
+                    <label for="kusum-note">Additional Note <span class="opt">(Optional)</span></label>
+                    <textarea id="kusum-note" name="note" rows="2" placeholder="Tell us about your land district, pump HP requirement, or subsidy filing details..."></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Request Callback</button>
+                  <div class="form-terms-row">
+                    <label class="terms-label">
+                      <input type="checkbox" name="agree_terms" checked required onclick="return false;" onkeydown="return false;">
+                      <span class="terms-text">I agree to the <a href="javascript:void(0)" class="terms-link">Terms of Use</a> &amp; <a href="javascript:void(0)" class="terms-link">Privacy Policy</a> and authorize Sor Connect to contact me via WhatsApp/Call.</span>
+                    </label>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Check KUSUM Eligibility</button>
                   <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
@@ -966,29 +1041,44 @@
               </div>
               <div class="svc-form-inputs">
                 <form class="contact-form" id="svc-surya-form" style="padding:0; border:none;">
-                  <div class="form-row">
-                    <label for="surya-name">Your Name <span class="req">*</span></label>
-                    <input type="text" id="surya-name" name="name" required placeholder="Enter full name">
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label for="surya-name">Name <span class="req">*</span></label>
+                      <input type="text" id="surya-name" name="name" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-row">
+                      <label for="surya-whatsapp">WhatsApp Number <span class="req">*</span></label>
+                      <input type="tel" id="surya-whatsapp" name="whatsapp" required placeholder="10-digit WhatsApp number" pattern="[0-9]{10}" maxlength="10">
+                    </div>
                   </div>
                   <div class="form-two">
                     <div class="form-row">
-                      <label for="surya-mobile">Mobile Number <span class="req">*</span></label>
-                      <input type="tel" id="surya-mobile" name="mobile" required placeholder="Enter 10-digit number">
+                      <label for="surya-bill">Monthly Electricity Bill <span class="req">*</span></label>
+                      <select id="surya-bill" name="monthly_bill" required>
+                        <option value="" disabled selected>Select Monthly Bill</option>
+                        <option value="Under ₹1500">Under ₹1500</option>
+                        <option value="₹1500-₹2000">₹1500 - ₹2000</option>
+                        <option value="₹2500-₹4000">₹2500 - ₹4000</option>
+                        <option value="₹4000-₹8000">₹4000 - ₹8000</option>
+                        <option value="More than ₹8000">More than ₹8000</option>
+                      </select>
                     </div>
                     <div class="form-row">
-                      <label for="surya-email">Email Address</label>
-                      <input type="email" id="surya-email" name="email" placeholder="name@domain.com">
+                      <label for="surya-pincode">PIN Code <span class="req">*</span></label>
+                      <input type="text" id="surya-pincode" name="pincode" required placeholder="6-digit PIN code" pattern="[0-9]{6}" maxlength="6">
                     </div>
                   </div>
-                  <div class="form-row" style="margin-top:20px;">
-                    <label for="surya-size">Rooftop Area / Monthly Units Consumed</label>
-                    <input type="text" id="surya-size" name="site_size" placeholder="e.g. 300 sq ft / 250 units per month">
-                  </div>
                   <div class="form-row">
-                    <label for="surya-msg">City / DISCOM &amp; Requirement Details</label>
-                    <textarea id="surya-msg" name="message" placeholder="e.g. Jaipur, JVVNL consumer — need 3 kW rooftop solar installation with subsidy filing"></textarea>
+                    <label for="surya-note">Additional Note <span class="opt">(Optional)</span></label>
+                    <textarea id="surya-note" name="note" rows="2" placeholder="Tell us about your rooftop area (sq ft), DISCOM name, or connection type..."></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Check My Eligibility &amp; Get Quote</button>
+                  <div class="form-terms-row">
+                    <label class="terms-label">
+                      <input type="checkbox" name="agree_terms" checked required onclick="return false;" onkeydown="return false;">
+                      <span class="terms-text">I agree to the <a href="javascript:void(0)" class="terms-link">Terms of Use</a> &amp; <a href="javascript:void(0)" class="terms-link">Privacy Policy</a> and authorize Sor Connect to contact me via WhatsApp/Call.</span>
+                    </label>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Check Subsidy &amp; Get Quote</button>
                   <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
                 </form>
               </div>
@@ -1011,7 +1101,7 @@
           <p>Send us your latest electricity bill and rooftop or land details — we'll recommend the right plan and run the numbers for free.</p>
         </div>
         <div class="cta-band-actions">
-          <a href="contact.html" class="btn btn-primary">Talk to Our Engineers</a>
+          <a href="javascript:void(0)" class="btn btn-primary" data-open-modal="quote" data-modal-title="Solar Consultation with Engineers" data-modal-desc="Send us your site details — we'll recommend the right plant capacity and calculate your subsidy for free.">Talk to Our Engineers</a>
         </div>
       </div>
     </div>
@@ -1033,22 +1123,22 @@
       <div class="footer-col">
         <h5>Sitemap</h5>
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="projects.html">Projects</a></li>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="home">Home</a></li>
+          <li><a href="services">Services</a></li>
+          <li><a href="projects">Projects</a></li>
+          <li><a href="about">About Us</a></li>
+          <li><a href="contact">Contact</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h5>Services</h5>
         <ul>
-          <li><a href="services.html#design">Solar Designing</a></li>
-          <li><a href="services.html#epc">EPC Services</a></li>
-          <li><a href="services.html#installation">Installation &amp; Commissioning</a></li>
-          <li><a href="services.html#om">Operation &amp; Maintenance</a></li>
-          <li><a href="services.html#kusum">PM-KUSUM Consultation</a></li>
-          <li><a href="services.html#surya-ghar">PM Surya Ghar Yojana</a></li>
+          <li><a href="services#design">Solar Designing</a></li>
+          <li><a href="services#epc">EPC Services</a></li>
+          <li><a href="services#installation">Installation &amp; Commissioning</a></li>
+          <li><a href="services#om">Operation &amp; Maintenance</a></li>
+          <li><a href="services#kusum">PM-KUSUM Consultation</a></li>
+          <li><a href="services#surya-ghar">PM Surya Ghar Yojana</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -1060,8 +1150,8 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>Â© 2026 Sor Connect. All rights reserved.</span>
-      <span><a href="contact.html">Careers — Apply Now</a></span>
+      <span>© 2026 Sor Connect. All rights reserved.</span>
+      <span><a href="contact">Careers — Apply Now</a></span>
     </div>
   </div>
 </footer>
