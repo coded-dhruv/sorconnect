@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="form-terms-row">
               <label class="terms-label">
                 <input type="checkbox" name="agree_terms" checked required onclick="return false;" onkeydown="return false;">
-                <span class="terms-text">I agree to the <a href="javascript:void(0)" class="terms-link">Terms of Use</a> &amp; <a href="javascript:void(0)" class="terms-link">Privacy Policy</a> and authorize Sor Connect to contact me via WhatsApp/Call.</span>
+                <span class="terms-text">I agree to the <a href="terms.html" target="_blank" class="terms-link">Terms of Use</a> &amp; <a href="privacy.html" target="_blank" class="terms-link">Privacy Policy</a> and authorize Sor Connect to contact me via WhatsApp/Call.</span>
               </label>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Get Free Proposal</button>
