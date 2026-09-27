@@ -150,7 +150,7 @@ select:focus-visible {
 /* ===================== HEADER — Solid White Capsule ===================== */
 header.site-header {
   position: fixed;
-  top: 44px;       /* starts below topbar (~34px) + 10px gap */
+  top: 20px;       /* clean top margin from top of screen */
   left: 0;
   right: 0;
   margin: 0 auto;
@@ -167,8 +167,14 @@ header.site-header {
     background 0.35s var(--ease);
 }
 
-/* Once topbar scrolls off, navbar glides smoothly to top */
-header.site-header.scrolled {
+/* If a page includes the topbar before header, offset slightly */
+.topbar + header.site-header {
+  top: 44px;
+}
+
+/* Once scrolled, navbar glides smoothly into compact top position */
+header.site-header.scrolled,
+.topbar + header.site-header.scrolled {
   top: 12px;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(16px);
@@ -613,7 +619,7 @@ nav.main-nav a.active::after {
 }
 .hero-inner > * { flex: 1 1 420px; text-align: left; }
 .hero-inner-single {
-  padding-top: 145px;  /* push content below topbar + floating nav */
+  padding-top: 155px;  /* generous clearance below floating nav */
   padding-bottom: 60px;
   display: flex;
   justify-content: flex-start;
@@ -665,7 +671,7 @@ nav.main-nav a.active::after {
 
 @media (max-width: 900px) {
   .hero-inner { padding-bottom: 40px; justify-content: flex-start; text-align: left; }
-  .hero-inner-single { padding-top: 130px; text-align: left; }
+  .hero-inner-single { padding-top: 135px; text-align: left; }
   .hero-inner-single > * { text-align: left; }
   .hero-actions { justify-content: flex-start; }
 }
