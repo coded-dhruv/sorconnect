@@ -954,10 +954,10 @@ body.admin-body {
       </div>
 
       <form id="admin-login-form" class="login-form">
-        <div class="form-group">
+          <div class="form-group">
           <label for="admin-id-input">Admin ID</label>
           <div class="login-input-wrap">
-            <input type="text" id="admin-id-input" required autocomplete="username" placeholder="soconnectadmin">
+            <input type="text" id="admin-id-input" required autocomplete="username" placeholder="sorconnect">
           </div>
         </div>
 
@@ -1000,8 +1000,8 @@ body.admin-body {
           </button>
 
           <div class="admin-user-chip">
-            <div class="admin-user-avatar">AD</div>
-            <span id="active-user-name">soconnectadmin</span>
+            <div class="admin-user-avatar">SC</div>
+            <span id="active-user-name">sorconnect</span>
           </div>
 
           <a href="/home" target="_blank" class="btn-admin-action" title="View Public Site">
@@ -1407,7 +1407,7 @@ body.admin-body {
   (function() {
     // Session Keys & State
     const AUTH_SESSION_KEY = 'sorconnect_admin_token';
-    const VALID_ADMIN_ID = 'soconnectadmin';
+    const VALID_ADMIN_ID = 'sorconnect';
     const VALID_ADMIN_PASS = 'adminpqyt@46';
 
     let state = {
@@ -1599,19 +1599,20 @@ body.admin-body {
 
     async function directClientSupabaseSync(notify = true) {
       try {
-        const [catRes, projRes] = await Promise.all([
+        const [catRes, projRes, subRes] = await Promise.all([
           fetch(`${SUPABASE_URL}/rest/v1/categories?select=*&order=id.asc`, {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-          }),
+          }).catch(() => null),
           fetch(`${SUPABASE_URL}/rest/v1/projects?select=*,categories(*)&order=id.asc`, {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-          })
+          }).catch(() => null),
+          fetch(`${SUPABASE_URL}/rest/v1/submissions?select=*&order=created_at.desc`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+          }).catch(() => null)
         ]);
 
-        if (catRes.ok && projRes.ok) {
+        if (catRes && catRes.ok) {
           const rawCats = await catRes.json();
-          const rawProjs = await projRes.json();
-
           if (Array.isArray(rawCats) && rawCats.length > 0) {
             state.categories = rawCats.map((c, idx) => ({
               id: 'cat_' + c.id,
@@ -1627,7 +1628,10 @@ body.admin-body {
             populateCategoryDropdowns();
             renderCategories();
           }
+        }
 
+        if (projRes && projRes.ok) {
+          const rawProjs = await projRes.json();
           if (Array.isArray(rawProjs) && rawProjs.length > 0) {
             state.projects = rawProjs.map(p => ({
               id: 'proj_' + p.id,
@@ -1640,10 +1644,29 @@ body.admin-body {
             }));
             renderProjects();
           }
+        }
 
-          if (notify) {
-            showToast(`✓ Synced ${state.projects.length} projects & ${state.categories.length} categories from Supabase!`);
+        if (subRes && subRes.ok) {
+          const rawSubs = await subRes.json();
+          if (Array.isArray(rawSubs) && rawSubs.length > 0) {
+            state.submissions = rawSubs.map(s => ({
+              id: s.id,
+              timestamp: s.created_at || s.timestamp,
+              name: s.name,
+              whatsapp: s.whatsapp,
+              monthly_bill: s.monthly_bill,
+              pincode: s.pincode,
+              note: s.note,
+              status: s.status || 'New',
+              subject: s.subject || 'Solar Inquiry',
+              source_url: s.source_url || 'Website Form'
+            }));
+            renderSubmissions();
           }
+        }
+
+        if (notify) {
+          showToast(`✓ Synced ${state.projects.length} projects & ${state.categories.length} categories from Supabase!`);
         }
       } catch (err) {
         if (notify) {

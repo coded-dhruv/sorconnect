@@ -485,62 +485,58 @@ document.addEventListener('DOMContentLoaded', function () {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payloadObj)
-      })
-      .then(res => res.json())
-      .then(data => {
-        buttonEl.textContent = '✓ Inquiry Sent';
-        if (noteEl) {
-          noteEl.textContent = defaultSuccessText;
-          noteEl.style.color = 'var(--leaf)';
-          noteEl.style.display = 'block';
-        }
-        formEl.reset();
-        // Keep terms checked by default
-        const terms = formEl.querySelector('input[name="agree_terms"]');
-        if (terms) terms.checked = true;
+      }).catch(() => {});
 
-        // Auto-close modal after brief delay if submitted inside modal
-        if (formId === 'quote-modal-form') {
-          setTimeout(() => {
-            closeQuoteModal();
-            buttonEl.textContent = originalBtnText;
-            buttonEl.disabled = false;
-            if (noteEl) noteEl.style.display = 'none';
-          }, 2500);
-        } else {
-          setTimeout(() => {
-            buttonEl.textContent = originalBtnText;
-            buttonEl.disabled = false;
-          }, 4000);
-        }
-      })
-      .catch(err => {
-        // Fallback for purely static environments
-        console.warn('Backend API connection fallback:', err);
-        buttonEl.textContent = '✓ Inquiry Sent';
-        if (noteEl) {
-          noteEl.textContent = defaultSuccessText;
-          noteEl.style.color = 'var(--leaf)';
-          noteEl.style.display = 'block';
-        }
-        formEl.reset();
-        const terms = formEl.querySelector('input[name="agree_terms"]');
-        if (terms) terms.checked = true;
+      // Direct submission to Supabase submissions table
+      try {
+        const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+        
+        fetch(`${SUPABASE_URL}/rest/v1/submissions`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify([{
+            name: payloadObj.name,
+            whatsapp: payloadObj.whatsapp,
+            monthly_bill: payloadObj.monthly_bill,
+            pincode: payloadObj.pincode,
+            note: payloadObj.note || '',
+            status: 'New',
+            subject: subject,
+            source_url: window.location.href
+          }])
+        }).catch(() => {});
+      } catch (e) {}
 
-        if (formId === 'quote-modal-form') {
-          setTimeout(() => {
-            closeQuoteModal();
-            buttonEl.textContent = originalBtnText;
-            buttonEl.disabled = false;
-            if (noteEl) noteEl.style.display = 'none';
-          }, 2500);
-        } else {
-          setTimeout(() => {
-            buttonEl.textContent = originalBtnText;
-            buttonEl.disabled = false;
-          }, 4000);
-        }
-      });
+      // UI Success Feedback
+      buttonEl.textContent = '✓ Inquiry Sent';
+      if (noteEl) {
+        noteEl.textContent = defaultSuccessText;
+        noteEl.style.color = 'var(--leaf)';
+        noteEl.style.display = 'block';
+      }
+      formEl.reset();
+      const terms = formEl.querySelector('input[name="agree_terms"]');
+      if (terms) terms.checked = true;
+
+      if (formId === 'quote-modal-form') {
+        setTimeout(() => {
+          closeQuoteModal();
+          buttonEl.textContent = originalBtnText;
+          buttonEl.disabled = false;
+          if (noteEl) noteEl.style.display = 'none';
+        }, 2500);
+      } else {
+        setTimeout(() => {
+          buttonEl.textContent = originalBtnText;
+          buttonEl.disabled = false;
+        }, 4000);
+      }
     });
   }
 

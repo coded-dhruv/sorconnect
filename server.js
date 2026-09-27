@@ -219,6 +219,37 @@ const server = http.createServer(async (req, res) => {
     submissions.unshift(submission);
     writeJsonFile(SUBMISSIONS_FILE, submissions);
 
+    // Also save asynchronously to Supabase submissions table
+    try {
+      const postData = JSON.stringify([{
+        name: submission.name,
+        whatsapp: submission.whatsapp,
+        monthly_bill: submission.monthly_bill,
+        pincode: submission.pincode,
+        note: submission.note,
+        status: submission.status,
+        subject: submission.subject,
+        source_url: submission.source_url
+      }]);
+
+      const supReq = https.request(`${SUPABASE_URL}/rest/v1/submissions`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        }
+      }, (supRes) => {
+        console.log(`[SUPABASE] Contact submission stored to Supabase with status: ${supRes.statusCode}`);
+      });
+      supReq.on('error', (err) => console.warn('[SUPABASE INSERT WARNING]', err.message));
+      supReq.write(postData);
+      supReq.end();
+    } catch (e) {
+      console.warn('[SUPABASE SUBMISSION ERROR]', e.message);
+    }
+
     console.log(`[CONTACT API] New submission saved: ${submission.name} (WA: ${submission.whatsapp}, Bill: ${submission.monthly_bill}, PIN: ${submission.pincode})`);
     sendJson(res, 200, { success: true, message: 'Your request has been submitted successfully.' });
     return;
@@ -230,12 +261,12 @@ const server = http.createServer(async (req, res) => {
     const id = (payload.id || payload.username || '').trim();
     const password = (payload.password || '').trim();
 
-    if (id === 'soconnectadmin' && password === 'adminpqyt@46') {
+    if (id === 'sorconnect' && password === 'adminpqyt@46') {
       const token = 'sorconnect_auth_token_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
       sendJson(res, 200, {
         success: true,
         message: 'Authentication successful',
-        user: { id: 'soconnectadmin', name: 'Sor Connect Administrator' },
+        user: { id: 'sorconnect', name: 'Sor Connect Administrator' },
         token: token
       });
     } else {
