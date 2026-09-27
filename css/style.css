@@ -147,31 +147,30 @@ select:focus-visible {
   .topbar-right { display: none; }
 }
 
-/* ===================== HEADER — Floating Overlay Capsule ===================== */
+/* ===================== HEADER — Solid White Capsule ===================== */
 header.site-header {
   position: fixed;
-  top: 44px;       /* starts below topbar (~34px) + 10px gap over hero */
+  top: 44px;       /* starts below topbar (~34px) + 10px gap */
   left: 0;
   right: 0;
   margin: 0 auto;
   max-width: var(--container);
   width: calc(100% - 24px);
   z-index: 1000;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: #ffffff;
+  border: 1px solid var(--sage-line);
   border-radius: 14px;
-  box-shadow: none;
+  box-shadow: 0 4px 20px rgba(14, 44, 34, 0.08), 0 1px 3px rgba(14, 44, 34, 0.05);
   transition:
     top 0.35s var(--ease),
-    background 0.35s var(--ease),
-    border-color 0.35s var(--ease),
-    box-shadow 0.35s var(--ease);
+    box-shadow 0.35s var(--ease),
+    background 0.35s var(--ease);
 }
 
-/* Once topbar scrolls off / user scrolls away from hero, navbar glides up and becomes white glass pill */
+/* Once topbar scrolls off, navbar glides smoothly to top */
 header.site-header.scrolled {
   top: 12px;
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-color: var(--sage-line);
@@ -187,7 +186,7 @@ body { padding-top: 0; }
   min-height: 64px;
 }
 
-/* Brand — white over hero, dark once scrolled */
+/* Brand — dark text for white navbar */
 .brand {
   display: flex;
   align-items: center;
@@ -209,7 +208,7 @@ body { padding-top: 0; }
   font-family: var(--heading);
   font-weight: 700;
   font-size: 19px;
-  color: var(--white);
+  color: var(--forest-deep);
   letter-spacing: -0.02em;
   transition: color var(--dur) var(--ease);
 }
@@ -218,27 +217,25 @@ body { padding-top: 0; }
   font-size: 10.5px;
   font-weight: 500;
   letter-spacing: 0.03em;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--leaf);
   text-transform: uppercase;
   transition: color var(--dur) var(--ease);
 }
-header.site-header.scrolled .brand-text .name { color: var(--forest-deep); }
-header.site-header.scrolled .brand-text .tag  { color: var(--leaf); }
 
-/* Nav links — white over hero, dark once scrolled */
+/* Nav links — crisp dark text synced with white navbar */
 nav.main-nav a {
   font-family: var(--body);
   font-size: 14.5px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--ink-soft);
   padding: 24px 18px;
   position: relative;
   transition: color var(--dur) var(--ease);
 }
 nav.main-nav a.nav-cta { padding: 0; margin-left: 16px; }
-nav.main-nav a:hover { color: var(--white); }
+nav.main-nav a:hover { color: var(--forest-deep); }
 nav.main-nav a.active {
-  color: var(--white);
+  color: var(--forest);
   font-weight: 700;
 }
 nav.main-nav a.active::after {
@@ -248,34 +245,25 @@ nav.main-nav a.active::after {
   left: 18px;
   right: 18px;
   height: 3px;
-  background: var(--white);
+  background: var(--leaf);
   transition: background var(--dur) var(--ease);
 }
-
-/* Scrolled state — restore dark colours */
-header.site-header.scrolled nav.main-nav a          { color: var(--ink-soft); }
-header.site-header.scrolled nav.main-nav a:hover    { color: var(--forest-deep); }
-header.site-header.scrolled nav.main-nav a.active   { color: var(--forest); }
-header.site-header.scrolled nav.main-nav a.active::after { background: var(--leaf); }
 
 /* Chevron down icon transition */
 .chevron-down {
   margin-left: 5px;
   vertical-align: middle;
+  stroke: var(--ink-soft);
   transition: transform var(--dur) var(--ease), stroke var(--dur) var(--ease);
 }
-header.site-header:not(.scrolled) .chevron-down { stroke: rgba(255, 255, 255, 0.88); }
-header.site-header.scrolled .chevron-down { stroke: var(--ink-soft); }
+.nav-item-dropdown:hover .chevron-down {
+  stroke: var(--forest-deep);
+}
 
 /* Dropdown Menu system */
 .nav-item-dropdown {
   position: relative;
   display: inline-block;
-}
-.chevron-down {
-  margin-left: 5px;
-  vertical-align: middle;
-  transition: transform var(--dur) var(--ease);
 }
 .nav-item-dropdown:hover .chevron-down {
   transform: rotate(180deg);
@@ -285,7 +273,7 @@ header.site-header.scrolled .chevron-down { stroke: var(--ink-soft); }
   top: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(10px);
-  background: var(--white);
+  background: #ffffff;
   border: 1px solid var(--sage-line);
   border-radius: 8px;
   min-width: 260px;
@@ -316,7 +304,7 @@ header.site-header.scrolled .chevron-down { stroke: var(--ink-soft); }
 .dropdown-menu a::after {
   display: none !important;
 }
-/* Left dash prefix as requested by user */
+/* Left dash prefix */
 .dropdown-menu a::before {
   content: "—";
   position: absolute;
@@ -333,16 +321,6 @@ header.site-header.scrolled .chevron-down { stroke: var(--ink-soft); }
 .dropdown-menu a:hover::before {
   opacity: 1;
   left: 24px;
-}
-/* Scrolled state header dropdown adjustment */
-header.site-header.scrolled .dropdown-menu {
-  background: rgba(255, 255, 255, 0.98);
-}
-header.site-header.scrolled .dropdown-menu a {
-  color: var(--ink-soft) !important;
-}
-header.site-header.scrolled .dropdown-menu a:hover {
-  color: var(--forest-deep) !important;
 }
 
 /* Mobile dropdown styles */
@@ -370,24 +348,20 @@ header.site-header.scrolled .dropdown-menu a:hover {
   .dropdown-menu a {
     padding: 8px 16px !important;
     font-size: 13px !important;
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: var(--ink-soft) !important;
   }
   .dropdown-menu a::before {
     display: none !important;
   }
-  header.site-header.scrolled .dropdown-menu a {
-    color: var(--ink-soft) !important;
-  }
 }
 
-
-/* CTA button — outline/white over hero, filled once scrolled */
+/* CTA button — solid green filled button with shine */
 .nav-cta {
   display: inline-flex;
   align-items: center;
-  background: rgba(255,255,255,0.15);
+  background-image: linear-gradient(135deg, var(--forest) 0%, var(--leaf) 50%, var(--forest) 100%);
   color: var(--white) !important;
-  border: 1.5px solid rgba(255,255,255,0.55);
+  border: none;
   padding: 10px 22px !important;
   border-radius: var(--radius);
   font-family: var(--heading);
@@ -396,32 +370,21 @@ header.site-header.scrolled .dropdown-menu a:hover {
   letter-spacing: 0.01em;
   background-size: 200% auto;
   background-position: left center;
+  box-shadow: 0 4px 14px rgba(22, 78, 59, 0.2);
   transition: 
     background var(--dur) var(--ease), 
     background-position 0.4s var(--ease),
-    border-color var(--dur) var(--ease),
     transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
     box-shadow 0.3s var(--ease);
 }
 .nav-cta:hover {
-  background-image: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, var(--leaf-bright) 50%, var(--leaf) 100%);
   background-position: right center;
-  border-color: var(--leaf-bright);
-  box-shadow: 0 10px 20px rgba(79,174,113,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(62, 143, 92, 0.35);
 }
 .nav-cta::after { display: none !important; }
-/* Scrolled: solid filled button */
-header.site-header.scrolled .nav-cta {
-  background: linear-gradient(135deg, var(--forest) 0%, var(--leaf) 50%, var(--forest) 100%);
-  border-color: transparent;
-}
-header.site-header.scrolled .nav-cta:hover {
-  background-position: right center;
-  border-color: transparent;
-  box-shadow: 0 10px 20px rgba(62,143,92,0.35);
-}
 
-/* Mobile toggle — white over hero, dark once scrolled */
+/* Mobile toggle */
 .nav-toggle {
   display: none;
   flex-direction: column;
@@ -433,12 +396,11 @@ header.site-header.scrolled .nav-cta:hover {
 }
 .nav-toggle span {
   width: 25px;
-  height: 2px;
-  background: var(--white);
+  height: 2.5px;
+  background: var(--forest-deep);
   border-radius: 2px;
   transition: background var(--dur) var(--ease);
 }
-header.site-header.scrolled .nav-toggle span { background: var(--forest-deep); }
 
 @media (max-width: 960px) {
   nav.main-nav {
