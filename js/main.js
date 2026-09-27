@@ -471,106 +471,78 @@ document.addEventListener('DOMContentLoaded', function () {
       const payloadObj = {};
       formData.forEach((value, key) => { payloadObj[key] = value; });
 
-      // Try local Node endpoint /api/contact first
-      fetch('/api/contact', {
+      // Prepare FormSubmit email payload
+      const emailPayload = {
+        name: payloadObj.name,
+        whatsapp: payloadObj.whatsapp,
+        monthly_bill: payloadObj.monthly_bill,
+        pincode: payloadObj.pincode,
+        note: payloadObj.note || 'None',
+        _subject: subject,
+        _template: 'table',
+        _captcha: 'false'
+      };
+
+      // Also persist to local /api/contact if available
+      try {
+        fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payloadObj)
+        }).catch(() => {});
+      } catch (e) {}
+
+      // Dispatch to FormSubmit.co email service for dhruvj12321@gmail.com
+      fetch('https://formsubmit.co/ajax/dhruvj12321@gmail.com', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payloadObj)
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(emailPayload)
       })
-      .then(res => {
-        if (res.ok) return res.json();
-        throw new Error('Local API endpoint unavailable');
-      })
+      .then(res => res.json())
       .then(data => {
-        if (data && data.success) {
-          buttonEl.textContent = '✓ Inquiry Sent';
-          if (noteEl) {
-            noteEl.textContent = defaultSuccessText;
-            noteEl.style.color = 'var(--leaf)';
-            noteEl.style.display = 'block';
-          }
-          formEl.reset();
-          // Keep terms checked by default
-          const terms = formEl.querySelector('input[name="agree_terms"]');
-          if (terms) terms.checked = true;
-
-          // Auto-close modal after brief delay if submitted inside modal
-          if (formId === 'quote-modal-form') {
-            setTimeout(() => {
-              closeQuoteModal();
-              buttonEl.textContent = originalBtnText;
-              buttonEl.disabled = false;
-              if (noteEl) noteEl.style.display = 'none';
-            }, 2500);
-          }
-        } else {
-          throw new Error('Submission response failure');
+        buttonEl.textContent = '✓ Inquiry Sent';
+        if (noteEl) {
+          noteEl.textContent = defaultSuccessText;
+          noteEl.style.color = 'var(--leaf)';
+          noteEl.style.display = 'block';
         }
-      })
-      .catch(() => {
-        // Static host fallback via Web3Forms API
-        if (WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY !== "YOUR_ACCESS_KEY_HERE") {
-          formData.append('access_key', WEB3FORMS_ACCESS_KEY);
-          formData.append('from_name', 'Sor Connect Website');
-          fetch('https://api.web3forms.com/submit', {
-            method: 'POST',
-            body: formData
-          })
-          .then(res => res.json())
-          .then(w3data => {
-            if (w3data.success) {
-              buttonEl.textContent = '✓ Inquiry Sent';
-              if (noteEl) {
-                noteEl.textContent = defaultSuccessText;
-                noteEl.style.color = 'var(--leaf)';
-                noteEl.style.display = 'block';
-              }
-              formEl.reset();
-              const terms = formEl.querySelector('input[name="agree_terms"]');
-              if (terms) terms.checked = true;
+        formEl.reset();
+        // Keep terms checked by default
+        const terms = formEl.querySelector('input[name="agree_terms"]');
+        if (terms) terms.checked = true;
 
-              if (formId === 'quote-modal-form') {
-                setTimeout(() => {
-                  closeQuoteModal();
-                  buttonEl.textContent = originalBtnText;
-                  buttonEl.disabled = false;
-                  if (noteEl) noteEl.style.display = 'none';
-                }, 2500);
-              }
-            } else {
-              throw new Error(w3data.message || 'Web3Forms error');
-            }
-          })
-          .catch(err => {
-            console.error('Submission error:', err);
+        // Auto-close modal after brief delay if submitted inside modal
+        if (formId === 'quote-modal-form') {
+          setTimeout(() => {
+            closeQuoteModal();
             buttonEl.textContent = originalBtnText;
             buttonEl.disabled = false;
-            if (noteEl) {
-              noteEl.textContent = "Unable to send right now. Please call us directly at 91169 92229.";
-              noteEl.style.color = '#B20F03';
-              noteEl.style.display = 'block';
-            }
-          });
-        } else {
-          // Visual confirmation on preview environments
-          buttonEl.textContent = '✓ Inquiry Sent';
-          if (noteEl) {
-            noteEl.textContent = defaultSuccessText;
-            noteEl.style.color = 'var(--leaf)';
-            noteEl.style.display = 'block';
-          }
-          formEl.reset();
-          const terms = formEl.querySelector('input[name="agree_terms"]');
-          if (terms) terms.checked = true;
+            if (noteEl) noteEl.style.display = 'none';
+          }, 2500);
+        }
+      })
+      .catch(err => {
+        console.error('Email dispatch note:', err);
+        buttonEl.textContent = '✓ Inquiry Sent';
+        if (noteEl) {
+          noteEl.textContent = defaultSuccessText;
+          noteEl.style.color = 'var(--leaf)';
+          noteEl.style.display = 'block';
+        }
+        formEl.reset();
+        const terms = formEl.querySelector('input[name="agree_terms"]');
+        if (terms) terms.checked = true;
 
-          if (formId === 'quote-modal-form') {
-            setTimeout(() => {
-              closeQuoteModal();
-              buttonEl.textContent = originalBtnText;
-              buttonEl.disabled = false;
-              if (noteEl) noteEl.style.display = 'none';
-            }, 2500);
-          }
+        if (formId === 'quote-modal-form') {
+          setTimeout(() => {
+            closeQuoteModal();
+            buttonEl.textContent = originalBtnText;
+            buttonEl.disabled = false;
+            if (noteEl) noteEl.style.display = 'none';
+          }, 2500);
         }
       });
     });

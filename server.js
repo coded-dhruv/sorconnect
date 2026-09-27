@@ -62,32 +62,39 @@ const server = http.createServer((req, res) => {
 
         console.log(`[CONTACT API] New submission received from ${submission.name} (WA: ${submission.whatsapp}, Bill: ${submission.monthly_bill}, PIN: ${submission.pincode}). Target: ${TARGET_RECIPIENT}`);
 
-        // Forward to Web3Forms if key is present in env or fallback
-        const web3Key = process.env.WEB3FORMS_ACCESS_KEY;
-        if (web3Key) {
-          const https = require('https');
-          const postData = JSON.stringify({
-            access_key: web3Key,
-            from_name: 'Sor Connect Website',
-            subject: submission.subject,
-            name: submission.name,
-            email: TARGET_RECIPIENT,
-            message: `New Solar Inquiry for ${TARGET_RECIPIENT}\n\nName: ${submission.name}\nWhatsApp: ${submission.whatsapp}\nMonthly Bill: ${submission.monthly_bill}\nPIN Code: ${submission.pincode}\nAdditional Note: ${submission.note}\nSubmitted: ${submission.timestamp}\nSource: ${submission.source_url}`
-          });
+        // Forward to FormSubmit.co email service for instant delivery
+        const https = require('https');
+        const postData = JSON.stringify({
+          name: submission.name,
+          whatsapp: submission.whatsapp,
+          monthly_bill: submission.monthly_bill,
+          pincode: submission.pincode,
+          note: submission.note || 'None',
+          _subject: submission.subject,
+          _template: 'table',
+          _captcha: 'false'
+        });
 
-          const postReq = https.request('https://api.web3forms.com/submit', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Content-Length': Buffer.byteLength(postData)
-            }
-          }, (postRes) => {
-            console.log(`[CONTACT API] Web3Forms relay status: ${postRes.statusCode}`);
+        const postReq = https.request('https://formsubmit.co/ajax/dhruvj12321@gmail.com', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Origin': 'https://sorconnect.com',
+            'Referer': 'https://sorconnect.com/',
+            'User-Agent': 'Mozilla/5.0 (Sor Connect Form Relay)',
+            'Content-Length': Buffer.byteLength(postData)
+          }
+        }, (postRes) => {
+          let resData = '';
+          postRes.on('data', c => resData += c);
+          postRes.on('end', () => {
+            console.log(`[CONTACT API] Email dispatch status: ${postRes.statusCode} - ${resData}`);
           });
-          postReq.on('error', err => console.error('[CONTACT API] Web3Forms relay error:', err.message));
-          postReq.write(postData);
-          postReq.end();
-        }
+        });
+        postReq.on('error', err => console.error('[CONTACT API] Email dispatch error:', err.message));
+        postReq.write(postData);
+        postReq.end();
 
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({ success: true, message: 'Thank you! Your solar quotation request has been received.' }));
