@@ -5,56 +5,56 @@
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
   <url>
-    <loc>https://sorconnect.com/</loc>
+    <loc>https://sorconnect.in/</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://sorconnect.com/home</loc>
+    <loc>https://sorconnect.in/home</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://sorconnect.com/services</loc>
+    <loc>https://sorconnect.in/services</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://sorconnect.com/projects</loc>
+    <loc>https://sorconnect.in/projects</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://sorconnect.com/about</loc>
+    <loc>https://sorconnect.in/about</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://sorconnect.com/contact</loc>
+    <loc>https://sorconnect.in/contact</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://sorconnect.com/terms</loc>
+    <loc>https://sorconnect.in/terms</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
-    <loc>https://sorconnect.com/privacy</loc>
+    <loc>https://sorconnect.in/privacy</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>

@@ -4,4 +4,4 @@ Disallow: /admprtl
 Disallow: /admprtl.html
 Disallow: /api/
 
-Sitemap: https://sorconnect.com/sitemap.xml
+Sitemap: https://sorconnect.in/sitemap.xml
