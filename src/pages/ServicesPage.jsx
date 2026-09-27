@@ -6,176 +6,212 @@ const SERVICES_DATA = [
   {
     id: 'epc',
     name: 'EPC Services',
-    tag: 'Turnkey Solutions',
-    title: 'End-to-End Solar EPC Solutions',
-    subtitle: 'From Concept to Grid Synchronisation — Built for Decades of Peak Performance.',
-    desc: 'Our turnkey Engineering, Procurement, and Construction (EPC) services cover every phase of solar deployment. From feasibility audits and engineering design to procurement of Tier-1 equipment and civil installation, Sor Connect delivers bankable solar assets that perform reliably for 25+ years.',
+    title: 'EPC Services',
+    subtitle: 'End-to-End Engineering, Procurement & Construction',
+    desc: 'Our turnkey EPC solutions cover the entire spectrum of solar power plant development — from initial site analysis and engineering design to procurement of Tier-1 equipment, civil construction, electrical integration, and commissioning. We deliver high-performing solar plants for industrial, commercial, and utility-scale clients.',
     imgs: ['/assets/svc-epc-1.jpg', '/assets/svc-epc-2.jpg'],
     offers: [
-      'Comprehensive Site Survey & 3D Shadow Analysis',
-      'Civil, Mechanical & Electrical Engineering (SLD)',
-      'Tier-1 Solar Modules & BIS-Certified Inverters',
-      'Complete DISCOM Liaisoning & Net-Metering Clearances',
-      'CEIG Inspection Approval & Grid Synchronisation',
-      'Commercial Ground-Mount & Industrial Rooftop EPC'
+      'Comprehensive site survey, shadow analysis & feasibility',
+      'Civil, structural and electrical engineering design (SLD)',
+      'Procurement of Tier-1 BIS-certified modules & inverters',
+      'End-to-end DISCOM liaisoning & net-metering approval',
+      'CEIG clearance, safety audits & grid synchronisation',
+      'Rooftop and ground-mount utility plant installation'
     ],
-    standout: [
-      { icon: '🛡️', title: 'Tier-1 Procurement', desc: 'Direct sourcing from top global Tier-1 module manufacturers and leading inverter brands.' },
-      { icon: '⚡', title: 'Zero Downtime', desc: 'Pre-planned scheduled shutdowns to integrate solar power without disturbing your manufacturing output.' },
-      { icon: '📋', title: 'Guaranteed Approvals', desc: 'We handle 100% of DISCOM approvals, CEIG clearances, and tariff filings on your behalf.' },
-      { icon: '📈', title: 'Higher Generation Yields', desc: 'Optimized DC/AC inverter sizing ensuring higher output during mornings and cloudy conditions.' }
+    standouts: [
+      { num: '01', title: 'Tier-1 Component Procurement', desc: 'Direct relationships with leading tier-1 module makers and inverter manufacturers guarantee authentic hardware and manufacturer warranties.' },
+      { num: '02', title: 'Zero Operational Downtime', desc: 'Carefully phased installation ensures your existing factory or building operations continue without interruption.' },
+      { num: '03', title: 'Full Regulatory Approvals', desc: 'We take complete responsibility for DISCOM clearances, CEIG inspections, and subsidy paperwork.' },
+      { num: '04', title: 'Optimised Yield Engineering', desc: 'Custom DC-to-AC sizing ratios that maximize energy generation during morning and low-light hours.' }
     ],
-    formTitle: 'Request an EPC Quotation',
-    formSubtitle: 'Share your site location and electricity bill. Our engineers will provide a customized technical proposal.'
+    faqs: [
+      { q: 'What size solar plant does my facility need?', a: 'Plant sizing depends on your connected load, average monthly energy consumption, and available rooftop or land area. Our engineering team conducts a free initial load profile assessment.' },
+      { q: 'How long does a typical industrial EPC project take?', a: 'Commercial and industrial rooftop installations typically take 4 to 8 weeks from contract signing to grid synchronisation.' },
+      { q: 'What warranties are provided on EPC projects?', a: 'We provide 25-year performance warranties on solar modules, 5 to 10 years on string inverters, and a 5-year comprehensive workmanship warranty.' }
+    ],
+    formTag: 'EPC Inquiry',
+    formTitle: 'Request an EPC Proposal',
+    formSubtitle: 'Share your facility location and monthly electricity bill. Our engineers will share a custom technical and financial proposal within 24 hours.'
   },
   {
     id: 'installation',
     name: 'Installation & Commissioning',
-    tag: 'Precision Engineering',
     title: 'Installation & Commissioning (I&C)',
-    subtitle: 'Safe, Compliant, and High-Precision Mechanical & Electrical Deployment.',
-    desc: 'Whether you need support installing third-party procured panels or full balance-of-system deployment, Sor Connect provides experienced electrical and mechanical teams equipped with calibrated torque tools and safety harnesses.',
+    subtitle: 'Safety testing, grid synchronisation, and power evacuation.',
+    desc: 'Precision mechanical and electrical installation is essential for plant safety and long-term yield. Sor Connect provides specialised installation teams equipped with calibrated tools, fall protection gear, and deep technical expertise for both rooftop and ground-mounted solar installations.',
     imgs: ['/assets/svc-inst-1.jpg', '/assets/svc-inst-2.jpg'],
     offers: [
-      'High-Strength Hot-Dip Galvanized Mounting Racks',
-      'Torque-Calibrated Module Clamping & Cable Dressing',
-      'Dual Chemical Earthing & Class-A Lightning Protection',
-      'Inverter Parameter Calibration & Grid Sync Testing',
-      'Full DISCOM Bidirectional Meter Testing & Commissioning',
-      'String Voltage, Open Circuit & Short Circuit Validation'
+      'Hot-dip galvanized structural module mounting',
+      'Torque-calibrated module clamping and alignment',
+      'Dual chemical earthing & lightning protection system',
+      'DC cable management with UV-resistant conduit routing',
+      'Inverter synchronisation, protection testing & calibration',
+      'DISCOM bidirectional meter commissioning & testing'
     ],
-    standout: [
-      { icon: '🏗️', title: '130+ In-House Technicians', desc: 'Our trained in-house installation workforce adheres strictly to MNRE and IEEE installation standards.' },
-      { icon: '🔍', title: 'Rigorous Quality Checks', desc: 'Every cable connection, crimp, and torque bolt is tested and logged before commissioning.' },
-      { icon: '⏱️', title: 'Rapid Deployment', desc: 'Fast-track installation schedules ensuring timely grid synchronisation and tariff savings.' },
-      { icon: '⚡', title: 'Comprehensive Safety', desc: 'Strict HSE safety protocols, harnesses, and isolators installed across all roofs.' }
+    standouts: [
+      { num: '01', title: '130+ In-House Technicians', desc: 'Experienced in-house workforce following strict MNRE and IEEE installation guidelines.' },
+      { num: '02', title: 'Rigorous Quality Audits', desc: 'Every cable crimp, string voltage, and torque value is documented and verified prior to commissioning.' },
+      { num: '03', title: 'Safety-First Protocol', desc: 'Full adherence to HSE protocols with safety harnesses, lifelines, and certified electrical isolators.' },
+      { num: '04', title: 'Rapid Commissioning', desc: 'Pre-assembled structural components and parallel string testing speed up grid sync times.' }
     ],
-    formTitle: 'Inquire About I&C Services',
-    formSubtitle: 'Tell us about your upcoming solar plant capacity and commissioning timeline.'
+    faqs: [
+      { q: 'Can you install systems using third-party equipment?', a: 'Yes, we provide pure Installation & Commissioning (I&C) services for developers and contractors who procure their own panels and inverters.' },
+      { q: 'What safety standards do you comply with?', a: 'We comply with IS 3043 earthing standards, IEC 62446 commissioning tests, and CEA safety regulations.' }
+    ],
+    formTag: 'I&C Inquiry',
+    formTitle: 'Request Installation Support',
+    formSubtitle: 'Tell us about your upcoming solar project capacity, site location, and timeline.'
   },
   {
     id: 'om',
     name: 'Operation & Maintenance',
-    tag: 'Asset Protection',
-    title: '25-Year Operation & Maintenance (O&M)',
-    subtitle: 'Protect Your Investment. Maximize Uptime. Optimize Generation Daily.',
-    desc: 'Solar panels lose up to 25% of their generating capacity if not cleaned and maintained properly. Sor Connect provides comprehensive AMC contracts, thermographic drone inspections, and rapid breakdown response across India.',
+    title: 'Operation & Maintenance (O&M)',
+    subtitle: '24/7 Monitoring, Preventive Servicing & 25-Year Asset Protection.',
+    desc: 'Dust, environmental pollution, and component degradation can cause up to 25% yield loss if not properly maintained. Sor Connect provides comprehensive Operation and Maintenance contracts backed by digital IoT monitoring and rapid on-ground response to ensure your solar asset delivers maximum ROI.',
     imgs: ['/assets/svc-om-1.jpg', '/assets/svc-om-2.jpg'],
     offers: [
-      'Scheduled Pressurized & De-Ionized Panel Cleaning',
-      'Drone-Based Infrared Thermography for Hotspot Detection',
-      'Inverter Health Checks, Firmware Updates & Component Servicing',
-      '24/7 Remote IoT SCADA Monitoring & Alert Systems',
-      'Guaranteed 4-Hour On-Site Breakdown Support',
-      'Monthly Generation Analytics & Tariff Savings Reports'
+      'Scheduled pressurized & robotic panel cleaning',
+      'Thermographic drone scans for hotspot and micro-crack detection',
+      'Inverter servicing, parameter tuning & firmware updates',
+      '24/7 Cloud IoT remote generation monitoring & alerts',
+      'Guaranteed on-site breakdown response within 4 hours',
+      'Monthly generation reports and DISCOM bill auditing'
     ],
-    standout: [
-      { icon: '🚁', title: 'Drone Thermal Audits', desc: 'Advanced FLIR infrared imaging to identify micro-cracks and hot-spots invisible to naked eyes.' },
-      { icon: '📱', title: 'Smart IoT Tracking', desc: 'Real-time monitoring platform showing exact generation, performance ratio, and alerts on your phone.' },
-      { icon: '🛠️', title: 'Guaranteed 98.5% Uptime', desc: 'Pre-emptive maintenance contracts that keep inverters running at peak efficiency all year.' },
-      { icon: '💧', title: 'Robotic Cleaning Available', desc: 'Waterless robotic cleaners for large rooftop and ground-mount arrays in arid regions.' }
+    standouts: [
+      { num: '01', title: 'Thermographic Drone Audits', desc: 'High-resolution infrared scanning identifies malfunctioning cells, diodes, and string anomalies before they cause generation loss.' },
+      { num: '02', title: 'Cloud IoT Dashboard', desc: 'Real-time telemetry showing live power, performance ratio (PR), and automated alert notifications.' },
+      { num: '03', title: 'Guaranteed 98.5% Uptime', desc: 'Proactive maintenance routines ensure maximum system uptime during peak generation months.' },
+      { num: '04', title: '12 Free Visits in Year 1', desc: 'All EPC installations include 12 complimentary preventive maintenance visits in the first operational year.' }
     ],
+    faqs: [
+      { q: 'How often should solar panels be cleaned?', a: 'In dusty industrial areas or arid regions, panel cleaning every 10 to 15 days is recommended to prevent soiling losses.' },
+      { q: 'Do you offer AMC for third-party installed plants?', a: 'Yes, we take over existing third-party solar plants under comprehensive Annual Maintenance Contracts (AMC).' }
+    ],
+    formTag: 'O&M AMC',
     formTitle: 'Schedule an O&M Audit',
-    formSubtitle: 'Share your existing solar capacity to get an Annual Maintenance Contract (AMC) proposal.'
+    formSubtitle: 'Share your current plant capacity and location to receive a custom AMC proposal.'
   },
   {
     id: 'design',
     name: 'Solar Designing',
-    tag: 'Digital Simulation',
-    title: 'Solar Designing & Technical Simulation',
-    subtitle: 'Engineering Blueprints Built for Optimum Irradiation and Bankability.',
-    desc: 'Our certified solar engineers create detailed AutoCAD engineering layouts, string sizing configurations, and bankable PVsyst simulation models to ensure your solar installation is structurally resilient and electrically optimized.',
+    title: 'Solar Designing & Simulation',
+    subtitle: 'Precision CAD Blueprints, Shading Simulation & Bankable PVsyst Reports.',
+    desc: 'Good engineering begins before the first bolt is turned. Our solar design division creates bankable PVsyst simulation models, 3D shadow models, electrical Single Line Diagrams (SLD), and structural load analysis that maximize kilowatt-hour generation and satisfy financial lenders.',
     imgs: ['/assets/svc-design-1.jpg', '/assets/svc-design-2.jpg'],
     offers: [
-      '3D Drone Photogrammetry & Obstacle Shadow Mapping',
-      'Bankable PVsyst Hourly Yield & Degradation Reports',
-      'Detailed Electrical Single Line Diagrams (SLD)',
-      'Structural Load Analysis & Wind Speed Simulation (180 km/h)',
-      'BOM (Bill of Materials) Optimization & Specification Lists',
-      'DISCOM & CEIG Clearance Blueprint Documentation'
+      '3D Drone photogrammetry and shadow obstacle mapping',
+      'Bankable PVsyst yield forecast and loss analysis reports',
+      'Detailed electrical Single Line Diagrams (SLD) and BOM',
+      'Structural load analysis and wind-speed calculations (180 km/h)',
+      'Optimized tilt angle and string configuration layouts',
+      'CEIG & DISCOM blueprint clearance documentation'
     ],
-    standout: [
-      { icon: '📊', title: 'Bank-Approved PVsyst Models', desc: 'Bankable generation forecasts recognized by national and private banks for project loans.' },
-      { icon: '📐', title: 'Precision CAD Layouts', desc: 'Optimized tilt angles and azimuth configurations maximizing kilowatt-hour yield per sq ft.' },
-      { icon: '🌪️', title: 'Wind Load Certified', desc: 'Structural designs engineered to withstand extreme cyclones and gale winds up to 180 km/h.' },
-      { icon: '⚡', title: 'DC/AC Loss Minimization', desc: 'Optimized cable routing and inverter placement minimizing ohmic transmission losses.' }
+    standouts: [
+      { num: '01', title: 'Bank-Approved PVsyst Models', desc: 'Generation reports accepted by leading nationalised and private banks for debt syndication.' },
+      { num: '02', title: 'Optimized String Layouts', desc: 'Careful stringing and inverter MPPT allocation minimize mismatch and clipping losses.' },
+      { num: '03', title: 'Wind Load Engineering', desc: 'Mounting structures engineered and certified to withstand extreme weather conditions and wind loads.' },
+      { num: '04', title: 'Rapid CAD Turnaround', desc: 'Complete detailed project reports (DPR) delivered within 48 to 72 hours of site survey.' }
     ],
-    formTitle: 'Order a Solar Design Proposal',
-    formSubtitle: 'Upload or specify your rooftop dimensions for a detailed PVsyst simulation and SLD layout.'
+    faqs: [
+      { q: 'What data is needed to generate a PVsyst report?', a: 'GPS coordinates of the site, available rooftop/land drawings, transformer capacity, and historical weather data.' }
+    ],
+    formTag: 'Design Inquiry',
+    formTitle: 'Get a Solar Plant Design',
+    formSubtitle: 'Share your site coordinates and capacity requirements for custom CAD and PVsyst proposals.'
   },
   {
     id: 'kusum',
     name: 'PM-KUSUM Consultation',
-    tag: 'Govt Agriculture Scheme',
     title: 'PM-KUSUM Yojana Consultation',
-    subtitle: 'Empowering Farmers & Landowners with Solar Water Pumps & Grid-Connected Income.',
-    desc: 'Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan (PM-KUSUM) enables farmers to replace diesel pumps with subsidized solar pumps and monetize barren land by establishing decentralized solar power plants.',
+    subtitle: 'Government Subsidies for Solar Pumps and Feeder Solarisation.',
+    desc: 'The Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan (PM-KUSUM) scheme empowers farmers and agricultural enterprises to install solar irrigation pumps and generate grid-connected solar revenue on uncultivated land. Sor Connect guides farmers through portal registrations, DISCOM agreements, and EPC execution.',
     imgs: ['/assets/svc-kusum-1.jpg', '/assets/svc-kusum-2.jpg'],
     offers: [
-      'Component A: 0.5 MW to 2 MW Solar Plants on Barren Land',
-      'Component B: Up to 60% Subsidy on Standalone Solar Pumps (3-10 HP)',
-      'Component C: Solarization of Existing Grid-Connected Agriculture Pumps',
-      'DISCOM Power Purchase Agreement (PPA) Facilitation',
-      'Farmer Loan Assistance via Nationalized Banks',
-      'End-to-End State Nodal Agency (RREC, UPNEDA) Filing'
+      'Component A: 500 kW to 2 MW ground-mounted solar plants on barren land',
+      'Component B: Standalone solar agriculture pumps with up to 60% subsidy',
+      'Component C: Solarisation of grid-connected agricultural pump feeders',
+      'DISCOM Power Purchase Agreement (PPA) documentation support',
+      'State renewable energy development agency liaisoning',
+      'Turnkey installation and 5-year comprehensive maintenance'
     ],
-    standout: [
-      { icon: '🌾', title: 'Guaranteed 25-Yr Lease Income', desc: 'Landowners can earn stable rental income per acre/year under Component A PPA agreements.' },
-      { icon: '🚜', title: 'Up to 90% Cost Covered', desc: 'Combination of 30% Central + 30% State subsidies and 30% bank loans — farmers pay only 10%.' },
-      { icon: '📑', title: '100% Documentation Handled', desc: 'We prepare your Khasra/Khatauni land files, DISCOM feeder maps, and portal applications.' },
-      { icon: '💧', title: 'Zero Diesel Fuel Costs', desc: 'Reliable daytime irrigation for 300+ sunny days a year without relying on erratic rural power grids.' }
+    standouts: [
+      { num: '01', title: 'Empanelled Consultant', desc: 'Recognized advisory track record helping farmers secure central and state subsidies.' },
+      { num: '02', title: 'Assured 25-Yr Revenue', desc: 'Generate regular tariff income by selling surplus solar energy directly back to the DISCOM.' },
+      { num: '03', title: 'Complete Documentation', desc: 'We handle land verification, feeder mapping, portal filings, and PPA execution.' },
+      { num: '04', title: 'Heavy-Duty Hardware', desc: 'Agricultural-grade galvanized structures and high-head solar VFD pump controllers.' }
     ],
+    faqs: [
+      { q: 'Who is eligible for PM-KUSUM Component A?', a: 'Individual farmers, cooperatives, farmer producer organisations (FPOs), and developers with land located within 5 km of an electrical sub-station.' }
+    ],
+    formTag: 'PM-KUSUM',
     formTitle: 'Check PM-KUSUM Eligibility',
-    formSubtitle: 'Share your land district, pump HP requirement, or barren land details for subsidy verification.'
+    formSubtitle: 'Enter your agricultural land details and nearby substation distance for a free feasibility check.'
   },
   {
     id: 'surya-ghar',
     name: 'PM Surya Ghar Yojana',
-    tag: 'Residential Rooftop Scheme',
-    title: 'PM Surya Ghar: Muft Bijli Yojana',
-    subtitle: 'Direct Central Government Subsidy up to ₹78,000 for Residential Rooftops.',
-    desc: 'PM Surya Ghar is the Government of India flagship initiative targeting 1 crore households with free solar power. Sor Connect is an empanelled EPC installer authorized to execute PM Surya Ghar installations from portal registration to subsidy disbursement.',
+    title: 'PM Surya Ghar Yojana',
+    subtitle: 'Government-Backed Rooftop Solar Subsidy for Residential Consumers.',
+    desc: 'PM Surya Ghar: Muft Bijli Yojana is the Government of India flagship rooftop solar initiative, targeting 1 crore households with free solar power. Under this scheme, eligible residential consumers can install rooftop solar panels and receive direct central subsidies of up to ₹78,000, making solar energy dramatically more affordable. Sor Connect is an empanelled EPC installer authorised to execute PM Surya Ghar projects — we handle the entire process from application to commissioning, at zero hassle to the homeowner.',
     imgs: ['/assets/svc-kusum-1.jpg', '/assets/svc-design-1.jpg'],
     offers: [
-      'Up to 2 kW: ₹30,000 per kW (₹60,000 max subsidy)',
+      'Up to 2 kW: ₹30,000 per kW — max ₹60,000 subsidy',
       '2 kW to 3 kW: ₹18,000 per additional kW',
-      '3 kW & Above: Maximum capped central subsidy of ₹78,000',
-      'Additional State Top-Up Subsidies (Rajasthan & UP)',
-      'DISCOM Net-Metering & Bi-Directional Meter Setup',
-      'Collateral-Free Bank Loans up to ₹2 Lakh at Reduced Interest'
+      'Above 3 kW: Maximum total subsidy capped at ₹78,000',
+      'State Top-Up: Additional state-level subsidies where applicable',
+      'Net Metering: Export surplus power to DISCOM and earn bill credits',
+      'Loan Facility: Collateral-free loans up to ₹2 lakh at reduced rates via nationalised banks'
     ],
-    standout: [
-      { icon: '✅', title: 'MNRE Empanelled EPC', desc: 'Authorized installer under the National Portal for Rooftop Solar — every plant qualifies for DBT subsidy.' },
-      { icon: '📋', title: 'Complete Paperwork Handled', desc: 'We handle national portal registration, DISCOM net-metering approval, and subsidy disbursement.' },
-      { icon: '⚡', title: 'BIS & ALMM Listed Modules', desc: 'DCR-compliant monocrystalline PERC panels and high-efficiency string inverters.' },
-      { icon: '🔧', title: 'Long-Term Warranty & AMC', desc: '25-year module performance warranty backed by Sor Connect local engineering support.' }
+    standouts: [
+      { num: '01', title: 'MNRE Empanelled EPC', desc: 'We are an officially empanelled installer under the National Portal for Rooftop Solar — every installation we do qualifies for subsidy disbursement.' },
+      { num: '02', title: 'Complete Documentation Handled', desc: 'Our team prepares and submits your national portal application, DISCOM net-metering paperwork, and subsidy disbursement forms — you sign, we do the rest.' },
+      { num: '03', title: 'Quality MNRE-Approved Components', desc: 'We supply only BIS/ALMM-listed solar modules and DCR-compliant inverters that pass department inspection and qualify for subsidy release.' },
+      { num: '04', title: 'Post-Installation AMC Support', desc: 'After commissioning, we offer Annual Maintenance Contracts to keep your rooftop plant producing at peak efficiency for its entire 25-year life.' }
     ],
-    formTitle: 'Check PM Surya Ghar Subsidy',
-    formSubtitle: 'Enter your monthly electricity bill and PIN code. We calculate your subsidy and payback timeframe.'
+    faqs: [
+      { q: 'Who is eligible for PM Surya Ghar Yojana?', a: 'Any residential electricity consumer in India with a valid DISCOM connection can apply, provided they own the property and have a suitable rooftop area. Tenants may also apply with landlord consent.' },
+      { q: 'How long does the subsidy take to arrive?', a: 'After successful net-meter installation and DISCOM approval, the central government disburses the subsidy directly into your bank account within 30 days.' },
+      { q: 'What system size should I install?', a: 'A 2 kW system covers most Indian households consuming 200-300 units per month. A 3 kW system maximises the central subsidy while powering heavier loads like ACs.' },
+      { q: 'Can I combine Surya Ghar with state-level subsidies?', a: 'Yes. Several states like Rajasthan and UP offer additional subsidies on top of the central scheme. Our consultants apply for every applicable incentive.' }
+    ],
+    formTag: 'PM Surya Ghar',
+    formTitle: 'Check Your Eligibility & Get a Free Quote',
+    formSubtitle: 'Share your rooftop details and electricity bill. Our team will verify your eligibility, calculate your subsidy amount, and share a zero-cost proposal within 24 hours.'
   }
 ];
 
 export default function ServicesPage() {
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState('epc');
+  const [activeTabId, setActiveTabId] = useState('epc');
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
   useEffect(() => {
     const hash = location.hash.replace('#', '');
     if (hash && SERVICES_DATA.some(s => s.id === hash)) {
-      setActiveTab(hash);
-      const el = document.getElementById(hash);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
+      setActiveTabId(hash);
+      const targetEl = document.getElementById(hash);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth' });
       }
     }
   }, [location.hash]);
 
-  const currentService = SERVICES_DATA.find(s => s.id === activeTab) || SERVICES_DATA[0];
+  const activeService = SERVICES_DATA.find(s => s.id === activeTabId) || SERVICES_DATA[0];
+
+  const handleTabClick = (id) => {
+    setActiveTabId(id);
+    window.location.hash = id;
+    setOpenFaqIndex(null);
+  };
+
+  const toggleFaq = (idx) => {
+    setOpenFaqIndex(prev => prev === idx ? null : idx);
+  };
 
   return (
-    <main className="services-page-main">
+    <main>
       
-      {/* Page Hero */}
+      {/* ============ PAGE HERO ============ */}
       <section className="page-hero">
         <video autoPlay loop muted playsInline className="page-hero-video">
           <source src="/assets/covervideo.mp4" type="video/mp4" />
@@ -185,108 +221,149 @@ export default function ServicesPage() {
           <div className="breadcrumb"><Link to="/home">Home</Link> / Services</div>
           <span className="eyebrow on-dark">Full Lifecycle Solar Capabilities</span>
           <h1>Our Solar Engineering &amp; EPC Services</h1>
-          <p>End-to-end solar designing, turnkey EPC, commissioning, 25-year O&amp;M, and government subsidy advisory.</p>
+          <p>
+            From the first feasibility study to twenty-five years of operation, Sor Connect's in-house teams handle design, procurement, construction and after-care.
+          </p>
         </div>
       </section>
 
-      {/* Main Services Container with Interactive Sidebar */}
+      {/* ============ MAIN SERVICES SIDEBAR LAYOUT ============ */}
       <section className="section">
         <div className="container services-layout-container">
           
           {/* Left Sticky Sidebar Menu */}
           <aside className="services-sidebar">
-            <div className="sidebar-box">
-              <span className="sidebar-tag">Our Capabilities</span>
-              <nav className="sidebar-nav-menu">
-                {SERVICES_DATA.map(svc => (
-                  <button
-                    key={svc.id}
-                    type="button"
-                    className={`sidebar-nav-item ${svc.id === activeTab ? 'active' : ''}`}
-                    onClick={() => {
-                      setActiveTab(svc.id);
-                      window.location.hash = svc.id;
-                    }}
-                  >
-                    <span>{svc.name}</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M9 18l6-6-6-6"/>
-                    </svg>
-                  </button>
-                ))}
-              </nav>
+            <nav className="sidebar-nav-menu">
+              {SERVICES_DATA.map(svc => (
+                <a
+                  key={svc.id}
+                  href={`#${svc.id}`}
+                  className={svc.id === activeTabId ? 'active' : ''}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleTabClick(svc.id);
+                  }}
+                >
+                  <span>{svc.name}</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M9 18l6-6-6-6"/>
+                  </svg>
+                </a>
+              ))}
+            </nav>
 
-              <div className="sidebar-helpline-box">
-                <span className="helpline-label">Direct Engineering Helpline</span>
-                <a href="tel:9116992229" className="helpline-phone">91169 92229</a>
-                <p>Speak directly with an engineer in Jaipur or Agra.</p>
+            <div className="sidebar-contact-card">
+              <div className="contact-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/>
+                </svg>
               </div>
+              <h4>Need Quick Advice?</h4>
+              <p>Speak directly with our technical engineering desk.</p>
+              <a href="tel:9116992229" className="phone-num">91169 92229</a>
             </div>
           </aside>
 
-          {/* Right Main Service Detail Content */}
-          <div className="services-main-content">
-            <div id={currentService.id} className="svc-content-wrapper">
-              <span className="svc-badge-tag">{currentService.tag}</span>
-              <h2 className="svc-title">{currentService.title}</h2>
-              <div className="svc-subtitle">{currentService.subtitle}</div>
-              <p className="svc-description">{currentService.desc}</p>
+          {/* Right Main Content Area */}
+          <div className="services-content-main">
+            
+            <div id={activeService.id} className="svc-tab-content active">
+              <h2 className="svc-content-title">{activeService.title}</h2>
+              <div className="svc-content-subtitle">{activeService.subtitle}</div>
+              <p className="svc-content-desc">{activeService.desc}</p>
 
-              {/* Service Images Duo */}
-              <div className="svc-image-duo">
-                {currentService.imgs.map((imgSrc, idx) => (
+              {/* Images Duo Row */}
+              <div className="svc-img-row">
+                {activeService.imgs.map((imgSrc, idx) => (
                   <div key={idx} className="svc-img-item">
-                    <img src={imgSrc} alt={currentService.title} />
+                    <img src={imgSrc} alt={`${activeService.title} preview ${idx + 1}`} />
                   </div>
                 ))}
               </div>
 
-              {/* What We Deliver Box */}
+              {/* What We Offer Checklist Box */}
               <div className="svc-offer-box">
-                <h3>⚡ What We Deliver</h3>
+                <h3>What We Offer</h3>
                 <div className="svc-offer-grid">
-                  {currentService.offers.map((item, idx) => (
+                  {activeService.offers.map((offer, idx) => (
                     <div key={idx} className="svc-offer-item">
-                      <span className="check-mark">✓</span>
-                      <span>{item}</span>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                      <span>{offer}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Why Choose Us Grid */}
+              {/* Why Stand Out Box */}
               <div className="svc-standout-box">
-                <h3>🌟 Why Choose Sor Connect for {currentService.name}</h3>
-                <div className="svc-standout-grid">
-                  {currentService.standout.map((item, idx) => (
-                    <div key={idx} className="svc-standout-item">
-                      <div className="standout-icon">{item.icon}</div>
-                      <div>
-                        <strong>{item.title}</strong>
-                        <p>{item.desc}</p>
+                <h3>Why Stand Out with Sor Connect</h3>
+                <div className="svc-index-list">
+                  {activeService.standouts.map((st, idx) => (
+                    <div key={idx} className="svc-index-item">
+                      <div className="svc-index-num">{st.num}</div>
+                      <div className="svc-index-content">
+                        <h4>{st.title}</h4>
+                        <p>{st.desc}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* In-Page Quotation Form */}
-              <div className="svc-form-box mt-48">
+              {/* FAQ Accordion */}
+              {activeService.faqs && activeService.faqs.length > 0 && (
+                <div className="svc-faq-box">
+                  <h3>Frequently Asked Questions</h3>
+                  <div className="faq-accordion">
+                    {activeService.faqs.map((faq, idx) => {
+                      const isOpen = openFaqIndex === idx;
+                      return (
+                        <div key={idx} className={`faq-item ${isOpen ? 'active' : ''}`}>
+                          <button 
+                            type="button" 
+                            className="faq-trigger"
+                            onClick={() => toggleFaq(idx)}
+                          >
+                            <span>{faq.q}</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <path d="M9 18l6-6-6-6" />
+                            </svg>
+                          </button>
+                          <div 
+                            className="faq-content" 
+                            style={{ maxHeight: isOpen ? '200px' : '0px' }}
+                          >
+                            <div className="faq-content-inner">
+                              {faq.a}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Inline In-Page Request Form */}
+              <div className="svc-form-box">
                 <div className="svc-form-info">
-                  <span className="sub">{currentService.name}</span>
-                  <h3>{currentService.formTitle}</h3>
-                  <p>{currentService.formSubtitle}</p>
+                  <span className="sub">{activeService.formTag}</span>
+                  <h3>{activeService.formTitle}</h3>
+                  <p>{activeService.formSubtitle}</p>
                 </div>
                 <div className="svc-form-inputs">
                   <ContactForm 
-                    formId={`svc-${currentService.id}-form`}
-                    buttonText={`Get ${currentService.name} Proposal`}
-                    subject={`Service Inquiry [${currentService.name}] - Sor Connect`}
+                    formId={`svc-${activeService.id}-form`}
+                    subject={`Service Inquiry: ${activeService.name} - Sor Connect`}
+                    buttonText="Submit In-Page Request"
                   />
                 </div>
               </div>
 
             </div>
+
           </div>
 
         </div>

@@ -5,346 +5,427 @@ import Slideshow from '../components/Slideshow';
 
 const PROCESS_STEPS = [
   {
-    id: 'tab-consult',
+    id: 'tab-discovery',
     step: '01',
-    name: 'Site Audit & Feasibility',
-    title: 'Precision Site Survey & Shadow Analysis',
-    desc: 'Our senior solar engineers visit your facility or rooftop, map available surface area, perform 3D drone shadow simulation, and analyze your last 12 months electricity tariffs to determine your ideal generation capacity.',
+    num: '01',
+    title: 'Discovery & Consultation',
+    sub: 'Site Audit & Scheme Eligibility',
+    heading: 'Understanding Your Site & Energy Goals',
+    desc: 'We evaluate your rooftop or land feasibility, historical electricity bills, and state/central subsidy eligibility under PM-KUSUM and PM Surya Ghar schemes.',
     img: '/assets/process-1.jpg',
-    points: ['3D Shadow & Irradiance Analysis', 'Roof Structural Integrity Check', 'DISCOM Load Sanction Audit']
+    points: [
+      'Site & energy audit',
+      'Feasibility & ROI analysis',
+      'Govt subsidy assistance',
+      'Customized plant sizing'
+    ]
   },
   {
     id: 'tab-design',
     step: '02',
-    name: 'Engineering & SLD Design',
-    title: 'Custom Electrical Engineering & PVsyst Simulation',
-    desc: 'We prepare detailed Single Line Diagrams (SLD), 3D module layout arrays, structural foundation calculations, and bankable PVsyst generation reports to maximize unit yields per square meter.',
+    num: '02',
+    title: 'Design & Approvals',
+    sub: '3D Simulation & Net Metering',
+    heading: 'Precision Solar Engineering & Clearances',
+    desc: 'Our engineering division creates high-yield 3D shade models, Staad Pro structural calculations, electrical single-line diagrams, and files DISCOM net-metering approvals.',
     img: '/assets/process-2.jpg',
-    points: ['Bankable PVsyst Yield Reports', 'Optimized DC/AC Inverter Ratios', 'Tier-1 Module Layout Optimization']
+    points: [
+      '3D Shading & yield simulation',
+      'Staad Pro structural check',
+      'DISCOM liaisoning filings',
+      'Net-metering clearance'
+    ]
   },
   {
-    id: 'tab-liaison',
+    id: 'tab-procurement',
     step: '03',
-    name: 'DISCOM & Subsidy Approvals',
-    title: 'End-to-End Government & DISCOM Liaisoning',
-    desc: 'We manage complete regulatory documentation, net-metering approvals, CEIG electrical clearances, and national portal subsidy claims (PM Surya Ghar & PM-KUSUM) from start to finish.',
+    num: '03',
+    title: 'Procurement & Installation',
+    sub: 'Tier-1 Hardware & Civil Work',
+    heading: 'Tier-1 Materials & Turnkey Construction',
+    desc: 'In-house installation teams erect hot-dip galvanized mounting structures, securely position Tier-1 ALMM modules, run UV-rated wiring, and install premium inverters.',
     img: '/assets/process-3.jpg',
-    points: ['DISCOM Feasibility Clearances', 'Direct DBT Central Subsidy Filing', 'CEIG / Electrical Inspectorate Approvals']
+    points: [
+      'Tier-1 module sourcing',
+      'Galvanized structure mounting',
+      'Class-A DC cable dressing',
+      'Dual chemical earthing'
+    ]
   },
   {
-    id: 'tab-install',
+    id: 'tab-commissioning',
     step: '04',
-    name: 'Procurement & Installation',
-    title: 'Industrial Standard Turnkey Deployment',
-    desc: 'Execution by our trained in-house EPC crew using hot-dip galvanized mounting structures, Tier-1 ALMM modules, German DC switchgear, and dedicated safety protocols.',
+    num: '04',
+    title: 'Commissioning & Handover',
+    sub: 'Safety Testing & Grid Sync',
+    heading: 'Safety Audits, Grid Sync & Testing',
+    desc: 'CEIG electrical clearance inspection, comprehensive dual-earthing safety tests, DISCOM meter changeover and full plant sync into your main LT panel.',
     img: '/assets/process-4.jpg',
-    points: ['Class-A Hot-Dip Galvanized Racks', 'Dual Earthing & Lightning Protection', 'Zero Operational Downtime Guarantee']
+    points: [
+      'CEIG safety approvals',
+      'DISCOM bidirectional meter sync',
+      'LT panel power evacuation',
+      'Official commissioning cert'
+    ]
   },
   {
-    id: 'tab-om',
+    id: 'tab-asset',
     step: '05',
-    name: 'Commissioning & 25-Yr O&M',
-    title: 'Net Meter Testing & Remote IoT Monitoring',
-    desc: 'Joint DISCOM inspection, bidirectional meter commissioning, remote IoT SCADA setup, and warranty-backed proactive Annual Maintenance Contracts (AMC) for 25 continuous years.',
+    num: '05',
+    title: 'Asset Management',
+    sub: '25-Yr SCADA & Scheduled O&M',
+    heading: '25-Year Monitoring & Preventative AMC',
+    desc: 'Continuous IoT cloud generation monitoring, 12 free on-site maintenance visits in Year 1, thermal drone scans, and fast breakdown response to guarantee uptime.',
     img: '/assets/process-5.jpg',
-    points: ['Bidirectional Meter Sync', 'Real-Time Mobile Generation Tracking', 'Scheduled Robotic & Pressurized Cleaning']
+    points: [
+      '24/7 Cloud IoT tracking',
+      '12 Free visits in Year 1',
+      'Scheduled panel cleaning',
+      'Performance guarantee'
+    ]
   }
 ];
 
 export default function HomePage({ onOpenQuoteModal }) {
-  const [activeProcessTab, setActiveProcessTab] = useState(0);
+  const [activeStepIndex, setActiveStepIndex] = useState(0);
+  const currentStep = PROCESS_STEPS[activeStepIndex];
 
   return (
-    <main className="home-page-main">
+    <main>
       
       {/* ============ 1. HERO SECTION ============ */}
-      <section className="hero-section">
-        <video autoPlay loop muted playsInline className="hero-video-bg">
-          <source src="/assets/covervideo.mp4" type="video/mp4" />
-        </video>
-        <div className="hero-overlay"></div>
-        
-        <div className="container hero-content">
-          <div className="hero-badge">
-            <span className="badge-dot"></span>
-            <span>MNRE Authorised Solar EPC Partner</span>
+      <section className="hero">
+        <div className="hero-overlay" aria-hidden="true"></div>
+
+        <div className="container">
+          <div className="hero-inner hero-inner-single">
+            <div>
+              <span className="eyebrow on-dark">Trusted Solar Solutions Since 2020</span>
+              <h1>Engineering India's <em>shift to solar</em>, plant by plant.</h1>
+              <p className="lede">
+                Sor Connect designs, builds and operates solar power plants for industries, farms and communities — from first feasibility study to twenty-five years of after-care.
+              </p>
+              <div className="hero-actions">
+                <button 
+                  type="button" 
+                  className="btn btn-primary"
+                  onClick={() => onOpenQuoteModal(
+                    "Request a Site Assessment",
+                    "Get an engineering assessment and feasibility report for your residential, commercial, or agricultural site."
+                  )}
+                >
+                  Request a Site Assessment
+                </button>
+                <Link to="/services" className="btn btn-outline">
+                  Explore Our Services →
+                </Link>
+              </div>
+            </div>
           </div>
+        </div>
 
-          <h1 className="hero-title">
-            Engineering High-Yield Solar Power for India’s Future
-          </h1>
-
-          <p className="hero-desc">
-            End-to-end turnkey solar EPC, solar designing, and 25-year O&amp;M solutions for industrial plants, residential rooftops, and PM Surya Ghar &amp; PM-KUSUM schemes.
-          </p>
-
-          <div className="hero-actions">
-            <button 
-              type="button" 
-              className="btn btn-primary"
-              onClick={onOpenQuoteModal}
-            >
-              Get a Free Feasibility Quote
-            </button>
-            <Link to="/projects" className="btn btn-outline-light">
-              Explore 150+ MW Portfolio
-            </Link>
-          </div>
-
-          {/* Quick Metrics Bar */}
-          <div className="hero-stats-row">
-            <div className="hero-stat-card">
-              <span className="stat-num">150+</span>
-              <span className="stat-unit">MW</span>
-              <span className="stat-label">Capacity Deployed</span>
+        {/* Readout Bar */}
+        <div className="readout-bar">
+          <div className="container">
+            <div className="readout-item">
+              <div className="val">150<span style={{ fontSize: '15px' }}>+ MW</span></div>
+              <div className="lbl">Solar capacity managed</div>
             </div>
-            <div className="hero-stat-card">
-              <span className="stat-num">10k+</span>
-              <span className="stat-unit">Units</span>
-              <span className="stat-label">Rooftops &amp; Farms</span>
+            <div className="readout-item">
+              <div className="val">13<span style={{ fontSize: '15px' }}>&nbsp;states</span></div>
+              <div className="lbl">Pan-India operations</div>
             </div>
-            <div className="hero-stat-card">
-              <span className="stat-num">13</span>
-              <span className="stat-unit">States</span>
-              <span className="stat-label">Pan-India Reach</span>
+            <div className="readout-item">
+              <div className="val">130<span style={{ fontSize: '15px' }}>+</span></div>
+              <div className="lbl">Skilled professionals</div>
             </div>
-            <div className="hero-stat-card">
-              <span className="stat-num">₹28Cr+</span>
-              <span className="stat-unit">/yr</span>
-              <span className="stat-label">Client Power Savings</span>
+            <div className="readout-item">
+              <div className="val">100<span style={{ fontSize: '15px' }}>%</span></div>
+              <div className="lbl">Client satisfaction</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ============ 2. WHAT WE DO SECTION ============ */}
-      <section 
-        className="section what-we-do-section"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(23, 63, 49, 0.92), rgba(23, 63, 49, 0.95)), url(/assets/what-we-do-bg.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          color: '#FFFFFF'
-        }}
-      >
+      {/* ============ 2. ABOUT SNAPSHOT ============ */}
+      <section className="section">
+        <div className="container">
+          <div className="hero-inner" style={{ alignItems: 'center' }}>
+            <div>
+              <span className="eyebrow">Who We Are</span>
+              <h2 style={{ fontSize: 'clamp(24px,2.8vw,32px)', lineHeight: 1.2, letterSpacing: '-0.03em' }}>
+                Founded on a simple idea: clean power shouldn't be hard to get.
+              </h2>
+            </div>
+            <div>
+              <p style={{ fontSize: '16px', color: 'var(--ink-soft)', lineHeight: 1.75 }}>
+                Established in 2020 by Mr. Vivek Jain, Sor Connect began as a 2 MW solar maintenance operation in Rajasthan. Six years on, we manage over 150 MW across 13 states, backed by 130+ in-house engineers, designers and field technicians.
+              </p>
+              <p style={{ fontSize: '16px', color: 'var(--ink-soft)', lineHeight: 1.75, marginTop: '14px' }}>
+                We offer complete, end-to-end services — EPC, Operation &amp; Maintenance, PM-KUSUM Yojana consultation, installation &amp; commissioning, and solar plant design — under a single roof, for residential, commercial, industrial and agricultural clients alike.
+              </p>
+              <Link to="/about" className="btn btn-outline-dark mt-48">
+                Learn Our Full Story →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ 3. SERVICES PREVIEW ============ */}
+      <section className="section svc-section">
         <div className="container">
           <div className="section-head center">
-            <span className="eyebrow on-dark">Core Capabilities</span>
-            <h2 style={{ color: '#FFFFFF' }}>Comprehensive Solar Solutions</h2>
-            <p style={{ color: 'rgba(255,255,255,0.85)', maxWidth: '680px', margin: '0 auto' }}>
-              From engineering blueprint design to 25-year asset protection, Sor Connect provides full lifecycle solar energy engineering.
+            <span className="eyebrow on-dark">What We Do</span>
+            <h2 style={{ color: '#fff' }}>One partner, every stage of the plant's life.</h2>
+            <p style={{ color: 'rgba(255,255,255,0.85)' }}>
+              From the first feasibility study to twenty-five years of operation, Sor Connect's in-house teams handle design, procurement, construction and after-care.
             </p>
           </div>
 
-          <div className="card-grid cols-3 mt-48">
-            <div className="card card-dark">
-              <div className="icon-wrap">⚡</div>
-              <h3>Solar EPC Services</h3>
-              <p>Turnkey Engineering, Procurement &amp; Construction for industrial, commercial, and utility ground mounts.</p>
-              <Link to="/services#epc" className="card-link">Learn about EPC →</Link>
-            </div>
+          <div className="svc-grid">
+            {/* Card 1 */}
+            <Link to="/services#epc" className="svc-card">
+              <div className="svc-img">
+                <img src="/assets/svc-epc.jpg" alt="EPC Services" />
+                <div className="svc-img-label">Coming soon</div>
+              </div>
+              <div className="svc-body">
+                <h3>EPC Services</h3>
+                <p>Engineering, Procurement &amp; Construction — Tier-1 modules, complete civil &amp; electrical execution, on schedule.</p>
+              </div>
+              <div className="svc-foot">
+                <span className="svc-learn">
+                  Learn more 
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </span>
+              </div>
+            </Link>
 
-            <div className="card card-dark">
-              <div className="icon-wrap">🏠</div>
-              <h3>PM Surya Ghar Yojana</h3>
-              <p>Direct central government subsidies up to ₹78,000 for residential rooftop solar with net metering.</p>
-              <Link to="/services#surya-ghar" className="card-link">Check Subsidy →</Link>
-            </div>
+            {/* Card 2 */}
+            <Link to="/services#installation" className="svc-card">
+              <div className="svc-img">
+                <img src="/assets/svc-kusum.jpg" alt="Installation & Commissioning" />
+                <div className="svc-img-label">Coming soon</div>
+              </div>
+              <div className="svc-body">
+                <h3>Installation &amp; Commissioning</h3>
+                <p>Safety testing, grid synchronisation, and evacuation of power into the client's LT panel — done right, first time.</p>
+              </div>
+              <div className="svc-foot">
+                <span className="svc-learn">
+                  Learn more 
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </span>
+              </div>
+            </Link>
 
-            <div className="card card-dark">
-              <div className="icon-wrap">🌾</div>
-              <h3>PM-KUSUM Solar Pumps</h3>
-              <p>Agricultural solarization, grid-connected solar pumps, and decentralized solar power plants for farmers.</p>
-              <Link to="/services#kusum" className="card-link">PM-KUSUM Advisory →</Link>
-            </div>
+            {/* Card 3 */}
+            <Link to="/services#om" className="svc-card">
+              <div className="svc-img">
+                <img src="/assets/svc-om.jpg" alt="Operation & Maintenance" />
+                <div className="svc-img-label">Coming soon</div>
+              </div>
+              <div className="svc-body">
+                <h3>Operation &amp; Maintenance</h3>
+                <p>24/7 monitoring, preventive servicing, and 12 free engineer visits in year one to protect your output.</p>
+              </div>
+              <div className="svc-foot">
+                <span className="svc-learn">
+                  Learn more 
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </span>
+              </div>
+            </Link>
 
-            <div className="card card-dark">
-              <div className="icon-wrap">📐</div>
-              <h3>Solar Designing</h3>
-              <p>3D PVsyst energy simulation, string sizing, shadow calculation, and DISCOM-compliant SLD engineering.</p>
-              <Link to="/services#design" className="card-link">Design Services →</Link>
-            </div>
+            {/* Card 4 */}
+            <Link to="/services#design" className="svc-card">
+              <div className="svc-img">
+                <img src="/assets/svc-liaison.jpg" alt="Solar Designing" />
+                <div className="svc-img-label">Coming soon</div>
+              </div>
+              <div className="svc-body">
+                <h3>Solar Designing</h3>
+                <p>Yield analysis, electrical &amp; structural design, and full plant simulation before a single panel is ordered.</p>
+              </div>
+              <div className="svc-foot">
+                <span className="svc-learn">
+                  Learn more 
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </span>
+              </div>
+            </Link>
+          </div>
 
-            <div className="card card-dark">
-              <div className="icon-wrap">🔧</div>
-              <h3>Installation &amp; Commissioning</h3>
-              <p>Structural alignment, German cabling, inverter commissioning, CEIG approvals, and DISCOM meter sync.</p>
-              <Link to="/services#installation" className="card-link">Installation Details →</Link>
-            </div>
-
-            <div className="card card-dark">
-              <div className="icon-wrap">🛡️</div>
-              <h3>25-Yr Operation &amp; Maintenance</h3>
-              <p>Proactive AMC, thermographic drone audits, robotic panel cleaning, and IoT generation monitoring.</p>
-              <Link to="/services#om" className="card-link">O&amp;M Packages →</Link>
-            </div>
+          <div className="text-center" style={{ marginTop: '52px' }}>
+            <Link to="/services" className="btn btn-outline">View All Services</Link>
           </div>
         </div>
       </section>
 
-      {/* ============ 3. TWO-COLUMN INTERACTIVE CONTACT & SLIDESHOW SECTION ============ */}
-      <section className="section home-contact-interactive-section">
+      {/* ============ 4. PROCESS / YOUR PROJECT, OUR EXPERTISE ============ */}
+      <section className="section process-section">
         <div className="container">
-          <div className="section-head">
-            <span className="eyebrow">Direct Consultation</span>
-            <h2>Request a Free Site Assessment &amp; Feasibility Study</h2>
-            <p>Share your electricity bill bracket and details. Our engineers calculate your generation potential and payback period in 24 hours.</p>
-          </div>
+          <div className="process-grid">
 
-          <div className="home-interactive-2col">
-            {/* Left Column: Dark Contact Form */}
-            <div className="home-contact-card-dark">
-              <div className="home-form-header">
-                <span className="badge-pill">Zero Obligation</span>
-                <h3>Custom Solar Quotation</h3>
-                <p>Fill out the form below to receive customized DISCOM subsidy calculations &amp; system sizing.</p>
+            {/* Left Column: Heading & 5-Step Milestone Roadmap */}
+            <div className="process-left">
+              <span className="eyebrow on-dark" style={{ color: 'var(--leaf-bright)' }}>Execution Roadmap</span>
+              <h2 className="process-heading">Your Project,<br />Our Expertise</h2>
+              
+              <div className="process-nav">
+                {PROCESS_STEPS.map((step, idx) => (
+                  <button
+                    key={step.id}
+                    className={`process-nav-btn ${idx === activeStepIndex ? 'active' : ''}`}
+                    type="button"
+                    onClick={() => setActiveStepIndex(idx)}
+                  >
+                    <div className="step-num">{step.num}</div>
+                    <div className="step-meta">
+                      <span className="step-title">{step.title}</span>
+                      <span className="step-sub">{step.sub}</span>
+                    </div>
+                    <div className="btn-arrow">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M9 18l6-6-6-6"/>
+                      </svg>
+                    </div>
+                  </button>
+                ))}
               </div>
-              <ContactForm 
-                formId="home-inline-form"
-                buttonText="Get Free Solar Proposal"
-                subject="Home Page Lead - Sor Connect"
-              />
             </div>
 
-            {/* Right Column: Auto-sliding Award & Project Slideshow */}
-            <div className="home-slideshow-container">
+            {/* Right Column: Interactive Showcase Card */}
+            <div className="process-showcase-col">
+              <div className="process-showcase-card">
+                
+                <div className="process-card-topbar">
+                  <div className="stage-counter-badge">
+                    <span className="stage-badge-indicator"></span>
+                    <span>Phase {currentStep.num} of 05 • Key Deliverables</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    style={{ padding: '6px 16px', fontSize: '12.5px', borderRadius: '20px' }}
+                    onClick={() => onOpenQuoteModal(
+                      "Project Feasibility Consultation",
+                      "Speak with our solar engineers about your custom site requirements."
+                    )}
+                  >
+                    Talk to Engineer
+                  </button>
+                </div>
+
+                <div className="process-card-body">
+                  {/* Arched Image Preview */}
+                  <div className="process-image-wrapper">
+                    <div className="process-image-arch">
+                      <img 
+                        src={currentStep.img} 
+                        alt={currentStep.title} 
+                      />
+                    </div>
+                    {/* Rotating Seal Badge */}
+                    <div className="process-seal-badge">
+                      <svg viewBox="0 0 100 100" className="process-seal-spin">
+                        <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="transparent" />
+                        <text fontFamily="Montserrat" fontSize="5.6" fontWeight="700" letterSpacing="1.1" fill="#3E8F5C">
+                          <textPath href="#circlePath">SEAMLESS INTEGRATION • SOLAR INSTALLATIONS • SOLAR EXPERTS •</textPath>
+                        </text>
+                      </svg>
+                      <div className="process-seal-logo">
+                        <img src="/assets/logo.png" alt="Sor Connect Logo" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Detail Content */}
+                  <div className="process-details-col">
+                    <div className="process-tab-content active">
+                      <h3>{currentStep.heading}</h3>
+                      <p>{currentStep.desc}</p>
+                      
+                      <div className="process-checklist">
+                        {currentStep.points.map((pt, pIdx) => (
+                          <div key={pIdx} className="process-check-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                              <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                            <span>{pt}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="process-cta-action" style={{ marginTop: '24px' }}>
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-block"
+                          onClick={() => onOpenQuoteModal(
+                            `Inquire about ${currentStep.title}`,
+                            `Discuss phase ${currentStep.num} engineering requirements with our solar project team.`
+                          )}
+                        >
+                          Request a Free Plant Feasibility Study
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ============ 5. STRATEGIC PARTNERSHIPS & DARK ASSESSMENT FORM ============ */}
+      <section className="section showcase-section" id="interactive-showcase">
+        <div className="container">
+          <div className="showcase-2col-layout">
+
+            {/* COLUMN 1 (Mobile Row 1): Auto-Sliding Certificate & Achievement Slideshow */}
+            <div className="showcase-slider-col">
+              <div className="slideshow-header">
+                <span className="eyebrow">Strategic Partnerships &amp; Trust</span>
+                <h2>Certified Excellence in Renewable Energy</h2>
+                <p>
+                  Backed by leading global manufacturers and recognized across state and national forums for excellence in EPC delivery, quality compliance, and rapid solar expansion.
+                </p>
+              </div>
+
               <Slideshow />
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ============ 4. STRATEGIC PARTNERSHIPS SECTION ============ */}
-      <section className="section section-sage">
-        <div className="container">
-          <div className="section-head center">
-            <span className="eyebrow">Industry Trust &amp; Alliances</span>
-            <h2>Strategic Authorized Partnerships</h2>
-            <p>We work directly with world leaders in solar and inverter technology to ensure rock-solid equipment warranties and maximum generation.</p>
-          </div>
-
-          <div className="partners-redesign-grid">
-            <div className="partner-card">
-              <div className="partner-card-header">
-                <div className="partner-logo-box">
-                  <img src="/assets/reliance-logo.jpeg" alt="Tata Power Solar logo" />
+            {/* COLUMN 2 (Mobile Row 2): Dark Background Contact & Assessment Form */}
+            <div className="showcase-form-col">
+              <div className="home-dark-form-card">
+                <div className="form-card-header">
+                  <span className="eyebrow on-dark">Ready to Start?</span>
+                  <h3>Get a Free Solar Assessment &amp; Quote</h3>
+                  <p>
+                    Share your electricity details. Our engineers will verify your subsidy eligibility and deliver a custom zero-cost proposal within 24 hours.
+                  </p>
                 </div>
-                <span className="partner-tier-badge">Channel Partner</span>
-              </div>
-              <div className="pname">Tata Power Solar</div>
-              <p>Authorised partner for rooftop solar business, driving India's clean energy transition with world-class engineering standards.</p>
-              <ul className="partner-features">
-                <li><span>✓ Rooftop Solar Solutions</span></li>
-                <li><span>✓ Net-Zero Carbon Deployments</span></li>
-                <li><span>✓ Pan-India Residential &amp; C&amp;I</span></li>
-              </ul>
-            </div>
 
-            <div className="partner-card">
-              <div className="partner-card-header">
-                <div className="partner-logo-box">
-                  <img src="/assets/hitachi-logo.jpeg" alt="Hitachi logo" />
-                </div>
-                <span className="partner-tier-badge">Authorized Distributor</span>
-              </div>
-              <div className="pname">Hitachi Energy</div>
-              <p>Authorised sub-distributor of high-efficiency on-grid string and central inverters, ensuring superior uptime and warranty support.</p>
-              <ul className="partner-features">
-                <li><span>✓ High Yield On-Grid Inverters</span></li>
-                <li><span>✓ Direct Factory Regional Stock</span></li>
-                <li><span>✓ Rapid Technical Commissioning</span></li>
-              </ul>
-            </div>
-
-            <div className="partner-card">
-              <div className="partner-card-header">
-                <div className="partner-logo-box">
-                  <img src="/assets/sungrow-logo.png" alt="Sungrow logo" />
-                </div>
-                <span className="partner-tier-badge">Value Added Partner</span>
-              </div>
-              <div className="pname">Sungrow Power Supply</div>
-              <p>World-leading solar inverter and energy storage supplier, optimizing LCOE with smart monitoring and rugged field reliability.</p>
-              <ul className="partner-features">
-                <li><span>✓ Smart Commercial String Inverters</span></li>
-                <li><span>✓ Utility Central Inverter Systems</span></li>
-                <li><span>✓ Smart Cloud Monitoring</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ 5. OUR 5-STEP ENGINEERING PROCESS ============ */}
-      <section className="section">
-        <div className="container">
-          <div className="section-head center">
-            <span className="eyebrow">Standardized Execution</span>
-            <h2>Our 5-Step Turnkey Solar Process</h2>
-            <p>Every Sor Connect installation adheres strictly to MNRE guidelines, CEIG protocols, and IEEE electrical safety standards.</p>
-          </div>
-
-          <div className="process-interactive-wrapper mt-48">
-            <div className="process-nav-menu">
-              {PROCESS_STEPS.map((step, idx) => (
-                <button
-                  key={step.id}
-                  type="button"
-                  className={`process-nav-btn ${idx === activeProcessTab ? 'active' : ''}`}
-                  onClick={() => setActiveProcessTab(idx)}
-                >
-                  <span className="step-idx">{step.step}</span>
-                  <span className="step-txt">{step.name}</span>
-                </button>
-              ))}
-            </div>
-
-            <div className="process-display-card">
-              <div className="process-text-content">
-                <span className="process-eyebrow">STEP {PROCESS_STEPS[activeProcessTab].step}</span>
-                <h3>{PROCESS_STEPS[activeProcessTab].title}</h3>
-                <p>{PROCESS_STEPS[activeProcessTab].desc}</p>
-                <ul className="process-points-list">
-                  {PROCESS_STEPS[activeProcessTab].points.map((pt, pIdx) => (
-                    <li key={pIdx}>
-                      <span className="check-icon">✓</span>
-                      <span>{pt}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="process-visual-content">
-                <img 
-                  src={PROCESS_STEPS[activeProcessTab].img} 
-                  alt={PROCESS_STEPS[activeProcessTab].title} 
+                <ContactForm 
+                  formId="home-contact-form"
+                  buttonText="Submit Free Assessment Request"
                 />
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ============ 6. CTA BANNER ============ */}
-      <section className="section section-tight">
-        <div className="container">
-          <div className="cta-band">
-            <div>
-              <h3>Ready to bring your electricity bill down to ₹0?</h3>
-              <p>Speak directly with our senior solar engineers in Jaipur and Agra today.</p>
-            </div>
-            <div className="cta-band-actions">
-              <button 
-                type="button" 
-                className="btn btn-primary"
-                onClick={onOpenQuoteModal}
-              >
-                Request Free Site Assessment
-              </button>
-              <a href="tel:9116992229" className="btn btn-outline">
-                Call 91169 92229
-              </a>
-            </div>
           </div>
         </div>
       </section>
