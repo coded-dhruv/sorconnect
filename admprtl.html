@@ -994,6 +994,11 @@ body.admin-body {
         </div>
 
         <div class="admin-nav-right">
+          <button type="button" class="btn-admin-action" id="btn-sync-supabase" onclick="syncWithSupabase()" title="Pull latest projects &amp; categories from Supabase">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span>Sync Supabase</span>
+          </button>
+
           <div class="admin-user-chip">
             <div class="admin-user-avatar">AD</div>
             <span id="active-user-name">soconnectadmin</span>
@@ -1157,6 +1162,10 @@ body.admin-body {
           </div>
 
           <div class="control-bar-right">
+            <button type="button" class="btn-secondary-admin" onclick="syncWithSupabase()" title="Sync projects with Supabase">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span>Sync Supabase</span>
+            </button>
             <button type="button" class="btn-primary-admin" id="btn-add-new-project">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               <span>Add New Project</span>
@@ -1186,7 +1195,7 @@ body.admin-body {
           <div id="projects-empty" class="admin-empty-state" style="display: none;">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
             <h4>No projects found</h4>
-            <p>Click "Add New Project" above to create your first portfolio entry.</p>
+            <p>Click "Add New Project" above or "Sync Supabase" to load projects.</p>
           </div>
         </div>
       </section>
@@ -1203,6 +1212,10 @@ body.admin-body {
           </div>
 
           <div class="control-bar-right">
+            <button type="button" class="btn-secondary-admin" onclick="syncWithSupabase()" title="Sync categories with Supabase">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span>Sync Supabase</span>
+            </button>
             <button type="button" class="btn-primary-admin" id="btn-add-new-category">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               <span>Add New Category</span>
@@ -1540,12 +1553,103 @@ body.admin-body {
     // DATA FETCHING & RENDERING
     // ==========================================
 
+    const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+
     async function loadAllData() {
       await Promise.all([
         fetchSubmissions(),
         fetchCategories(),
         fetchProjects()
       ]);
+
+      // If projects or categories are empty, auto-sync from Supabase
+      if (state.projects.length === 0 || state.categories.length === 0) {
+        await directClientSupabaseSync(false);
+      }
+    }
+
+    // Sync with Supabase (Server + Client fallback)
+    window.syncWithSupabase = async function() {
+      const syncBtns = document.querySelectorAll('#btn-sync-supabase, button[onclick="syncWithSupabase()"]');
+      syncBtns.forEach(btn => {
+        btn.disabled = true;
+        btn.innerHTML = `<svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Syncing...</span>`;
+      });
+
+      try {
+        const res = await fetch('/api/sync/supabase', { method: 'POST' });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          await fetchCategories();
+          await fetchProjects();
+          showToast(`✓ Synced ${data.synced_projects || 0} projects & ${data.synced_categories || 0} categories from Supabase!`);
+        } else {
+          await directClientSupabaseSync(true);
+        }
+      } catch (err) {
+        await directClientSupabaseSync(true);
+      } finally {
+        syncBtns.forEach(btn => {
+          btn.disabled = false;
+          btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Sync Supabase</span>`;
+        });
+      }
+    };
+
+    async function directClientSupabaseSync(notify = true) {
+      try {
+        const [catRes, projRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}/rest/v1/categories?select=*&order=id.asc`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+          }),
+          fetch(`${SUPABASE_URL}/rest/v1/projects?select=*,categories(*)&order=id.asc`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+          })
+        ]);
+
+        if (catRes.ok && projRes.ok) {
+          const rawCats = await catRes.json();
+          const rawProjs = await projRes.json();
+
+          if (Array.isArray(rawCats) && rawCats.length > 0) {
+            state.categories = rawCats.map((c, idx) => ({
+              id: 'cat_' + c.id,
+              name: c.name || (c.slug === 'epc' ? 'EPC Projects' : 'I&C / O&M Projects'),
+              slug: c.slug || (c.id === 1 ? 'epc' : 'ic_om'),
+              eyebrow: (c.name || '').includes('Portfolio') ? c.name : (c.name || 'Portfolio'),
+              description: c.description || (c.slug === 'epc' 
+                ? 'A snapshot of Engineering, Procurement & Construction projects completed for industrial clients across multiple sectors.' 
+                : 'Industrial & Commercial installations and ongoing operation & maintenance accounts currently managed by our field teams.'),
+              table_id: (c.slug || 'category').replace(/_/g, '-') + '-projects-list',
+              order: idx + 1
+            }));
+            populateCategoryDropdowns();
+            renderCategories();
+          }
+
+          if (Array.isArray(rawProjs) && rawProjs.length > 0) {
+            state.projects = rawProjs.map(p => ({
+              id: 'proj_' + p.id,
+              client: p.client || '',
+              location: p.location || '',
+              capacity: p.capacity || '',
+              sector_or_type: p.sector_or_type || '',
+              category_slug: (p.categories && p.categories.slug) ? p.categories.slug : (p.category_id === 1 ? 'epc' : 'ic_om'),
+              created_at: p.created_at || new Date().toISOString()
+            }));
+            renderProjects();
+          }
+
+          if (notify) {
+            showToast(`✓ Synced ${state.projects.length} projects & ${state.categories.length} categories from Supabase!`);
+          }
+        }
+      } catch (err) {
+        if (notify) {
+          showToast('Failed to sync from Supabase: ' + err.message, true);
+        }
+      }
     }
 
     // 1. SUBMISSIONS LOGIC

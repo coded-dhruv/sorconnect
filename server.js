@@ -1,4 +1,5 @@
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
@@ -21,6 +22,9 @@ const mimeTypes = {
 const SUBMISSIONS_FILE = path.join(__dirname, 'submissions.json');
 const PROJECTS_FILE = path.join(__dirname, 'projects.json');
 const CATEGORIES_FILE = path.join(__dirname, 'categories.json');
+
+const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
 
 // Helper to safely read JSON files
 function readJsonFile(filePath, defaultVal = []) {
@@ -79,6 +83,96 @@ function parseBody(req) {
   });
 }
 
+// Helper to query Supabase REST API
+function fetchFromSupabase(endpoint) {
+  return new Promise((resolve, reject) => {
+    const fullUrl = `${SUPABASE_URL}${endpoint}`;
+    https.get(fullUrl, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            resolve(JSON.parse(data || '[]'));
+          } catch (e) {
+            resolve([]);
+          }
+        } else {
+          reject(new Error(`Supabase request failed: ${res.statusCode} ${data}`));
+        }
+      });
+    }).on('error', (err) => reject(err));
+  });
+}
+
+// Sync Projects and Categories from Supabase
+async function syncFromSupabase() {
+  try {
+    console.log('[SUPABASE SYNC] Fetching categories and projects from Supabase...');
+    const [rawCategories, rawProjects] = await Promise.all([
+      fetchFromSupabase('/rest/v1/categories?select=*&order=id.asc'),
+      fetchFromSupabase('/rest/v1/projects?select=*,categories(*)&order=id.asc')
+    ]);
+
+    if (Array.isArray(rawCategories) && rawCategories.length > 0) {
+      const formattedCategories = rawCategories.map((c, idx) => ({
+        id: 'cat_' + c.id,
+        name: c.name || (c.slug === 'epc' ? 'EPC Projects' : 'I&C / O&M Projects'),
+        slug: c.slug || (c.id === 1 ? 'epc' : 'ic_om'),
+        eyebrow: (c.name || '').includes('Portfolio') ? c.name : (c.name || 'Portfolio'),
+        description: c.description || (c.slug === 'epc' 
+          ? 'A snapshot of Engineering, Procurement & Construction projects completed for industrial clients across multiple sectors.' 
+          : 'Industrial & Commercial installations and ongoing operation & maintenance accounts currently managed by our field teams.'),
+        table_id: (c.slug || 'category').replace(/_/g, '-') + '-projects-list',
+        order: idx + 1
+      }));
+      writeJsonFile(CATEGORIES_FILE, formattedCategories);
+      console.log(`[SUPABASE SYNC] Successfully synced ${formattedCategories.length} categories.`);
+    }
+
+    if (Array.isArray(rawProjects) && rawProjects.length > 0) {
+      const formattedProjects = rawProjects.map(p => ({
+        id: 'proj_' + p.id,
+        client: p.client || '',
+        location: p.location || '',
+        capacity: p.capacity || '',
+        sector_or_type: p.sector_or_type || '',
+        category_slug: (p.categories && p.categories.slug) ? p.categories.slug : (p.category_id === 1 ? 'epc' : 'ic_om'),
+        created_at: p.created_at || new Date().toISOString()
+      }));
+      writeJsonFile(PROJECTS_FILE, formattedProjects);
+      console.log(`[SUPABASE SYNC] Successfully synced ${formattedProjects.length} projects.`);
+    }
+
+    return {
+      success: true,
+      synced_categories: rawCategories.length,
+      synced_projects: rawProjects.length,
+      timestamp: new Date().toISOString()
+    };
+  } catch (err) {
+    console.error('[SUPABASE SYNC ERROR]', err.message);
+    return {
+      success: false,
+      message: err.message
+    };
+  }
+}
+
+// Initial Sync check on startup
+(async () => {
+  const existingProjects = readJsonFile(PROJECTS_FILE, []);
+  const existingCategories = readJsonFile(CATEGORIES_FILE, []);
+  if (existingProjects.length === 0 || existingCategories.length === 0) {
+    await syncFromSupabase();
+  }
+})();
+
 const server = http.createServer(async (req, res) => {
   // CORS Preflight
   if (req.method === 'OPTIONS') {
@@ -98,7 +192,14 @@ const server = http.createServer(async (req, res) => {
   // API ENDPOINTS
   // ==========================================
 
-  // 1. Contact submission endpoint (No mail relay - stored directly to database)
+  // 1. Supabase Sync Endpoint
+  if (urlPath === '/api/sync/supabase' || urlPath === '/api/sync') {
+    const result = await syncFromSupabase();
+    sendJson(res, result.success ? 200 : 500, result);
+    return;
+  }
+
+  // 2. Contact submission endpoint (Saved to database, no email relay)
   if (req.method === 'POST' && urlPath === '/api/contact') {
     const payload = await parseBody(req);
     const submission = {
@@ -123,7 +224,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 2. Admin Login endpoint
+  // 3. Admin Login endpoint
   if (req.method === 'POST' && urlPath === '/api/admin/login') {
     const payload = await parseBody(req);
     const id = (payload.id || payload.username || '').trim();
@@ -146,7 +247,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 3. Submissions APIs
+  // 4. Submissions APIs
   if (urlPath === '/api/submissions') {
     if (req.method === 'GET') {
       const submissions = readJsonFile(SUBMISSIONS_FILE, []);
@@ -183,7 +284,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 4. Projects APIs
+  // 5. Projects APIs
   if (urlPath === '/api/projects') {
     if (req.method === 'GET') {
       const projects = readJsonFile(PROJECTS_FILE, []);
@@ -246,7 +347,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 5. Categories APIs
+  // 6. Categories APIs
   if (urlPath === '/api/categories') {
     if (req.method === 'GET') {
       const categories = readJsonFile(CATEGORIES_FILE, []);
@@ -305,7 +406,6 @@ const server = http.createServer(async (req, res) => {
       };
       writeJsonFile(CATEGORIES_FILE, categories);
 
-      // If slug changed, update all associated projects
       if (oldSlug !== newSlug) {
         const projects = readJsonFile(PROJECTS_FILE, []);
         let updated = false;
@@ -334,7 +434,6 @@ const server = http.createServer(async (req, res) => {
       categories = categories.filter(c => c.id !== catToDelete.id);
       writeJsonFile(CATEGORIES_FILE, categories);
 
-      // Optionally cleanup projects or reassign them
       let projects = readJsonFile(PROJECTS_FILE, []);
       if (payload.delete_projects) {
         projects = projects.filter(p => p.category_slug !== catToDelete.slug);
@@ -411,7 +510,6 @@ const server = http.createServer(async (req, res) => {
     fs.readFile(filePath, (error, content) => {
       if (error) {
         if (error.code === 'ENOENT') {
-          // Clean URL fallback: try appending .html (e.g. /about -> about.html)
           if (!path.extname(filePath)) {
             const fallbackPath = filePath + '.html';
             fs.readFile(fallbackPath, (fallbackError, fallbackContent) => {
