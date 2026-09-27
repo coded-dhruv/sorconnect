@@ -16,7 +16,9 @@ const mimeTypes = {
   '.svg': 'image/svg+xml',
   '.mp4': 'video/mp4',
   '.ico': 'image/x-icon',
-  '.webmanifest': 'application/manifest+json'
+  '.webmanifest': 'application/manifest+json',
+  '.xml': 'application/xml; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8'
 };
 
 const SUBMISSIONS_FILE = path.join(__dirname, 'submissions.json');

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admprtl
+Disallow: /admprtl.html
+Disallow: /api/
+
+Sitemap: https://sorconnect.com/sitemap.xml
