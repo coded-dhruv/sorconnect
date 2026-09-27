@@ -3,21 +3,25 @@
 document.addEventListener('DOMContentLoaded', function () {
 
   // ===================== CLEAN URL & ROUTE MANAGEMENT =====================
-  // Beautify browser address bar so /index.html displays as /home, and strip .html extensions
+  // Beautify browser address bar so /index.html displays as /home, and clean .html extensions
   if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
     try {
-      var currentPath = window.location.pathname;
-      var searchStr = window.location.search || '';
-      var hashStr = window.location.hash || '';
+      if (window.location.protocol.indexOf('http') === 0) {
+        var currentPath = window.location.pathname;
+        var searchStr = window.location.search || '';
+        var hashStr = window.location.hash || '';
+        var dir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+        var file = currentPath.substring(currentPath.lastIndexOf('/') + 1);
 
-      if (currentPath.endsWith('/index.html') || currentPath === '/' || currentPath.endsWith('/index')) {
-        window.history.replaceState(null, document.title, '/home' + searchStr + hashStr);
-      } else if (currentPath.endsWith('.html')) {
-        var cleanPath = currentPath.replace(/\.html$/, '');
-        window.history.replaceState(null, document.title, cleanPath + searchStr + hashStr);
+        if (file === '' || file === 'index.html' || file === 'index') {
+          window.history.replaceState(null, document.title, dir + 'home' + searchStr + hashStr);
+        } else if (file.endsWith('.html')) {
+          var cleanFile = file.replace(/\.html$/, '');
+          window.history.replaceState(null, document.title, dir + cleanFile + searchStr + hashStr);
+        }
       }
     } catch (e) {
-      // Ignore if local restricted file protocol
+      // Ignore if restricted
     }
   }
 
