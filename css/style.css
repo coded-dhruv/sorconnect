@@ -88,65 +88,6 @@ select:focus-visible {
   }
 }
 
-/* ===================== TOP BAR ===================== */
-.topbar {
-  /* Scrolls with the page — flies off screen on scroll */
-  background: var(--forest-deep);
-  color: #BFD4C7;
-  font-family: var(--body);
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.01em;
-}
-.topbar .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 9px;
-  padding-bottom: 9px;
-  gap: 24px;
-}
-.topbar-left { display: flex; gap: 0; flex-wrap: wrap; }
-.topbar-left span {
-  white-space: nowrap;
-  padding-right: 20px;
-  margin-right: 20px;
-  border-right: 1px solid rgba(255,255,255,0.15);
-}
-.topbar-left span:last-child { border-right: none; }
-.topbar-left b { color: var(--leaf-bright); font-weight: 700; }
-.topbar-right { display: flex; gap: 0; white-space: nowrap; }
-.topbar-right a {
-  padding-left: 18px;
-  margin-left: 18px;
-  border-left: 1px solid rgba(255,255,255,0.15);
-  transition: color var(--dur) var(--ease);
-}
-.topbar-right a:first-child { border-left: none; }
-.topbar-right a:hover { color: var(--leaf-bright); }
-
-@media (max-width: 760px) {
-  .topbar {
-    font-size: 11.5px;
-  }
-  .topbar .container {
-    padding-top: 6px;
-    padding-bottom: 6px;
-    justify-content: center;
-    gap: 0;
-  }
-  .topbar-left {
-    justify-content: center;
-    gap: 0;
-    flex-wrap: nowrap;
-  }
-  .topbar-left span {
-    padding-right: 10px;
-    margin-right: 10px;
-  }
-  .topbar-right { display: none; }
-}
-
 /* ===================== HEADER — Solid White Capsule to Full-Width Sticky ===================== */
 header.site-header {
   position: fixed;
@@ -170,11 +111,6 @@ header.site-header {
     box-shadow 0.35s ease,
     background 0.35s ease;
   will-change: top, max-width, width, border-radius;
-}
-
-/* If a page includes the topbar before header, offset slightly */
-.topbar + header.site-header {
-  top: 48px;
 }
 
 /* Once scrolled away from hero: navbar expands to full width and sticks to top */
