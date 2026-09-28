@@ -39,17 +39,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // ===================== HEADER SCROLL STATE =====================
+  // ===================== HEADER SCROLL STATE (HERO EXPANSION & STICKY) =====================
   var header = document.querySelector('.site-header');
+  var hero = document.querySelector('.hero, .page-hero, .hero-inner-single');
   if (header) {
     var onScroll = function () {
-      if (window.scrollY > 40) {
+      var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+      var triggerThreshold = 80;
+      if (hero) {
+        var heroHeight = hero.offsetHeight || 300;
+        triggerThreshold = Math.min(Math.max(heroHeight * 0.35, 70), 200);
+      }
+      if (scrollY > triggerThreshold) {
         header.classList.add('scrolled');
       } else {
         header.classList.remove('scrolled');
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
     onScroll();
   }
 

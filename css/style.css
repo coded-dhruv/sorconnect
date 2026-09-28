@@ -147,7 +147,7 @@ select:focus-visible {
   .topbar-right { display: none; }
 }
 
-/* ===================== HEADER — Solid White Capsule ===================== */
+/* ===================== HEADER — Solid White Capsule to Full-Width Sticky ===================== */
 header.site-header {
   position: fixed;
   top: 20px;       /* clean top margin from top of screen */
@@ -155,32 +155,54 @@ header.site-header {
   right: 0;
   margin: 0 auto;
   max-width: var(--container);
-  width: calc(100% - 24px);
+  width: calc(100% - 32px);
   z-index: 1000;
   background: #ffffff;
   border: 1px solid var(--sage-line);
   border-radius: 14px;
   box-shadow: 0 4px 20px rgba(14, 44, 34, 0.08), 0 1px 3px rgba(14, 44, 34, 0.05);
   transition:
-    top 0.35s var(--ease),
-    box-shadow 0.35s var(--ease),
-    background 0.35s var(--ease);
+    top 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    background 0.35s ease;
+  will-change: top, max-width, width, border-radius;
 }
 
 /* If a page includes the topbar before header, offset slightly */
 .topbar + header.site-header {
-  top: 44px;
+  top: 48px;
 }
 
-/* Once scrolled, navbar glides smoothly into compact top position */
+/* Once scrolled away from hero: navbar expands to full width and sticks to top */
 header.site-header.scrolled,
 .topbar + header.site-header.scrolled {
-  top: 12px;
-  background: rgba(255, 255, 255, 0.98);
+  top: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: 1px solid rgba(14, 44, 34, 0.09) !important;
+  background: rgba(255, 255, 255, 0.97) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-color: var(--sage-line);
-  box-shadow: 0 6px 28px rgba(14, 44, 34, 0.12), 0 1px 4px rgba(14, 44, 34, 0.07);
+  box-shadow: 0 4px 24px rgba(14, 44, 34, 0.08), 0 1px 4px rgba(14, 44, 34, 0.04) !important;
+}
+
+@media (max-width: 760px) {
+  header.site-header {
+    top: 12px;
+    width: calc(100% - 20px);
+    border-radius: 12px;
+  }
+  .topbar + header.site-header {
+    top: 40px;
+  }
 }
 
 body { padding-top: 0; }
