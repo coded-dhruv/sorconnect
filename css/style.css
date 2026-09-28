@@ -1150,42 +1150,63 @@ nav.main-nav a.active::after {
   .stat-block { padding: 36px 20px; }
 }
 
-/* ===================== TABLE ===================== */
+/* ===================== TABLE (Aesthetic Enterprise Data Table) ===================== */
 .table-wrap {
   border: 1px solid var(--sage-line);
-  border-radius: var(--radius);
+  border-radius: 12px;
   overflow: hidden;
   background: var(--white);
+  box-shadow: 0 4px 18px rgba(14, 44, 34, 0.04);
+}
+.table-scroll {
+  overflow-x: auto;
 }
 table.data-table {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--body);
-  font-size: 14.5px;
+  font-size: 14px;
 }
 table.data-table th {
-  background: var(--forest-deep);
-  color: var(--white);
+  background: #F0F5F2;
+  color: var(--forest-deep);
   text-align: left;
-  padding: 15px 20px;
+  padding: 14px 20px;
   font-family: var(--heading);
   font-weight: 700;
-  font-size: 12.5px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  border-bottom: 2px solid var(--sage-line);
+  white-space: nowrap;
 }
 table.data-table td {
-  padding: 13px 20px;
-  border-bottom: 1px solid var(--sage-line);
+  padding: 16px 20px;
+  border-bottom: 1px solid #EEF3EF;
   color: var(--ink);
+  vertical-align: middle;
+  transition: background 0.2s var(--ease);
 }
 table.data-table tr:last-child td { border-bottom: none; }
-table.data-table tr:nth-child(even) td { background: var(--canvas-dim); }
+table.data-table tbody tr:hover td {
+  background: #F8FAF8;
+}
 table.data-table td.cap-col {
   font-family: var(--heading);
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--forest);
+  font-weight: 800;
+  font-size: 14.5px;
+  color: var(--leaf);
+  white-space: nowrap;
+}
+.tag-pill {
+  display: inline-block;
+  background: rgba(62, 143, 92, 0.08);
+  color: var(--forest-deep);
+  border: 1px solid rgba(62, 143, 92, 0.2);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
   white-space: nowrap;
 }
 .table-scroll { overflow-x: auto; }
