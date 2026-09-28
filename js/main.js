@@ -78,39 +78,62 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
 
-    // 2. Count-up statistics ticker bar
-    const readoutItems = document.querySelectorAll('.readout-item');
-    if (readoutItems.length > 0) {
-      readoutItems.forEach(item => {
-        const valEl = item.querySelector('.val');
-        if (valEl) {
-          const rawText = valEl.textContent;
-          const numValue = parseInt(rawText.replace(/[^0-9]/g, ''), 10);
-          const suffix = rawText.replace(/[0-9]/g, '');
+    // 2. Count-up statistics ticker & Why Sor Connect numbers rolling animation
+    const statNumElements = document.querySelectorAll('.stat-block .num, .readout-item .val, .stat-num');
+    if (statNumElements.length > 0) {
+      statNumElements.forEach(numEl => {
+        const spanEl = numEl.querySelector('span');
+        const spanHTML = spanEl ? spanEl.outerHTML : '';
+        const rawText = numEl.textContent || '';
 
-          if (!isNaN(numValue)) {
-            const countData = { value: 0 };
-            gsap.to(countData, {
-              value: numValue,
-              duration: 1.8,
-              ease: 'power2.out',
+        const match = rawText.match(/(\d+)/);
+        if (match) {
+          const targetValue = parseInt(match[1], 10);
+          const hasK = rawText.toLowerCase().includes('k');
+          const suffixHTML = hasK && !spanHTML.includes('k') 
+            ? `k${spanHTML || (rawText.includes('+') ? '<span>+</span>' : '')}`
+            : (spanHTML || (rawText.replace(/[\d]/g, '').trim() ? `<span>${rawText.replace(/[\d]/g, '').trim()}</span>` : ''));
+
+          const countObj = { val: 0 };
+          const statParent = numEl.closest('.stat-block') || numEl;
+
+          // Initial roll-up sliding entrance
+          gsap.fromTo(numEl, 
+            { y: 28, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.7,
+              ease: 'power3.out',
               scrollTrigger: {
-                trigger: item,
-                start: 'top 92%',
+                trigger: statParent,
+                start: 'top 88%',
                 toggleActions: 'play none none none'
-              },
-              onUpdate: () => {
-                valEl.innerHTML = Math.floor(countData.value) + `<span style="font-size:15px;">${suffix}</span>`;
               }
-            });
-          }
+            }
+          );
+
+          // Rolling number counter
+          gsap.to(countObj, {
+            val: targetValue,
+            duration: 2.0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: statParent,
+              start: 'top 88%',
+              toggleActions: 'play none none none'
+            },
+            onUpdate: function () {
+              numEl.innerHTML = Math.floor(countObj.val) + suffixHTML;
+            }
+          });
         }
       });
     }
 
     // 3. Staggered reveals for cards and grids
-    gsap.utils.toArray('.card-grid, .stats-strip, .partner-strip, .offices-grid, .process-nav').forEach(container => {
-      const items = container.querySelectorAll('.card, .stat-block, .partner-card, .office-col-card, .process-nav-btn');
+    gsap.utils.toArray('.card-grid, .partner-strip, .offices-grid, .process-nav').forEach(container => {
+      const items = container.querySelectorAll('.card, .partner-card, .office-col-card, .process-nav-btn');
       if (items.length > 0) {
         gsap.from(items, {
           scrollTrigger: {
