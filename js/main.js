@@ -526,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function () {
   attachModalTriggers();
 
   // ===================== FORM VALIDATION & SUBMISSION HANDLER =====================
-  const TARGET_EMAIL = 'dhruvj12321@gmail.com';
+  const TARGET_EMAIL = 'sorconnect@gmail.com';
   const WEB3FORMS_ACCESS_KEY = typeof window !== 'undefined' && window.WEB3FORMS_ACCESS_KEY ? window.WEB3FORMS_ACCESS_KEY : "YOUR_ACCESS_KEY_HERE";
 
   function validateRevampedForm(formEl) {
