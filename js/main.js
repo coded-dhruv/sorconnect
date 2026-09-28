@@ -39,27 +39,82 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // ===================== HEADER SCROLL STATE (HERO EXPANSION & STICKY) =====================
+  // ===================== SIDE BISCUIT & NAVBAR SCROLL BEHAVIOR =====================
+  // Inject floating Side Biscuit for "Contact Us" if not already in DOM
+  if (!document.getElementById('sideBiscuitContact')) {
+    var biscuit = document.createElement('a');
+    biscuit.href = 'javascript:void(0)';
+    biscuit.className = 'side-biscuit-contact';
+    biscuit.id = 'sideBiscuitContact';
+    biscuit.setAttribute('data-open-modal', 'quote');
+    biscuit.setAttribute('data-modal-title', 'Contact Sor Connect');
+    biscuit.setAttribute('data-modal-desc', 'Share your solar inquiry or site details. Our engineering team will get in touch with you within 24 hours.');
+    biscuit.setAttribute('aria-label', 'Contact Us');
+    biscuit.innerHTML = `
+      <div class="biscuit-pulse-indicator">
+        <span class="biscuit-pulse-ring"></span>
+        <span class="biscuit-pulse-dot"></span>
+      </div>
+      <div class="biscuit-icon">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </div>
+      <span class="biscuit-label">Contact Us</span>
+      <div class="biscuit-arrow">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </div>
+    `;
+    document.body.appendChild(biscuit);
+  }
+
+  // Header Scroll & Hero Threshold Tracker
   var header = document.querySelector('.site-header');
-  var hero = document.querySelector('.hero, .page-hero, .hero-inner-single');
-  if (header) {
-    var onScroll = function () {
-      var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
-      var triggerThreshold = 80;
-      if (hero) {
-        var heroHeight = hero.offsetHeight || 300;
-        triggerThreshold = Math.min(Math.max(heroHeight * 0.35, 70), 200);
-      }
-      if (scrollY > triggerThreshold) {
+  var sideBiscuit = document.getElementById('sideBiscuitContact');
+
+  var onScroll = function () {
+    var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    
+    // 1. Compact header blur state
+    if (header) {
+      if (scrollY > 50) {
         header.classList.add('scrolled');
       } else {
         header.classList.remove('scrolled');
       }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    onScroll();
-  }
+    }
+
+    // 2. Detect if user scrolled past the hero section
+    var heroEl = document.querySelector('.hero, .page-hero, .hero-inner-single, .hero-section');
+    var isPastHero = false;
+
+    if (heroEl) {
+      var heroHeight = heroEl.offsetHeight || 350;
+      var heroTop = heroEl.offsetTop || 0;
+      var heroBottom = heroTop + heroHeight;
+      // Trigger threshold: when user has scrolled past the majority of hero
+      var triggerThreshold = Math.max(heroBottom - 110, 160);
+      isPastHero = scrollY > triggerThreshold;
+    } else {
+      isPastHero = scrollY > 220;
+    }
+
+    // Animate navbar CTA out & side biscuit in
+    if (header) {
+      header.classList.toggle('scrolled-past-hero', isPastHero);
+    }
+    document.body.classList.toggle('scrolled-past-hero', isPastHero);
+    if (sideBiscuit) {
+      sideBiscuit.classList.toggle('show', isPastHero);
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  // Initial check
+  onScroll();
 
   // ===================== GSAP & SCROLL ANIMATIONS =====================
   if (typeof gsap !== 'undefined') {

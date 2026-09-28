@@ -319,7 +319,7 @@ nav.main-nav a.active::after {
   }
 }
 
-/* CTA button — solid green filled button with shine */
+/* CTA button — solid green filled button with shine & scroll transition */
 .nav-cta {
   display: inline-flex;
   align-items: center;
@@ -335,10 +335,19 @@ nav.main-nav a.active::after {
   background-size: 200% auto;
   background-position: left center;
   box-shadow: 0 4px 14px rgba(22, 78, 59, 0.2);
+  white-space: nowrap;
+  max-width: 220px;
+  opacity: 1;
+  transform: scale(1) translateX(0);
+  overflow: hidden;
   transition: 
+    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    margin 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     background var(--dur) var(--ease), 
     background-position 0.4s var(--ease),
-    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
     box-shadow 0.3s var(--ease);
 }
 .nav-cta:hover {
@@ -347,6 +356,163 @@ nav.main-nav a.active::after {
   box-shadow: 0 10px 22px rgba(62, 143, 92, 0.35);
 }
 .nav-cta::after { display: none !important; }
+
+/* Navbar CTA smooth collapse & fade when scrolled past hero */
+.site-header.scrolled-past-hero .nav-cta,
+body.scrolled-past-hero .site-header .nav-cta {
+  opacity: 0;
+  max-width: 0;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  transform: scale(0.8) translateX(14px);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* ==========================================================================
+   SIDE BISCUIT: FLOATING CONTACT US TAB
+   ========================================================================== */
+.side-biscuit-contact {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) translate3d(120%, 0, 0);
+  z-index: 998;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: linear-gradient(135deg, #0E2C22 0%, #173F31 60%, #1E4E3D 100%);
+  color: #FFFFFF !important;
+  padding: 12px 18px 12px 15px;
+  border-radius: 40px 0 0 40px;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-right: none;
+  box-shadow: -6px 12px 32px rgba(14, 44, 34, 0.28), 0 0 16px rgba(52, 211, 153, 0.12);
+  cursor: pointer;
+  text-decoration: none !important;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+  transition: 
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.side-biscuit-contact.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) translate3d(0, 0, 0);
+}
+
+.side-biscuit-contact:hover {
+  background: linear-gradient(135deg, #133D30 0%, #1F5542 60%, #286C54 100%);
+  transform: translateY(-50%) translate3d(-6px, 0, 0);
+  border-color: rgba(52, 211, 153, 0.55);
+  box-shadow: -8px 16px 40px rgba(14, 44, 34, 0.4), 0 0 24px rgba(52, 211, 153, 0.25);
+}
+
+.side-biscuit-contact:active {
+  transform: translateY(-50%) translate3d(-3px, 0, 0) scale(0.98);
+}
+
+/* Green Live Pulse Indicator */
+.biscuit-pulse-indicator {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.biscuit-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34D399;
+  box-shadow: 0 0 8px #34D399;
+  position: relative;
+  z-index: 2;
+}
+
+.biscuit-pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(52, 211, 153, 0.6);
+  animation: biscuitPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  z-index: 1;
+}
+
+@keyframes biscuitPing {
+  0% { transform: scale(1); opacity: 0.8; }
+  75%, 100% { transform: scale(3); opacity: 0; }
+}
+
+/* Biscuit Icon */
+.biscuit-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #34D399;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.side-biscuit-contact:hover .biscuit-icon {
+  transform: scale(1.1);
+}
+
+/* Biscuit Label */
+.biscuit-label {
+  font-family: var(--heading);
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+  color: #FFFFFF;
+  white-space: nowrap;
+}
+
+/* Biscuit Arrow */
+.biscuit-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  transition: transform 0.3s ease, color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.side-biscuit-contact:hover .biscuit-arrow {
+  color: #34D399;
+  transform: translateX(3px);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .side-biscuit-contact {
+    top: auto;
+    bottom: 24px;
+    right: 16px;
+    border-radius: 30px;
+    border-right: 1px solid rgba(52, 211, 153, 0.3);
+    padding: 10px 16px 10px 14px;
+    transform: translateY(120%) translate3d(0, 0, 0);
+  }
+  .side-biscuit-contact.show {
+    transform: translateY(0) translate3d(0, 0, 0);
+  }
+  .side-biscuit-contact:hover {
+    transform: translateY(-2px) translate3d(0, 0, 0);
+  }
+}
 
 /* Mobile toggle */
 .nav-toggle {
