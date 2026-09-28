@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ===================== SIDE BISCUIT & NAVBAR SCROLL BEHAVIOR =====================
-  // Inject floating Side Biscuit for "Contact Us" if not already in DOM
+  // Inject floating Vertical Side Biscuit for "Contact Us" if not already in DOM
   if (!document.getElementById('sideBiscuitContact')) {
     var biscuit = document.createElement('a');
     biscuit.href = 'javascript:void(0)';
@@ -60,9 +60,9 @@ document.addEventListener('DOMContentLoaded', function () {
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
       </div>
-      <span class="biscuit-label">Contact Us</span>
+      <span class="biscuit-label-vertical">Contact Us</span>
       <div class="biscuit-arrow">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 12h14M12 5l7 7-7 7"></path>
         </svg>
       </div>
