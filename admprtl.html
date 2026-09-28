@@ -19,7 +19,7 @@
   --admin-primary: #173F31;
   --admin-accent: #2D6A4F;
   --admin-leaf: #3D8B6E;
-  --admin-gold: #F4A261;
+  --admin-gold: #D97706;
   --admin-red: #D90429;
   --admin-text: #1C2421;
   --admin-muted: #5E6963;
@@ -197,6 +197,12 @@ body.admin-body {
   box-shadow: 0 6px 16px rgba(23, 63, 49, 0.25);
 }
 
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .login-error {
   background: #FFEBEB;
   border: 1px solid #FFC2C2;
@@ -240,7 +246,7 @@ body.admin-body {
 .admin-nav-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .admin-brand {
@@ -274,10 +280,41 @@ body.admin-body {
   letter-spacing: 0.05em;
 }
 
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #E8F5EE;
+  color: #1F7A4D;
+  border: 1px solid #D1EADE;
+}
+
+.admin-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22C55E;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.admin-status-pill.syncing .admin-status-dot {
+  background: #F59E0B;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.2); }
+}
+
 .admin-nav-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .admin-user-chip {
@@ -324,6 +361,11 @@ body.admin-body {
 .btn-admin-action:hover {
   background: #F5F7F6;
   border-color: #CAD5CF;
+}
+
+.btn-admin-action:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .btn-logout {
@@ -390,6 +432,7 @@ body.admin-body {
   border-radius: 12px;
   font-size: 11.5px;
   font-weight: 700;
+  transition: all 0.2s;
 }
 
 .admin-tab-btn.active .tab-badge {
@@ -496,6 +539,7 @@ body.admin-body {
   font-size: 13.5px;
   outline: none;
   font-family: inherit;
+  transition: border-color 0.2s;
 }
 
 .search-input-box input:focus {
@@ -520,6 +564,11 @@ body.admin-body {
   background: #FAFCFB;
   outline: none;
   font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.admin-filter-select:focus {
+  border-color: var(--admin-leaf);
 }
 
 .control-bar-right {
@@ -548,6 +597,12 @@ body.admin-body {
   box-shadow: 0 4px 12px rgba(23, 63, 49, 0.2);
 }
 
+.btn-primary-admin:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .btn-secondary-admin {
   padding: 9.5px 14px;
   background: #FFFFFF;
@@ -568,6 +623,11 @@ body.admin-body {
   border-color: #CAD5CF;
 }
 
+.btn-secondary-admin:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Data Tables */
 .admin-table-card {
   background: #FFFFFF;
@@ -575,6 +635,7 @@ body.admin-body {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   overflow: hidden;
+  position: relative;
 }
 
 .admin-table-responsive {
@@ -604,10 +665,21 @@ body.admin-body {
   border-bottom: 1px solid #EEF2F0;
   vertical-align: middle;
   color: var(--admin-text);
+  transition: background-color 0.3s ease;
 }
 
-.admin-table tbody tr:hover {
+.admin-table tbody tr:hover td {
   background: #FAFCFB;
+}
+
+.highlight-row td {
+  animation: highlightGlow 2.5s ease-out forwards;
+}
+
+@keyframes highlightGlow {
+  0% { background-color: #D1FAE5; }
+  60% { background-color: #ECFDF5; }
+  100% { background-color: transparent; }
 }
 
 /* Badges */
@@ -708,10 +780,10 @@ body.admin-body {
   border-color: #FFC2C2;
 }
 
-/* Empty State */
-.admin-empty-state {
+/* Empty State & Error State in Card */
+.admin-empty-state, .admin-error-state {
   text-align: center;
-  padding: 60px 20px;
+  padding: 56px 20px;
   color: var(--admin-muted);
 }
 
@@ -720,15 +792,47 @@ body.admin-body {
   color: #A4B2AA;
 }
 
-.admin-empty-state h4 {
+.admin-error-state svg {
+  margin-bottom: 12px;
+  color: var(--admin-red);
+}
+
+.admin-empty-state h4, .admin-error-state h4 {
   font-size: 17px;
   color: var(--admin-primary);
   margin: 0 0 6px 0;
 }
 
-.admin-empty-state p {
+.admin-empty-state p, .admin-error-state p {
   font-size: 13.5px;
-  margin: 0;
+  margin: 0 0 16px 0;
+}
+
+/* Skeleton Loading Animation */
+.table-skeleton-row td {
+  padding: 18px 16px;
+}
+
+.skeleton-bar {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #EDF2EF 25%, #F7FAF8 50%, #EDF2EF 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.spin-icon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* ==================== MODALS ==================== */
@@ -738,7 +842,7 @@ body.admin-body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(13, 38, 30, 0.6);
+  background: rgba(13, 38, 30, 0.65);
   backdrop-filter: blur(4px);
   z-index: 1000;
   display: none;
@@ -811,6 +915,26 @@ body.admin-body {
   border-radius: 0 0 14px 14px;
 }
 
+/* Modal Error Banner */
+.modal-error-alert {
+  background: #FDF2F2;
+  border: 1.5px solid #F87171;
+  color: #B91C1C;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.4;
+}
+
+.modal-error-alert svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 /* Details Grid in Modal */
 .detail-key-value-list {
   display: flex;
@@ -869,12 +993,20 @@ body.admin-body {
   font-size: 14px;
   font-family: inherit;
   outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .modal-form-group input:focus,
 .modal-form-group select:focus,
 .modal-form-group textarea:focus {
   border-color: var(--admin-leaf);
+  box-shadow: 0 0 0 3px rgba(61, 139, 110, 0.12);
+}
+
+.modal-form-hint {
+  font-size: 12px;
+  color: var(--admin-muted);
+  margin-top: 5px;
 }
 
 /* Toast Notifications */
@@ -886,24 +1018,38 @@ body.admin-body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  pointer-events: none;
 }
 
 .admin-toast {
+  pointer-events: auto;
   background: #173F31;
   color: #FFFFFF;
-  padding: 12px 20px;
+  padding: 13px 20px;
   border-radius: 8px;
   font-size: 13.5px;
   font-weight: 500;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
   display: flex;
   align-items: center;
   gap: 10px;
+  max-width: 420px;
   animation: slideInUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.admin-toast.success {
+  background: #155E38;
+  border-left: 4px solid #34D399;
+}
+
 .admin-toast.error {
-  background: var(--admin-red);
+  background: #991B1B;
+  border-left: 4px solid #F87171;
+}
+
+.admin-toast.info {
+  background: #1E293B;
+  border-left: 4px solid #38BDF8;
 }
 
 @keyframes slideInUp {
@@ -954,7 +1100,7 @@ body.admin-body {
       </div>
 
       <form id="admin-login-form" class="login-form">
-          <div class="form-group">
+        <div class="form-group">
           <label for="admin-id-input">Admin ID</label>
           <div class="login-input-wrap">
             <input type="text" id="admin-id-input" required autocomplete="username" placeholder="sorconnect">
@@ -991,6 +1137,10 @@ body.admin-body {
             <span class="brand-title">Sor Connect</span>
           </a>
           <span class="admin-portal-tag">Admin Portal</span>
+          <div class="admin-status-pill" id="live-db-status" title="Database Connection Status">
+            <span class="admin-status-dot"></span>
+            <span id="db-status-text">Supabase Live</span>
+          </div>
         </div>
 
         <div class="admin-nav-right">
@@ -1068,7 +1218,7 @@ body.admin-body {
 
           <div class="metric-card">
             <div class="metric-info">
-              <div class="metric-label">High-Value Leads (>₹4k)</div>
+              <div class="metric-label">High-Value Leads (&gt;₹4k)</div>
               <div class="metric-value" id="sub-stat-high" style="color: #D96B00;">0</div>
             </div>
             <div class="metric-icon-box" style="background:#FFF4E5; color:#D96B00;">
@@ -1141,6 +1291,12 @@ body.admin-body {
             <h4>No submissions found</h4>
             <p>Customer inquiries submitted on website forms will appear right here.</p>
           </div>
+          <div id="submissions-error" class="admin-error-state" style="display: none;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <h4>Failed to load submissions</h4>
+            <p id="submissions-error-msg">Could not connect to database.</p>
+            <button type="button" class="btn-secondary-admin" onclick="fetchSubmissions()">Retry Connection</button>
+          </div>
         </div>
       </section>
 
@@ -1197,6 +1353,12 @@ body.admin-body {
             <h4>No projects found</h4>
             <p>Click "Add New Project" above or "Sync Supabase" to load projects.</p>
           </div>
+          <div id="projects-error" class="admin-error-state" style="display: none;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <h4>Failed to load projects</h4>
+            <p id="projects-error-msg">Could not connect to database.</p>
+            <button type="button" class="btn-secondary-admin" onclick="fetchProjects()">Retry Connection</button>
+          </div>
         </div>
       </section>
 
@@ -1207,7 +1369,7 @@ body.admin-body {
         <div class="admin-control-bar">
           <div class="control-bar-left">
             <p style="margin: 0; font-size: 13.5px; color: var(--admin-muted);">
-              Manage portfolio categories displayed on the public <a href="/projects" target="_blank" style="color: var(--admin-accent); font-weight: 600;">Projects page</a>.
+              Manage portfolio categories synchronized directly with Supabase and displayed across the website.
             </p>
           </div>
 
@@ -1231,8 +1393,8 @@ body.admin-body {
                 <tr>
                   <th>Category Name</th>
                   <th>Slug (ID)</th>
+                  <th>Database ID</th>
                   <th>Eyebrow / Tagline</th>
-                  <th>Description</th>
                   <th>Linked Projects</th>
                   <th style="text-align: right;">Actions</th>
                 </tr>
@@ -1246,6 +1408,12 @@ body.admin-body {
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
             <h4>No categories found</h4>
             <p>Click "Add New Category" above to create one.</p>
+          </div>
+          <div id="categories-error" class="admin-error-state" style="display: none;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <h4>Failed to load categories</h4>
+            <p id="categories-error-msg">Could not connect to database.</p>
+            <button type="button" class="btn-secondary-admin" onclick="fetchCategories()">Retry Connection</button>
           </div>
         </div>
       </section>
@@ -1261,6 +1429,10 @@ body.admin-body {
         <button type="button" class="admin-modal-close" onclick="closeAdminModal('view-submission-modal')">&times;</button>
       </div>
       <div class="admin-modal-body">
+        <div id="submission-modal-error" class="modal-error-alert" style="display: none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span class="msg-text"></span>
+        </div>
         <div class="detail-key-value-list">
           <div class="detail-row">
             <span class="detail-key">Customer Name</span>
@@ -1310,7 +1482,9 @@ body.admin-body {
       </div>
       <div class="admin-modal-footer">
         <button type="button" class="btn-secondary-admin" onclick="closeAdminModal('view-submission-modal')">Close</button>
-        <button type="button" class="btn-primary-admin" id="btn-save-sub-status">Save Status</button>
+        <button type="button" class="btn-primary-admin" id="btn-save-sub-status">
+          <span>Save Status</span>
+        </button>
       </div>
     </div>
   </div>
@@ -1325,6 +1499,11 @@ body.admin-body {
       <form id="project-form">
         <input type="hidden" id="project-form-id" name="id">
         <div class="admin-modal-body">
+          <div id="project-modal-error" class="modal-error-alert" style="display: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span class="msg-text"></span>
+          </div>
+
           <div class="modal-form-group">
             <label for="proj-client">Client / Company Name <span style="color:red;">*</span></label>
             <input type="text" id="proj-client" name="client" required placeholder="e.g. Vishwaraj Environment Ltd">
@@ -1354,7 +1533,9 @@ body.admin-body {
         </div>
         <div class="admin-modal-footer">
           <button type="button" class="btn-secondary-admin" onclick="closeAdminModal('project-edit-modal')">Cancel</button>
-          <button type="submit" class="btn-primary-admin" id="btn-save-project">Save Project</button>
+          <button type="submit" class="btn-primary-admin" id="btn-save-project">
+            <span>Save Project</span>
+          </button>
         </div>
       </form>
     </div>
@@ -1371,14 +1552,21 @@ body.admin-body {
         <input type="hidden" id="category-form-id" name="id">
         <input type="hidden" id="category-form-old-slug" name="old_slug">
         <div class="admin-modal-body">
+          <div id="category-modal-error" class="modal-error-alert" style="display: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span class="msg-text"></span>
+          </div>
+
           <div class="modal-form-group">
             <label for="cat-name">Category Name <span style="color:red;">*</span></label>
             <input type="text" id="cat-name" name="name" required placeholder="e.g. Commercial Rooftop Projects">
+            <div class="modal-form-hint">Display name for the category portfolio.</div>
           </div>
 
           <div class="modal-form-group">
             <label for="cat-slug">Category Slug (URL / Table ID) <span style="color:red;">*</span></label>
             <input type="text" id="cat-slug" name="slug" required placeholder="e.g. commercial_rooftop">
+            <div class="modal-form-hint">Unique identifier using letters, numbers, and underscores (e.g. <code>commercial_rooftop</code>).</div>
           </div>
 
           <div class="modal-form-group">
@@ -1393,7 +1581,9 @@ body.admin-body {
         </div>
         <div class="admin-modal-footer">
           <button type="button" class="btn-secondary-admin" onclick="closeAdminModal('category-edit-modal')">Cancel</button>
-          <button type="submit" class="btn-primary-admin" id="btn-save-category">Save Category</button>
+          <button type="submit" class="btn-primary-admin" id="btn-save-category">
+            <span>Save Category</span>
+          </button>
         </div>
       </form>
     </div>
@@ -1410,44 +1600,80 @@ body.admin-body {
     const VALID_ADMIN_ID = 'sorconnect';
     const VALID_ADMIN_PASS = 'adminpqyt@46';
 
+    const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+
     let state = {
       submissions: [],
       projects: [],
       categories: [],
-      activeSubmissionId: null
+      activeSubmissionId: null,
+      loading: {
+        submissions: false,
+        projects: false,
+        categories: false
+      }
     };
 
     // UI Elements
     const loginView = document.getElementById('login-view');
     const dashboardView = document.getElementById('dashboard-view');
     const loginForm = document.getElementById('admin-login-form');
+    const loginSubmitBtn = document.getElementById('login-submit-btn');
     const loginError = document.getElementById('login-error-msg');
     const loginErrorText = document.getElementById('login-error-text');
     const togglePwdBtn = document.getElementById('toggle-pwd-btn');
     const pwdInput = document.getElementById('admin-password-input');
     const logoutBtn = document.getElementById('admin-logout-btn');
 
-    // Toast helper
-    function showToast(message, isError = false) {
+    // ==========================================
+    // TOAST & MODAL HELPERS
+    // ==========================================
+    function showToast(message, type = 'success') {
       const container = document.getElementById('admin-toast-container');
       const toast = document.createElement('div');
-      toast.className = 'admin-toast' + (isError ? ' error' : '');
-      toast.innerHTML = `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="${isError ? 'M18 6L6 18M6 6l12 12' : 'M20 6L9 17l-5-5'}"/></svg>
-        <span>${message}</span>
-      `;
+      toast.className = `admin-toast ${type}`;
+      
+      let icon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`;
+      if (type === 'error') {
+        icon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+      } else if (type === 'info') {
+        icon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+      }
+
+      toast.innerHTML = `${icon}<span>${message}</span>`;
       container.appendChild(toast);
+      
       setTimeout(() => {
         toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s ease';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
         setTimeout(() => toast.remove(), 300);
-      }, 3500);
+      }, 3600);
     }
 
-    // Modal helpers
+    function showModalError(alertBoxId, message) {
+      const alertBox = document.getElementById(alertBoxId);
+      if (alertBox) {
+        const textSpan = alertBox.querySelector('.msg-text');
+        if (textSpan) textSpan.textContent = message;
+        alertBox.style.display = 'flex';
+      }
+    }
+
+    function clearModalError(alertBoxId) {
+      const alertBox = document.getElementById(alertBoxId);
+      if (alertBox) alertBox.style.display = 'none';
+    }
+
     window.openAdminModal = function(modalId) {
       const modal = document.getElementById(modalId);
-      if (modal) modal.classList.add('active');
+      if (modal) {
+        // Clear previous error alerts
+        const err = modal.querySelector('.modal-error-alert');
+        if (err) err.style.display = 'none';
+        modal.classList.add('active');
+      }
     };
 
     window.closeAdminModal = function(modalId) {
@@ -1463,7 +1689,54 @@ body.admin-body {
       });
     }
 
-    // Check Auth on page load
+    // ==========================================
+    // SUPABASE DIRECT API CLIENT
+    // ==========================================
+    async function supabaseQuery(endpoint, options = {}) {
+      const url = `${SUPABASE_URL}${endpoint}`;
+      const method = options.method || 'GET';
+      const headers = {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      };
+
+      const fetchOptions = {
+        method,
+        headers
+      };
+
+      if (options.body) {
+        fetchOptions.body = JSON.stringify(options.body);
+      }
+
+      const res = await fetch(url, fetchOptions);
+      const text = await res.text();
+      let data = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch (e) {
+        data = text;
+      }
+
+      if (!res.ok) {
+        let msg = `Supabase request failed (${res.status})`;
+        if (data && data.message) msg = data.message;
+        else if (data && data.error) msg = data.error;
+        else if (data && data.details) msg = data.details;
+        const err = new Error(msg);
+        err.status = res.status;
+        err.data = data;
+        throw err;
+      }
+
+      return data;
+    }
+
+    // ==========================================
+    // AUTHENTICATION
+    // ==========================================
     function checkAuth() {
       const token = sessionStorage.getItem(AUTH_SESSION_KEY) || localStorage.getItem(AUTH_SESSION_KEY);
       if (token) {
@@ -1492,35 +1765,50 @@ body.admin-body {
       const pass = document.getElementById('admin-password-input').value.trim();
 
       loginError.style.display = 'none';
+      loginSubmitBtn.disabled = true;
+      loginSubmitBtn.innerHTML = `
+        <svg class="spin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+        <span>Authenticating...</span>
+      `;
 
-      // Try server login first
       try {
+        // Try server login first
         const res = await fetch('/api/admin/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id, password: pass })
-        });
-        const data = await res.json();
+        }).catch(() => null);
 
-        if (res.ok && data.success) {
-          sessionStorage.setItem(AUTH_SESSION_KEY, data.token || 'valid_token');
+        if (res && res.ok) {
+          const data = await res.json().catch(() => ({}));
+          if (data.success) {
+            sessionStorage.setItem(AUTH_SESSION_KEY, data.token || 'valid_token');
+            showDashboard();
+            showToast('Welcome back, Admin!');
+            return;
+          }
+        }
+
+        // Standalone/Vercel fallback: validate credentials client-side
+        if (id === VALID_ADMIN_ID && pass === VALID_ADMIN_PASS) {
+          sessionStorage.setItem(AUTH_SESSION_KEY, 'standalone_admin_token_' + Date.now());
           showDashboard();
           showToast('Welcome back, Admin!');
           return;
         }
-      } catch (err) {
-        // Standalone fallback: validate client side against credentials
-        if (id === VALID_ADMIN_ID && pass === VALID_ADMIN_PASS) {
-          sessionStorage.setItem(AUTH_SESSION_KEY, 'standalone_admin_token');
-          showDashboard();
-          showToast('Authenticated in offline mode.');
-          return;
-        }
-      }
 
-      // If invalid
-      loginErrorText.textContent = 'Invalid Admin ID or Password. Please check and retry.';
-      loginError.style.display = 'flex';
+        loginErrorText.textContent = 'Invalid Admin ID or Password. Please check your credentials.';
+        loginError.style.display = 'flex';
+      } catch (err) {
+        loginErrorText.textContent = 'Login error: ' + err.message;
+        loginError.style.display = 'flex';
+      } finally {
+        loginSubmitBtn.disabled = false;
+        loginSubmitBtn.innerHTML = `
+          <span>Sign In to Admin Portal</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        `;
+      }
     });
 
     // Logout
@@ -1529,7 +1817,7 @@ body.admin-body {
         sessionStorage.removeItem(AUTH_SESSION_KEY);
         localStorage.removeItem(AUTH_SESSION_KEY);
         showLogin();
-        showToast('Logged out successfully.');
+        showToast('Logged out successfully.', 'info');
       }
     });
 
@@ -1550,45 +1838,58 @@ body.admin-body {
     });
 
     // ==========================================
-    // DATA FETCHING & RENDERING
+    // DATA LOADING & RENDERING
     // ==========================================
-
-    const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+    function setTableSkeleton(tbodyId, colCount) {
+      const tbody = document.getElementById(tbodyId);
+      if (!tbody) return;
+      tbody.innerHTML = Array(4).fill(0).map(() => `
+        <tr class="table-skeleton-row">
+          ${Array(colCount).fill('<td><div class="skeleton-bar"></div></td>').join('')}
+        </tr>
+      `).join('');
+    }
 
     async function loadAllData() {
+      setDbStatus('syncing', 'Syncing Data...');
       await Promise.all([
         fetchSubmissions(),
         fetchCategories(),
         fetchProjects()
       ]);
+      setDbStatus('live', 'Supabase Live');
+    }
 
-      // If projects or categories are empty, auto-sync from Supabase
-      if (state.projects.length === 0 || state.categories.length === 0) {
-        await directClientSupabaseSync(false);
+    function setDbStatus(mode, text) {
+      const pill = document.getElementById('live-db-status');
+      const textEl = document.getElementById('db-status-text');
+      if (!pill || !textEl) return;
+      textEl.textContent = text;
+      if (mode === 'syncing') {
+        pill.classList.add('syncing');
+      } else {
+        pill.classList.remove('syncing');
       }
     }
 
-    // Sync with Supabase (Server + Client fallback)
+    // Sync with Supabase (Manual Button)
     window.syncWithSupabase = async function() {
       const syncBtns = document.querySelectorAll('#btn-sync-supabase, button[onclick="syncWithSupabase()"]');
       syncBtns.forEach(btn => {
         btn.disabled = true;
         btn.innerHTML = `<svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Syncing...</span>`;
       });
+      setDbStatus('syncing', 'Syncing Supabase...');
 
       try {
-        const res = await fetch('/api/sync/supabase', { method: 'POST' });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          await fetchCategories();
-          await fetchProjects();
-          showToast(`✓ Synced ${data.synced_projects || 0} projects & ${data.synced_categories || 0} categories from Supabase!`);
-        } else {
-          await directClientSupabaseSync(true);
-        }
+        await fetchSubmissions();
+        await fetchCategories();
+        await fetchProjects();
+        showToast(`✓ Database synchronized: ${state.projects.length} projects & ${state.categories.length} categories active.`, 'success');
+        setDbStatus('live', 'Supabase Live');
       } catch (err) {
-        await directClientSupabaseSync(true);
+        showToast('Supabase sync warning: ' + err.message, 'error');
+        setDbStatus('live', 'Supabase Connected');
       } finally {
         syncBtns.forEach(btn => {
           btn.disabled = false;
@@ -1597,111 +1898,70 @@ body.admin-body {
       }
     };
 
-    async function directClientSupabaseSync(notify = true) {
-      try {
-        const [catRes, projRes, subRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}/rest/v1/categories?select=*&order=id.asc`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-          }).catch(() => null),
-          fetch(`${SUPABASE_URL}/rest/v1/projects?select=*,categories(*)&order=id.asc`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-          }).catch(() => null),
-          fetch(`${SUPABASE_URL}/rest/v1/submissions?select=*&order=created_at.desc`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-          }).catch(() => null)
-        ]);
-
-        if (catRes && catRes.ok) {
-          const rawCats = await catRes.json();
-          if (Array.isArray(rawCats) && rawCats.length > 0) {
-            state.categories = rawCats.map((c, idx) => ({
-              id: 'cat_' + c.id,
-              name: c.name || (c.slug === 'epc' ? 'EPC Projects' : 'I&C / O&M Projects'),
-              slug: c.slug || (c.id === 1 ? 'epc' : 'ic_om'),
-              eyebrow: (c.name || '').includes('Portfolio') ? c.name : (c.name || 'Portfolio'),
-              description: c.description || (c.slug === 'epc' 
-                ? 'A snapshot of Engineering, Procurement & Construction projects completed for industrial clients across multiple sectors.' 
-                : 'Industrial & Commercial installations and ongoing operation & maintenance accounts currently managed by our field teams.'),
-              table_id: (c.slug || 'category').replace(/_/g, '-') + '-projects-list',
-              order: idx + 1
-            }));
-            populateCategoryDropdowns();
-            renderCategories();
-          }
-        }
-
-        if (projRes && projRes.ok) {
-          const rawProjs = await projRes.json();
-          if (Array.isArray(rawProjs) && rawProjs.length > 0) {
-            state.projects = rawProjs.map(p => ({
-              id: 'proj_' + p.id,
-              client: p.client || '',
-              location: p.location || '',
-              capacity: p.capacity || '',
-              sector_or_type: p.sector_or_type || '',
-              category_slug: (p.categories && p.categories.slug) ? p.categories.slug : (p.category_id === 1 ? 'epc' : 'ic_om'),
-              created_at: p.created_at || new Date().toISOString()
-            }));
-            renderProjects();
-          }
-        }
-
-        if (subRes && subRes.ok) {
-          const rawSubs = await subRes.json();
-          if (Array.isArray(rawSubs) && rawSubs.length > 0) {
-            state.submissions = rawSubs.map(s => ({
-              id: s.id,
-              timestamp: s.created_at || s.timestamp,
-              name: s.name,
-              whatsapp: s.whatsapp,
-              monthly_bill: s.monthly_bill,
-              pincode: s.pincode,
-              note: s.note,
-              status: s.status || 'New',
-              subject: s.subject || 'Solar Inquiry',
-              source_url: s.source_url || 'Website Form'
-            }));
-            renderSubmissions();
-          }
-        }
-
-        if (notify) {
-          showToast(`✓ Synced ${state.projects.length} projects & ${state.categories.length} categories from Supabase!`);
-        }
-      } catch (err) {
-        if (notify) {
-          showToast('Failed to sync from Supabase: ' + err.message, true);
-        }
-      }
-    }
-
+    // ==========================================
     // 1. SUBMISSIONS LOGIC
-    async function fetchSubmissions() {
+    // ==========================================
+    window.fetchSubmissions = async function() {
+      state.loading.submissions = true;
+      setTableSkeleton('submissions-tbody', 7);
+      document.getElementById('submissions-error').style.display = 'none';
+
       try {
-        const res = await fetch('/api/submissions');
-        if (res.ok) {
-          const data = await res.json();
-          state.submissions = data.submissions || [];
+        // Try Supabase first
+        const rawSubs = await supabaseQuery('/rest/v1/submissions?select=*&order=created_at.desc');
+        if (Array.isArray(rawSubs)) {
+          state.submissions = rawSubs.map(s => ({
+            id: s.id,
+            timestamp: s.created_at || s.timestamp,
+            name: s.name,
+            whatsapp: s.whatsapp,
+            monthly_bill: s.monthly_bill,
+            pincode: s.pincode,
+            note: s.note,
+            status: s.status || 'New',
+            subject: s.subject || 'Solar Inquiry',
+            source_url: s.source_url || 'Website Form'
+          }));
+          renderSubmissions();
+          return;
         }
-      } catch (err) {
-        console.warn('Could not fetch submissions from server:', err);
+      } catch (supabaseErr) {
+        console.warn('Supabase submissions fetch failed, trying local API...', supabaseErr);
+        try {
+          const res = await fetch('/api/submissions');
+          if (res.ok) {
+            const data = await res.json();
+            state.submissions = data.submissions || [];
+            renderSubmissions();
+            return;
+          }
+        } catch (serverErr) {
+          console.error('Server submissions fetch failed:', serverErr);
+        }
+
+        // Show Error State
+        document.getElementById('submissions-tbody').innerHTML = '';
+        document.getElementById('submissions-error-msg').textContent = supabaseErr.message || 'Could not connect to database';
+        document.getElementById('submissions-error').style.display = 'block';
+      } finally {
+        state.loading.submissions = false;
       }
-      renderSubmissions();
-    }
+    };
 
     function renderSubmissions() {
       const tbody = document.getElementById('submissions-tbody');
       const emptyState = document.getElementById('submissions-empty');
+      const errorState = document.getElementById('submissions-error');
       const countBadge = document.getElementById('submissions-count-badge');
       const statTotal = document.getElementById('sub-stat-total');
       const statNew = document.getElementById('sub-stat-new');
       const statHigh = document.getElementById('sub-stat-high');
 
+      errorState.style.display = 'none';
       const searchVal = (document.getElementById('submissions-search').value || '').toLowerCase();
       const billFilter = document.getElementById('submissions-filter-bill').value;
       const statusFilter = document.getElementById('submissions-filter-status').value;
 
-      // Filter submissions
       const filtered = state.submissions.filter(sub => {
         const matchesSearch = !searchVal || 
           (sub.name && sub.name.toLowerCase().includes(searchVal)) ||
@@ -1715,7 +1975,6 @@ body.admin-body {
         return matchesSearch && matchesBill && matchesStatus;
       });
 
-      // Update metrics
       const totalCount = state.submissions.length;
       const newCount = state.submissions.filter(s => (s.status || 'New') === 'New').length;
       const highValCount = state.submissions.filter(s => s.monthly_bill === 'More than ₹8000' || s.monthly_bill === '₹4000-₹8000').length;
@@ -1734,13 +1993,14 @@ body.admin-body {
 
       filtered.forEach(sub => {
         const tr = document.createElement('tr');
+        tr.id = `sub-row-${sub.id}`;
         const formattedDate = sub.timestamp ? new Date(sub.timestamp).toLocaleString('en-IN', {
           day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
         }) : 'Recent';
 
         const waDigits = (sub.whatsapp || '').replace(/\D/g, '');
         const waClean = waDigits.length === 10 ? '91' + waDigits : waDigits;
-        const waMsg = encodeURIComponent(`Hello ${sub.name}, thank you for contacting Sor Connect regarding your solar installation! We received your request.`);
+        const waMsg = encodeURIComponent(`Hello ${sub.name || 'Customer'}, thank you for contacting Sor Connect regarding your solar inquiry! We received your request.`);
         const waLink = `https://wa.me/${waClean}?text=${waMsg}`;
 
         const isHighBill = sub.monthly_bill === 'More than ₹8000' || sub.monthly_bill === '₹4000-₹8000';
@@ -1779,6 +2039,7 @@ body.admin-body {
       if (!sub) return;
 
       state.activeSubmissionId = id;
+      clearModalError('submission-modal-error');
       document.getElementById('modal-sub-name').textContent = sub.name || 'Anonymous';
       document.getElementById('modal-sub-whatsapp').textContent = sub.whatsapp || '—';
       document.getElementById('modal-sub-bill').textContent = sub.monthly_bill || '—';
@@ -1804,30 +2065,40 @@ body.admin-body {
     // Save Submission Status
     document.getElementById('btn-save-sub-status').addEventListener('click', async function() {
       if (!state.activeSubmissionId) return;
+      const btn = this;
       const newStatus = document.getElementById('modal-sub-status-select').value;
+      clearModalError('submission-modal-error');
+
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg><span>Saving...</span>`;
 
       try {
-        const res = await fetch('/api/submissions/status', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: state.activeSubmissionId, status: newStatus })
+        // Direct Supabase update
+        await supabaseQuery(`/rest/v1/submissions?id=eq.${state.activeSubmissionId}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: { status: newStatus }
+        }).catch(async () => {
+          // Fallback to local server API
+          await fetch('/api/submissions/status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: state.activeSubmissionId, status: newStatus })
+          });
         });
-        if (res.ok) {
-          const sub = state.submissions.find(s => String(s.id) === String(state.activeSubmissionId));
-          if (sub) sub.status = newStatus;
-          renderSubmissions();
-          closeAdminModal('view-submission-modal');
-          showToast('Status updated to ' + newStatus);
-          return;
-        }
-      } catch (err) {}
 
-      // Fallback local update
-      const sub = state.submissions.find(s => String(s.id) === String(state.activeSubmissionId));
-      if (sub) sub.status = newStatus;
-      renderSubmissions();
-      closeAdminModal('view-submission-modal');
-      showToast('Status updated to ' + newStatus);
+        const sub = state.submissions.find(s => String(s.id) === String(state.activeSubmissionId));
+        if (sub) sub.status = newStatus;
+        renderSubmissions();
+        closeAdminModal('view-submission-modal');
+        showToast(`✓ Lead status updated to "${newStatus}"`, 'success');
+      } catch (err) {
+        showModalError('submission-modal-error', 'Failed to update status: ' + err.message);
+        showToast('Error updating status: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Save Status</span>`;
+      }
     });
 
     // Delete Submission
@@ -1835,28 +2106,29 @@ body.admin-body {
       if (!confirm('Are you sure you want to delete this submission entry?')) return;
 
       try {
-        const res = await fetch('/api/submissions/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id })
+        await supabaseQuery(`/rest/v1/submissions?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: { 'Prefer': 'return=representation' }
+        }).catch(async () => {
+          await fetch('/api/submissions/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+          });
         });
-        if (res.ok) {
-          state.submissions = state.submissions.filter(s => String(s.id) !== String(id));
-          renderSubmissions();
-          showToast('Submission deleted.');
-          return;
-        }
-      } catch (err) {}
 
-      state.submissions = state.submissions.filter(s => String(s.id) !== String(id));
-      renderSubmissions();
-      showToast('Submission deleted.');
+        state.submissions = state.submissions.filter(s => String(s.id) !== String(id));
+        renderSubmissions();
+        showToast('Submission deleted successfully.', 'info');
+      } catch (err) {
+        showToast('Failed to delete submission: ' + err.message, 'error');
+      }
     };
 
     // CSV Export
     document.getElementById('btn-export-submissions-csv').addEventListener('click', function() {
       if (state.submissions.length === 0) {
-        alert('No submissions available to export.');
+        showToast('No submissions available to export.', 'info');
         return;
       }
 
@@ -1874,6 +2146,7 @@ body.admin-body {
       a.download = `sorconnect_leads_${new Date().toISOString().slice(0, 10)}.csv`;
       a.click();
       URL.revokeObjectURL(url);
+      showToast('✓ CSV file downloaded successfully.', 'success');
     });
 
     // Submission Filters Listeners
@@ -1882,20 +2155,53 @@ body.admin-body {
     document.getElementById('submissions-filter-status').addEventListener('change', renderSubmissions);
     document.getElementById('btn-refresh-submissions').addEventListener('click', fetchSubmissions);
 
-    // 2. CATEGORIES LOGIC
-    async function fetchCategories() {
+    // ==========================================
+    // 2. CATEGORIES LOGIC (ROBUST SUPABASE CRUD)
+    // ==========================================
+    window.fetchCategories = async function() {
+      state.loading.categories = true;
+      setTableSkeleton('categories-tbody', 6);
+      document.getElementById('categories-error').style.display = 'none';
+
       try {
-        const res = await fetch('/api/categories');
-        if (res.ok) {
-          const data = await res.json();
-          state.categories = data.categories || [];
+        const rawCats = await supabaseQuery('/rest/v1/categories?select=*&order=id.asc');
+        if (Array.isArray(rawCats)) {
+          state.categories = rawCats.map((c, idx) => ({
+            id: c.id,
+            name: c.name || '',
+            slug: c.slug || (c.id === 1 ? 'epc' : 'ic_om'),
+            eyebrow: c.name ? (c.name.includes('Portfolio') ? c.name : c.name + ' Portfolio') : 'Portfolio',
+            description: c.description || (c.slug === 'epc' 
+              ? 'Engineering, Procurement & Construction turnkey projects.' 
+              : 'Installation, Commissioning and ongoing operation & maintenance.'),
+            order: idx + 1
+          }));
+          populateCategoryDropdowns();
+          renderCategories();
+          return;
         }
-      } catch (err) {
-        console.warn('Could not fetch categories:', err);
+      } catch (supabaseErr) {
+        console.warn('Supabase categories fetch failed, trying local API...', supabaseErr);
+        try {
+          const res = await fetch('/api/categories');
+          if (res.ok) {
+            const data = await res.json();
+            state.categories = data.categories || [];
+            populateCategoryDropdowns();
+            renderCategories();
+            return;
+          }
+        } catch (serverErr) {
+          console.error('Server categories fetch failed:', serverErr);
+        }
+
+        document.getElementById('categories-tbody').innerHTML = '';
+        document.getElementById('categories-error-msg').textContent = supabaseErr.message || 'Could not connect to database';
+        document.getElementById('categories-error').style.display = 'block';
+      } finally {
+        state.loading.categories = false;
       }
-      populateCategoryDropdowns();
-      renderCategories();
-    }
+    };
 
     function populateCategoryDropdowns() {
       const filterSelect = document.getElementById('projects-filter-category');
@@ -1907,12 +2213,12 @@ body.admin-body {
       state.categories.forEach(cat => {
         const opt1 = document.createElement('option');
         opt1.value = cat.slug;
-        opt1.textContent = cat.name;
+        opt1.textContent = `${cat.name} (${cat.slug})`;
         filterSelect.appendChild(opt1);
 
         const opt2 = document.createElement('option');
         opt2.value = cat.slug;
-        opt2.textContent = cat.name;
+        opt2.textContent = `${cat.name} (${cat.slug})`;
         formSelect.appendChild(opt2);
       });
     }
@@ -1920,8 +2226,10 @@ body.admin-body {
     function renderCategories() {
       const tbody = document.getElementById('categories-tbody');
       const emptyState = document.getElementById('categories-empty');
+      const errorState = document.getElementById('categories-error');
       const countBadge = document.getElementById('categories-count-badge');
 
+      errorState.style.display = 'none';
       countBadge.textContent = state.categories.length;
       tbody.innerHTML = '';
 
@@ -1932,13 +2240,14 @@ body.admin-body {
       emptyState.style.display = 'none';
 
       state.categories.forEach(cat => {
-        const projectCount = state.projects.filter(p => p.category_slug === cat.slug).length;
+        const projectCount = state.projects.filter(p => p.category_slug === cat.slug || String(p.category_id) === String(cat.id)).length;
         const tr = document.createElement('tr');
+        tr.id = `cat-row-${cat.id}`;
         tr.innerHTML = `
           <td style="font-weight: 700; color: var(--admin-primary);">${escapeHtml(cat.name)}</td>
-          <td><code style="background:#EBF2EE; padding:3px 6px; border-radius:4px; color:var(--admin-accent); font-size:12px;">${escapeHtml(cat.slug)}</code></td>
+          <td><code style="background:#EBF2EE; padding:3px 8px; border-radius:4px; color:var(--admin-accent); font-size:12px; font-weight:600;">${escapeHtml(cat.slug)}</code></td>
+          <td><span style="font-size:12px; color:var(--admin-muted); font-weight:600;">ID #${cat.id}</span></td>
           <td style="color: var(--admin-muted);">${escapeHtml(cat.eyebrow || '—')}</td>
-          <td style="font-size: 13px; color: var(--admin-muted); max-width: 260px;">${escapeHtml(cat.description || '—')}</td>
           <td><span class="tab-badge" style="background:#EBF5F0; color:var(--admin-accent);">${projectCount} projects</span></td>
           <td style="text-align: right;">
             <div class="table-action-btns" style="justify-content: flex-end;">
@@ -1964,6 +2273,7 @@ body.admin-body {
       document.getElementById('cat-slug').value = '';
       document.getElementById('cat-eyebrow').value = '';
       document.getElementById('cat-desc').value = '';
+      clearModalError('category-modal-error');
       openAdminModal('category-edit-modal');
     });
 
@@ -1978,6 +2288,7 @@ body.admin-body {
       document.getElementById('cat-slug').value = cat.slug || '';
       document.getElementById('cat-eyebrow').value = cat.eyebrow || '';
       document.getElementById('cat-desc').value = cat.description || '';
+      clearModalError('category-modal-error');
       openAdminModal('category-edit-modal');
     };
 
@@ -1985,93 +2296,243 @@ body.admin-body {
     document.getElementById('cat-name').addEventListener('input', function() {
       const idVal = document.getElementById('category-form-id').value;
       if (!idVal) {
-        document.getElementById('cat-slug').value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+        document.getElementById('cat-slug').value = this.value
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '_')
+          .replace(/^_+|_+$/g, '');
       }
     });
 
-    // Save Category Form
+    // Clear error on input
+    ['cat-name', 'cat-slug', 'cat-eyebrow', 'cat-desc'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', () => clearModalError('category-modal-error'));
+    });
+
+    // Save Category Form (Supabase Direct + Local Sync)
     document.getElementById('category-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+      const saveBtn = document.getElementById('btn-save-category');
       const id = document.getElementById('category-form-id').value;
       const old_slug = document.getElementById('category-form-old-slug').value;
       const name = document.getElementById('cat-name').value.trim();
-      const slug = document.getElementById('cat-slug').value.trim();
+      let slug = document.getElementById('cat-slug').value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '_');
       const eyebrow = document.getElementById('cat-eyebrow').value.trim();
       const description = document.getElementById('cat-desc').value.trim();
 
-      const endpoint = id ? '/api/categories/update' : '/api/categories/create';
-      const payload = { id, old_slug, name, slug, eyebrow, description };
+      if (!name) {
+        showModalError('category-modal-error', 'Please provide a Category Name.');
+        return;
+      }
+      if (!slug) {
+        slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+      }
+
+      // Check client-side duplicate slug
+      const duplicateSlug = state.categories.find(c => c.slug === slug && String(c.id) !== String(id));
+      if (duplicateSlug) {
+        showModalError('category-modal-error', `A category with slug "${slug}" already exists (${duplicateSlug.name}). Please choose a unique slug.`);
+        return;
+      }
+
+      clearModalError('category-modal-error');
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = `
+        <svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+        <span>${id ? 'Updating...' : 'Creating...'}</span>
+      `;
 
       try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          showToast(id ? 'Category updated successfully!' : 'Category created successfully!');
-          closeAdminModal('category-edit-modal');
-          await fetchCategories();
-          await fetchProjects();
-          return;
+        let resultCat = null;
+
+        if (id) {
+          // UPDATE Existing Category in Supabase
+          const patchResult = await supabaseQuery(`/rest/v1/categories?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: { name, slug }
+          });
+
+          resultCat = Array.isArray(patchResult) && patchResult.length > 0 ? patchResult[0] : { id, name, slug };
+
+          // Update in local state
+          const catIdx = state.categories.findIndex(c => String(c.id) === String(id));
+          if (catIdx !== -1) {
+            state.categories[catIdx] = {
+              ...state.categories[catIdx],
+              name,
+              slug,
+              eyebrow: eyebrow || name + ' Portfolio',
+              description: description || state.categories[catIdx].description
+            };
+          }
+
+          // If slug changed, update linked projects
+          if (old_slug && old_slug !== slug) {
+            state.projects.forEach(p => {
+              if (p.category_slug === old_slug || String(p.category_id) === String(id)) {
+                p.category_slug = slug;
+              }
+            });
+          }
+
+          // Sync to server API in background
+          fetch('/api/categories/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, old_slug, name, slug, eyebrow, description })
+          }).catch(() => {});
+
+          showToast(`✓ Category "${name}" updated successfully!`, 'success');
+
         } else {
-          alert(data.message || 'Error saving category');
+          // CREATE New Category in Supabase
+          const insertResult = await supabaseQuery('/rest/v1/categories', {
+            method: 'POST',
+            headers: { 'Prefer': 'return=representation' },
+            body: [{ name, slug }]
+          });
+
+          if (!Array.isArray(insertResult) || insertResult.length === 0) {
+            throw new Error('Supabase did not return the created category record.');
+          }
+
+          const created = insertResult[0];
+          resultCat = {
+            id: created.id,
+            name: created.name,
+            slug: created.slug,
+            eyebrow: eyebrow || name + ' Portfolio',
+            description: description || 'Projects under ' + name,
+            order: state.categories.length + 1
+          };
+
+          state.categories.push(resultCat);
+
+          // Sync to server API in background
+          fetch('/api/categories/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, slug, eyebrow, description })
+          }).catch(() => {});
+
+          showToast(`✓ Category "${name}" created successfully in Supabase!`, 'success');
         }
-      } catch (err) {
-        showToast('Operation completed locally.', false);
+
+        populateCategoryDropdowns();
+        renderCategories();
+        renderProjects();
         closeAdminModal('category-edit-modal');
+
+        // Highlight row
+        const targetRow = document.getElementById(`cat-row-${resultCat.id}`);
+        if (targetRow) {
+          targetRow.classList.add('highlight-row');
+          setTimeout(() => targetRow.classList.remove('highlight-row'), 2500);
+        }
+
+      } catch (err) {
+        console.error('Error saving category:', err);
+        let errorMsg = err.message || 'Failed to save category in Supabase.';
+        if (errorMsg.includes('23505') || errorMsg.includes('unique') || errorMsg.includes('already exists')) {
+          errorMsg = `A category with the name "${name}" or slug "${slug}" already exists in the database. Please provide a distinct name and slug.`;
+        }
+        showModalError('category-modal-error', errorMsg);
+        showToast('Category creation error: ' + errorMsg, 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = `<span>Save Category</span>`;
       }
     });
 
     // Delete Category
     window.deleteCategory = async function(id, slug, projectCount) {
-      let msg = 'Are you sure you want to delete this category?';
+      let msg = `Are you sure you want to delete the category "${slug}"?`;
       if (projectCount > 0) {
-        msg = `Warning: This category has ${projectCount} linked projects. Deleting it will also remove these projects or leave them unassigned. Continue?`;
+        msg = `Warning: This category has ${projectCount} linked projects. Deleting it will also delete or unassign those projects. Continue?`;
       }
       if (!confirm(msg)) return;
 
       try {
-        const res = await fetch('/api/categories/delete', {
+        await supabaseQuery(`/rest/v1/categories?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: { 'Prefer': 'return=representation' }
+        });
+
+        // Background server sync
+        fetch('/api/categories/delete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id, slug, delete_projects: true })
-        });
-        if (res.ok) {
-          showToast('Category deleted.');
-          await fetchCategories();
-          await fetchProjects();
-          return;
-        }
-      } catch (err) {}
+        }).catch(() => {});
 
-      state.categories = state.categories.filter(c => c.id !== id);
-      populateCategoryDropdowns();
-      renderCategories();
-      showToast('Category deleted.');
+        state.categories = state.categories.filter(c => String(c.id) !== String(id));
+        state.projects = state.projects.filter(p => String(p.category_id) !== String(id) && p.category_slug !== slug);
+
+        populateCategoryDropdowns();
+        renderCategories();
+        renderProjects();
+        showToast(`Category deleted successfully.`, 'info');
+      } catch (err) {
+        showToast(`Failed to delete category: ${err.message}`, 'error');
+      }
     };
 
-    // 3. PROJECTS LOGIC
-    async function fetchProjects() {
+    // ==========================================
+    // 3. PROJECTS LOGIC (ROBUST SUPABASE CRUD)
+    // ==========================================
+    window.fetchProjects = async function() {
+      state.loading.projects = true;
+      setTableSkeleton('projects-tbody', 6);
+      document.getElementById('projects-error').style.display = 'none';
+
       try {
-        const res = await fetch('/api/projects');
-        if (res.ok) {
-          const data = await res.json();
-          state.projects = data.projects || [];
+        const rawProjs = await supabaseQuery('/rest/v1/projects?select=*,categories(*)&order=id.asc');
+        if (Array.isArray(rawProjs)) {
+          state.projects = rawProjs.map(p => ({
+            id: p.id,
+            client: p.client || '',
+            location: p.location || '',
+            capacity: p.capacity || '',
+            sector_or_type: p.sector_or_type || '',
+            category_id: p.category_id || (p.categories ? p.categories.id : null),
+            category_slug: (p.categories && p.categories.slug) ? p.categories.slug : (p.category_id === 1 ? 'epc' : 'ic_om'),
+            created_at: p.created_at || new Date().toISOString()
+          }));
+          renderProjects();
+          renderCategories(); // update project counts
+          return;
         }
-      } catch (err) {
-        console.warn('Could not fetch projects:', err);
+      } catch (supabaseErr) {
+        console.warn('Supabase projects fetch failed, trying local API...', supabaseErr);
+        try {
+          const res = await fetch('/api/projects');
+          if (res.ok) {
+            const data = await res.json();
+            state.projects = data.projects || [];
+            renderProjects();
+            renderCategories();
+            return;
+          }
+        } catch (serverErr) {
+          console.error('Server projects fetch failed:', serverErr);
+        }
+
+        document.getElementById('projects-tbody').innerHTML = '';
+        document.getElementById('projects-error-msg').textContent = supabaseErr.message || 'Could not connect to database';
+        document.getElementById('projects-error').style.display = 'block';
+      } finally {
+        state.loading.projects = false;
       }
-      renderProjects();
-      renderCategories(); // update category counts
-    }
+    };
 
     function renderProjects() {
       const tbody = document.getElementById('projects-tbody');
       const emptyState = document.getElementById('projects-empty');
+      const errorState = document.getElementById('projects-error');
       const countBadge = document.getElementById('projects-count-badge');
 
+      errorState.style.display = 'none';
       const searchVal = (document.getElementById('projects-search').value || '').toLowerCase();
       const catFilter = document.getElementById('projects-filter-category').value;
 
@@ -2082,7 +2543,7 @@ body.admin-body {
           (p.capacity && p.capacity.toLowerCase().includes(searchVal)) ||
           (p.sector_or_type && p.sector_or_type.toLowerCase().includes(searchVal));
 
-        const matchesCat = !catFilter || p.category_slug === catFilter;
+        const matchesCat = !catFilter || p.category_slug === catFilter || String(p.category_id) === String(catFilter);
         return matchesSearch && matchesCat;
       });
 
@@ -2096,10 +2557,11 @@ body.admin-body {
       emptyState.style.display = 'none';
 
       filtered.forEach(proj => {
-        const catObj = state.categories.find(c => c.slug === proj.category_slug);
-        const catName = catObj ? catObj.name : (proj.category_slug || 'General');
+        const catObj = state.categories.find(c => c.slug === proj.category_slug || String(c.id) === String(proj.category_id));
+        const catName = catObj ? catObj.name : (proj.category_slug || 'Portfolio');
 
         const tr = document.createElement('tr');
+        tr.id = `proj-row-${proj.id}`;
         tr.innerHTML = `
           <td style="font-weight: 700; color: var(--admin-primary);">${escapeHtml(proj.client || '—')}</td>
           <td>${escapeHtml(proj.location || '—')}</td>
@@ -2129,6 +2591,8 @@ body.admin-body {
       document.getElementById('proj-location').value = '';
       document.getElementById('proj-capacity').value = '';
       document.getElementById('proj-sector').value = '';
+      clearModalError('project-modal-error');
+
       if (state.categories.length > 0) {
         document.getElementById('proj-category').value = state.categories[0].slug;
       }
@@ -2146,12 +2610,14 @@ body.admin-body {
       document.getElementById('proj-capacity').value = proj.capacity || '';
       document.getElementById('proj-sector').value = proj.sector_or_type || '';
       document.getElementById('proj-category').value = proj.category_slug || '';
+      clearModalError('project-modal-error');
       openAdminModal('project-edit-modal');
     };
 
     // Save Project Form
     document.getElementById('project-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+      const saveBtn = document.getElementById('btn-save-project');
       const id = document.getElementById('project-form-id').value;
       const client = document.getElementById('proj-client').value.trim();
       const location = document.getElementById('proj-location').value.trim();
@@ -2159,27 +2625,107 @@ body.admin-body {
       const sector_or_type = document.getElementById('proj-sector').value.trim();
       const category_slug = document.getElementById('proj-category').value;
 
-      const endpoint = id ? '/api/projects/update' : '/api/projects/create';
-      const payload = { id, client, location, capacity, sector_or_type, category_slug };
+      if (!client || !location || !capacity || !sector_or_type) {
+        showModalError('project-modal-error', 'Please fill in all required fields.');
+        return;
+      }
+
+      // Resolve numeric category_id
+      const catObj = state.categories.find(c => c.slug === category_slug);
+      const category_id = catObj ? catObj.id : 1;
+
+      clearModalError('project-modal-error');
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = `
+        <svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+        <span>${id ? 'Updating...' : 'Creating...'}</span>
+      `;
 
       try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          showToast(id ? 'Project updated successfully!' : 'Project created successfully!');
-          closeAdminModal('project-edit-modal');
-          await fetchProjects();
-          return;
+        let resultProj = null;
+
+        if (id) {
+          // UPDATE
+          const patchResult = await supabaseQuery(`/rest/v1/projects?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: { client, location, capacity, sector_or_type, category_id }
+          });
+
+          resultProj = Array.isArray(patchResult) && patchResult.length > 0 ? patchResult[0] : { id, client, location, capacity, sector_or_type, category_id };
+
+          const projIdx = state.projects.findIndex(p => String(p.id) === String(id));
+          if (projIdx !== -1) {
+            state.projects[projIdx] = {
+              ...state.projects[projIdx],
+              client,
+              location,
+              capacity,
+              sector_or_type,
+              category_id,
+              category_slug
+            };
+          }
+
+          fetch('/api/projects/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, client, location, capacity, sector_or_type, category_slug })
+          }).catch(() => {});
+
+          showToast(`✓ Project "${client}" updated successfully!`, 'success');
         } else {
-          alert(data.message || 'Error saving project');
+          // CREATE
+          const insertResult = await supabaseQuery('/rest/v1/projects', {
+            method: 'POST',
+            headers: { 'Prefer': 'return=representation' },
+            body: [{ client, location, capacity, sector_or_type, category_id }]
+          });
+
+          if (!Array.isArray(insertResult) || insertResult.length === 0) {
+            throw new Error('Supabase did not return the created project record.');
+          }
+
+          const created = insertResult[0];
+          resultProj = {
+            id: created.id,
+            client: created.client,
+            location: created.location,
+            capacity: created.capacity,
+            sector_or_type: created.sector_or_type,
+            category_id: created.category_id,
+            category_slug: category_slug,
+            created_at: created.created_at || new Date().toISOString()
+          };
+
+          state.projects.push(resultProj);
+
+          fetch('/api/projects/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ client, location, capacity, sector_or_type, category_slug })
+          }).catch(() => {});
+
+          showToast(`✓ Project "${client}" created successfully in Supabase!`, 'success');
         }
-      } catch (err) {
-        showToast('Saved locally.');
+
+        renderProjects();
+        renderCategories();
         closeAdminModal('project-edit-modal');
+
+        const targetRow = document.getElementById(`proj-row-${resultProj.id}`);
+        if (targetRow) {
+          targetRow.classList.add('highlight-row');
+          setTimeout(() => targetRow.classList.remove('highlight-row'), 2500);
+        }
+
+      } catch (err) {
+        console.error('Error saving project:', err);
+        showModalError('project-modal-error', 'Database error: ' + (err.message || 'Failed to save project.'));
+        showToast('Error saving project: ' + err.message, 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = `<span>Save Project</span>`;
       }
     });
 
@@ -2188,21 +2734,24 @@ body.admin-body {
       if (!confirm('Are you sure you want to delete this project?')) return;
 
       try {
-        const res = await fetch('/api/projects/delete', {
+        await supabaseQuery(`/rest/v1/projects?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: { 'Prefer': 'return=representation' }
+        });
+
+        fetch('/api/projects/delete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id })
-        });
-        if (res.ok) {
-          showToast('Project deleted successfully.');
-          await fetchProjects();
-          return;
-        }
-      } catch (err) {}
+        }).catch(() => {});
 
-      state.projects = state.projects.filter(p => String(p.id) !== String(id));
-      renderProjects();
-      showToast('Project deleted.');
+        state.projects = state.projects.filter(p => String(p.id) !== String(id));
+        renderProjects();
+        renderCategories();
+        showToast('Project deleted successfully.', 'info');
+      } catch (err) {
+        showToast('Failed to delete project: ' + err.message, 'error');
+      }
     };
 
     // Project Filters Listeners
@@ -2220,7 +2769,7 @@ body.admin-body {
         .replace(/'/g, '&#039;');
     }
 
-    // Initialize
+    // Initialize Auth & App
     checkAuth();
 
   })();

@@ -85,7 +85,7 @@ function parseBody(req) {
   });
 }
 
-// Helper to query Supabase REST API
+// Helper to query Supabase REST API (GET)
 function fetchFromSupabase(endpoint) {
   return new Promise((resolve, reject) => {
     const fullUrl = `${SUPABASE_URL}${endpoint}`;
@@ -109,6 +109,43 @@ function fetchFromSupabase(endpoint) {
         }
       });
     }).on('error', (err) => reject(err));
+  });
+}
+
+// Helper to perform Supabase REST write operations (POST, PATCH, DELETE)
+function supabaseRestRequest(endpoint, method = 'POST', body = null) {
+  return new Promise((resolve, reject) => {
+    const fullUrl = `${SUPABASE_URL}${endpoint}`;
+    const req = https.request(fullUrl, {
+      method,
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            resolve(JSON.parse(data || '[]'));
+          } catch (e) {
+            resolve([]);
+          }
+        } else {
+          console.warn(`[SUPABASE REST WARNING] ${method} ${endpoint} returned status ${res.statusCode}: ${data}`);
+          resolve(null);
+        }
+      });
+    });
+    req.on('error', (err) => {
+      console.warn(`[SUPABASE REST ERROR] ${method} ${endpoint}:`, err.message);
+      resolve(null);
+    });
+    if (body) req.write(JSON.stringify(body));
+    req.end();
   });
 }
 
@@ -329,17 +366,32 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && urlPath === '/api/projects/create') {
     const payload = await parseBody(req);
     const projects = readJsonFile(PROJECTS_FILE, []);
+    const categories = readJsonFile(CATEGORIES_FILE, []);
+    const catSlug = (payload.category_slug || payload.category || 'epc').trim();
+    const catObj = categories.find(c => c.slug === catSlug);
+    const category_id = catObj ? (parseInt(String(catObj.id).replace('cat_', ''), 10) || 1) : 1;
+
     const newProject = {
       id: 'proj_' + Date.now(),
       client: (payload.client || '').trim(),
       location: (payload.location || '').trim(),
       capacity: (payload.capacity || '').trim(),
       sector_or_type: (payload.sector_or_type || payload.type || '').trim(),
-      category_slug: (payload.category_slug || payload.category || 'epc').trim(),
+      category_slug: catSlug,
       created_at: new Date().toISOString()
     };
     projects.push(newProject);
     writeJsonFile(PROJECTS_FILE, projects);
+
+    // Sync to Supabase
+    supabaseRestRequest('/rest/v1/projects', 'POST', [{
+      client: newProject.client,
+      location: newProject.location,
+      capacity: newProject.capacity,
+      sector_or_type: newProject.sector_or_type,
+      category_id: category_id
+    }]).catch(() => {});
+
     sendJson(res, 200, { success: true, message: 'Project created successfully', project: newProject });
     return;
   }
@@ -349,6 +401,7 @@ const server = http.createServer(async (req, res) => {
     const projects = readJsonFile(PROJECTS_FILE, []);
     const projIndex = projects.findIndex(p => String(p.id) === String(payload.id));
     if (projIndex !== -1) {
+      const numericId = parseInt(String(payload.id).replace('proj_', ''), 10);
       projects[projIndex] = {
         ...projects[projIndex],
         client: (payload.client !== undefined ? payload.client : projects[projIndex].client).trim(),
@@ -359,6 +412,16 @@ const server = http.createServer(async (req, res) => {
         updated_at: new Date().toISOString()
       };
       writeJsonFile(PROJECTS_FILE, projects);
+
+      if (numericId) {
+        supabaseRestRequest(`/rest/v1/projects?id=eq.${numericId}`, 'PATCH', {
+          client: projects[projIndex].client,
+          location: projects[projIndex].location,
+          capacity: projects[projIndex].capacity,
+          sector_or_type: projects[projIndex].sector_or_type
+        }).catch(() => {});
+      }
+
       sendJson(res, 200, { success: true, message: 'Project updated successfully', project: projects[projIndex] });
     } else {
       sendJson(res, 404, { success: false, message: 'Project not found' });
@@ -370,9 +433,16 @@ const server = http.createServer(async (req, res) => {
     const payload = await parseBody(req);
     let projects = readJsonFile(PROJECTS_FILE, []);
     const initialLen = projects.length;
+    const numericId = parseInt(String(payload.id).replace('proj_', ''), 10);
+
     projects = projects.filter(p => String(p.id) !== String(payload.id));
     if (projects.length < initialLen) {
       writeJsonFile(PROJECTS_FILE, projects);
+
+      if (numericId) {
+        supabaseRestRequest(`/rest/v1/projects?id=eq.${numericId}`, 'DELETE').catch(() => {});
+      }
+
       sendJson(res, 200, { success: true, message: 'Project deleted successfully' });
     } else {
       sendJson(res, 404, { success: false, message: 'Project not found' });
@@ -417,6 +487,10 @@ const server = http.createServer(async (req, res) => {
 
     categories.push(newCategory);
     writeJsonFile(CATEGORIES_FILE, categories);
+
+    // Sync to Supabase
+    supabaseRestRequest('/rest/v1/categories', 'POST', [{ name, slug }]).catch(() => {});
+
     sendJson(res, 200, { success: true, message: 'Category created successfully', category: newCategory });
     return;
   }
@@ -429,6 +503,7 @@ const server = http.createServer(async (req, res) => {
     if (catIndex !== -1) {
       const oldSlug = categories[catIndex].slug;
       const newSlug = payload.slug ? payload.slug.trim() : oldSlug;
+      const numericId = parseInt(String(categories[catIndex].id).replace('cat_', ''), 10);
 
       categories[catIndex] = {
         ...categories[catIndex],
@@ -438,6 +513,10 @@ const server = http.createServer(async (req, res) => {
         description: payload.description !== undefined ? payload.description.trim() : categories[catIndex].description
       };
       writeJsonFile(CATEGORIES_FILE, categories);
+
+      if (numericId) {
+        supabaseRestRequest(`/rest/v1/categories?id=eq.${numericId}`, 'PATCH', { name: categories[catIndex].name, slug: newSlug }).catch(() => {});
+      }
 
       if (oldSlug !== newSlug) {
         const projects = readJsonFile(PROJECTS_FILE, []);
@@ -464,8 +543,13 @@ const server = http.createServer(async (req, res) => {
     const catToDelete = categories.find(c => String(c.id) === String(payload.id) || String(c.slug) === String(payload.slug));
     
     if (catToDelete) {
+      const numericId = parseInt(String(catToDelete.id).replace('cat_', ''), 10);
       categories = categories.filter(c => c.id !== catToDelete.id);
       writeJsonFile(CATEGORIES_FILE, categories);
+
+      if (numericId) {
+        supabaseRestRequest(`/rest/v1/categories?id=eq.${numericId}`, 'DELETE').catch(() => {});
+      }
 
       let projects = readJsonFile(PROJECTS_FILE, []);
       if (payload.delete_projects) {

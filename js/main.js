@@ -222,38 +222,95 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (epcTableBody || icOmTableBody) {
     const SUPABASE_PROJECTS_URL = 'https://znjpzipedsowuyrpotgb.supabase.co/rest/v1/projects?select=*,categories(*)&order=id.asc';
+    const SUPABASE_CATEGORIES_URL = 'https://znjpzipedsowuyrpotgb.supabase.co/rest/v1/categories?select=*&order=id.asc';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
 
-    fetch(SUPABASE_PROJECTS_URL, {
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-    })
-    .then(r => r.ok ? r.json() : Promise.reject('Failed to load from Supabase'))
-    .then(data => {
-      if (Array.isArray(data) && data.length > 0) {
-        let epcRowsHTML = '';
-        let icOmRowsHTML = '';
+    const supHeaders = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` };
 
-        data.forEach((p) => {
-          const categorySlug = (p.categories && p.categories.slug) ? p.categories.slug : (p.category_slug || (p.category_id === 1 ? 'epc' : 'ic_om'));
-          const isEPC = (categorySlug === 'epc');
+    Promise.all([
+      fetch(SUPABASE_CATEGORIES_URL, { headers: supHeaders }).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch(SUPABASE_PROJECTS_URL, { headers: supHeaders }).then(r => r.ok ? r.json() : []).catch(() => [])
+    ])
+    .then(([categories, projects]) => {
+      if (Array.isArray(projects) && projects.length > 0) {
+        // Group projects by category slug
+        const grouped = {};
+        projects.forEach(p => {
+          const slug = (p.categories && p.categories.slug) ? p.categories.slug : (p.category_slug || (p.category_id === 1 ? 'epc' : 'ic_om'));
+          if (!grouped[slug]) grouped[slug] = [];
+          grouped[slug].push(p);
+        });
 
-          const rowHTML = `
+        // Render EPC
+        if (epcTableBody && grouped['epc']) {
+          epcTableBody.innerHTML = grouped['epc'].map(p => `
             <tr>
               <td><strong>${p.client}</strong></td>
               <td>${p.location}</td>
               <td class="cap-col">${p.capacity}</td>
               <td><span class="tag-pill">${p.sector_or_type}</span></td>
-            </tr>`;
+            </tr>
+          `).join('');
+        }
 
-          if (isEPC) {
-            epcRowsHTML += rowHTML;
-          } else {
-            icOmRowsHTML += rowHTML;
-          }
-        });
+        // Render I&C / O&M
+        if (icOmTableBody && grouped['ic_om']) {
+          icOmTableBody.innerHTML = grouped['ic_om'].map(p => `
+            <tr>
+              <td><strong>${p.client}</strong></td>
+              <td>${p.location}</td>
+              <td class="cap-col">${p.capacity}</td>
+              <td><span class="tag-pill">${p.sector_or_type}</span></td>
+            </tr>
+          `).join('');
+        }
 
-        if (epcTableBody && epcRowsHTML) epcTableBody.innerHTML = epcRowsHTML;
-        if (icOmTableBody && icOmRowsHTML) icOmTableBody.innerHTML = icOmRowsHTML;
+        // Render any additional custom categories
+        const gridContainer = epcTableBody ? epcTableBody.closest('.card-grid') : null;
+        if (gridContainer && Array.isArray(categories)) {
+          categories.forEach(cat => {
+            if (cat.slug !== 'epc' && cat.slug !== 'ic_om' && grouped[cat.slug] && grouped[cat.slug].length > 0) {
+              const tableId = `cat-${cat.slug}-projects-list`;
+              if (!document.getElementById(tableId)) {
+                const tableCard = document.createElement('div');
+                tableCard.className = 'table-wrap fade-up';
+                tableCard.style.cssText = 'background: #ffffff; border-radius: 14px; padding: 24px 24px 20px; box-shadow: 0 10px 30px rgba(14, 44, 34, 0.05);';
+                tableCard.innerHTML = `
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--sage-line);">
+                    <div>
+                      <h3 style="font-size: 18px; color: var(--forest-deep); margin: 0 0 4px 0; font-weight: 700;">${cat.name}</h3>
+                      <p style="font-size: 13px; color: var(--ink-soft); margin: 0;">Verified Client Portfolio</p>
+                    </div>
+                    <span style="font-size: 12px; font-weight: 700; color: var(--forest); background: rgba(62,143,92,0.12); padding: 5px 12px; border-radius: 20px;">${grouped[cat.slug].length} Sites</span>
+                  </div>
+                  <div class="table-scroll">
+                    <table class="data-table">
+                      <thead>
+                        <tr>
+                          <th>Client</th>
+                          <th>Location</th>
+                          <th>Capacity</th>
+                          <th>Sector / Type</th>
+                        </tr>
+                      </thead>
+                      <tbody id="${tableId}">
+                        ${grouped[cat.slug].map(p => `
+                          <tr>
+                            <td><strong>${p.client}</strong></td>
+                            <td>${p.location}</td>
+                            <td class="cap-col">${p.capacity}</td>
+                            <td><span class="tag-pill">${p.sector_or_type}</span></td>
+                          </tr>
+                        `).join('')}
+                      </tbody>
+                    </table>
+                  </div>
+                `;
+                gridContainer.appendChild(tableCard);
+              }
+            }
+          });
+        }
       }
     })
     .catch(() => {
