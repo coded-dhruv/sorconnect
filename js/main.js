@@ -463,6 +463,60 @@ document.addEventListener('DOMContentLoaded', function () {
     return { valid: true };
   }
 
+  // ===================== SHADCN TOAST NOTIFICATION SYSTEM =====================
+  function ensureToastContainer() {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.setAttribute('aria-live', 'polite');
+      document.body.appendChild(container);
+    }
+    return container;
+  }
+
+  window.showToast = function (options) {
+    const container = ensureToastContainer();
+    const title = options.title || 'Notification';
+    const description = options.description || '';
+    const type = options.type || 'info';
+    const duration = options.duration || 4500;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+
+    let iconSvg = `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`;
+    if (type === 'error') {
+      iconSvg = `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    }
+
+    toast.innerHTML = `
+      ${iconSvg}
+      <div class="toast-content">
+        <div class="toast-title">${title}</div>
+        ${description ? `<p class="toast-desc">${description}</p>` : ''}
+      </div>
+      <button class="toast-close" type="button" aria-label="Close notification">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    `;
+
+    const closeBtn = toast.querySelector('.toast-close');
+    const dismiss = () => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px) scale(0.95)';
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 250);
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', dismiss);
+    const timer = setTimeout(dismiss, duration);
+    toast.addEventListener('mouseenter', () => clearTimeout(timer));
+
+    container.appendChild(toast);
+  };
+
   function handleRevampedSubmit(formEl, noteEl, buttonEl, defaultSuccessText) {
     if (!formEl || !buttonEl) return;
 
@@ -477,9 +531,12 @@ document.addEventListener('DOMContentLoaded', function () {
           noteEl.style.color = '#B20F03';
           noteEl.style.display = 'block';
           noteEl.setAttribute('role', 'alert');
-        } else {
-          alert(validation.message);
         }
+        window.showToast({
+          title: 'Validation Error',
+          description: validation.message,
+          type: 'error'
+        });
         if (validation.input) validation.input.focus();
         return;
       }
@@ -544,8 +601,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(() => {});
       } catch (e) {}
 
-      // UI Success Feedback
+      // UI Success Feedback & shadcn Toast
       buttonEl.textContent = '✓ Inquiry Sent';
+      window.showToast({
+        title: 'Inquiry Submitted!',
+        description: 'Thank you! Our solar engineers will connect with you within 24 hours.',
+        type: 'success'
+      });
+
       if (noteEl) {
         noteEl.textContent = defaultSuccessText;
         noteEl.style.color = 'var(--leaf)';
@@ -558,16 +621,15 @@ document.addEventListener('DOMContentLoaded', function () {
       if (formId === 'quote-modal-form') {
         setTimeout(() => {
           closeQuoteModal();
-          buttonEl.textContent = originalBtnText;
-          buttonEl.disabled = false;
           if (noteEl) noteEl.style.display = 'none';
-        }, 2500);
-      } else {
-        setTimeout(() => {
-          buttonEl.textContent = originalBtnText;
-          buttonEl.disabled = false;
-        }, 4000);
+        }, 1200);
       }
+
+      setTimeout(() => {
+        buttonEl.textContent = originalBtnText;
+        buttonEl.disabled = false;
+        if (noteEl) noteEl.style.display = 'none';
+      }, 3500);
     });
   }
 
