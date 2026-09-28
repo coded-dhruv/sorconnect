@@ -216,6 +216,38 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  // ===================== PROJECT CATEGORY FILTER (PROJECTS PAGE) =====================
+  const projectFilterBtns = document.querySelectorAll('.project-filter-btn');
+  const projectCards = document.querySelectorAll('.project-card-aesthetic');
+
+  if (projectFilterBtns.length > 0 && projectCards.length > 0) {
+    projectFilterBtns.forEach(btn => {
+      btn.addEventListener('click', function () {
+        projectFilterBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        const filterValue = this.getAttribute('data-filter');
+
+        projectCards.forEach(card => {
+          const cardCategory = card.getAttribute('data-category') || '';
+          const matches = (filterValue === 'all' || cardCategory.includes(filterValue));
+
+          if (matches) {
+            card.style.display = 'flex';
+            if (typeof gsap !== 'undefined') {
+              gsap.fromTo(card, 
+                { opacity: 0, y: 15, scale: 0.97 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
+              );
+            }
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+
   // ===================== PROCESS TABS (HOME) =====================
   const processBtns = document.querySelectorAll('.process-nav-btn');
   const processTabs = document.querySelectorAll('.process-tab-content');
