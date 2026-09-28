@@ -77,37 +77,17 @@ document.addEventListener('DOMContentLoaded', function () {
   var onScroll = function () {
     var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
     
-    // 1. Compact header blur state
+    // When scrolling away from initial top position (scrollY > 70px)
+    var isScrolled = scrollY > 70;
+
     if (header) {
-      if (scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
+      header.classList.toggle('scrolled', isScrolled);
+      header.classList.toggle('scrolled-past-hero', isScrolled);
     }
-
-    // 2. Detect if user scrolled past the hero section
-    var heroEl = document.querySelector('.hero, .page-hero, .hero-inner-single, .hero-section');
-    var isPastHero = false;
-
-    if (heroEl) {
-      var heroHeight = heroEl.offsetHeight || 350;
-      var heroTop = heroEl.offsetTop || 0;
-      var heroBottom = heroTop + heroHeight;
-      // Trigger threshold: when user has scrolled past the majority of hero
-      var triggerThreshold = Math.max(heroBottom - 110, 160);
-      isPastHero = scrollY > triggerThreshold;
-    } else {
-      isPastHero = scrollY > 220;
-    }
-
-    // Animate navbar CTA out & side biscuit in
-    if (header) {
-      header.classList.toggle('scrolled-past-hero', isPastHero);
-    }
-    document.body.classList.toggle('scrolled-past-hero', isPastHero);
+    document.body.classList.toggle('scrolled-past-hero', isScrolled);
+    document.body.classList.toggle('scrolled', isScrolled);
     if (sideBiscuit) {
-      sideBiscuit.classList.toggle('show', isPastHero);
+      sideBiscuit.classList.toggle('show', isScrolled);
     }
   };
 
