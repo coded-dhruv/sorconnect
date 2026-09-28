@@ -216,9 +216,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // ===================== PROJECT CATEGORY FILTER (PROJECTS PAGE) =====================
+  // ===================== PROJECT CATEGORY FILTER & DYNAMIC SUPABASE LOADER =====================
   const projectFilterBtns = document.querySelectorAll('.project-filter-btn');
   const projectCards = document.querySelectorAll('.project-card-aesthetic');
+  const featuredProjectsGrid = document.getElementById('featured-projects-grid');
+  const epcTableBody = document.getElementById('epc-projects-list');
+  const icOmTableBody = document.getElementById('ic-om-projects-list');
 
   if (projectFilterBtns.length > 0 && projectCards.length > 0) {
     projectFilterBtns.forEach(btn => {
@@ -227,10 +230,11 @@ document.addEventListener('DOMContentLoaded', function () {
         this.classList.add('active');
 
         const filterValue = this.getAttribute('data-filter');
+        const currentCards = document.querySelectorAll('.project-card-aesthetic');
 
-        projectCards.forEach(card => {
+        currentCards.forEach(card => {
           const cardCategory = card.getAttribute('data-category') || '';
-          const matches = (filterValue === 'all' || cardCategory.includes(filterValue));
+          const matches = (filterValue === 'all' || cardCategory === filterValue);
 
           if (matches) {
             card.style.display = 'flex';
@@ -245,6 +249,124 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         });
       });
+    });
+  }
+
+  // Fetch real-time projects directly from Supabase
+  if (featuredProjectsGrid && (epcTableBody || icOmTableBody)) {
+    const SUPABASE_PROJECTS_URL = 'https://znjpzipedsowuyrpotgb.supabase.co/rest/v1/projects?select=*,categories(*)&order=id.asc';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+
+    const projectImageMap = {
+      'Vishwaraj Environment Ltd': 'assets/svc-epc-1.jpg',
+      'Shreej Solar Solution': 'assets/svc-inst-1.jpg',
+      'Yutaka Autoparts Pvt Ltd': 'assets/svc-epc-2.jpg',
+      'Krishna Ishizaki Auto Ltd': 'assets/svc-design-1.jpg',
+      'Fine Vibes Pvt Ltd': 'assets/svc-om-1.jpg',
+      'Green Energy': 'assets/svc-om-2.jpg',
+      'Rana Bai Marble & Granite': 'assets/svc-design-2.jpg',
+      'KGK Dia Processing': 'assets/svc-epc.jpg',
+      'Arihant Oil & Mills Ltd': 'assets/svc-inst-2.jpg',
+      'Quality Marble Export': 'assets/svc-kusum-1.jpg'
+    };
+
+    const fallbackImgs = [
+      'assets/svc-epc-1.jpg',
+      'assets/svc-inst-1.jpg',
+      'assets/svc-epc-2.jpg',
+      'assets/svc-design-1.jpg',
+      'assets/svc-om-1.jpg',
+      'assets/svc-om-2.jpg',
+      'assets/svc-design-2.jpg',
+      'assets/svc-epc.jpg',
+      'assets/svc-inst-2.jpg',
+      'assets/svc-kusum-1.jpg'
+    ];
+
+    fetch(SUPABASE_PROJECTS_URL, {
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+    })
+    .then(r => r.ok ? r.json() : Promise.reject('Failed to load from Supabase'))
+    .then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        let cardsHTML = '';
+        let epcRowsHTML = '';
+        let icOmRowsHTML = '';
+        let epcCount = 0;
+        let icCount = 0;
+
+        data.forEach((p, idx) => {
+          const categorySlug = (p.categories && p.categories.slug) ? p.categories.slug : (p.category_slug || (p.category_id === 1 ? 'epc' : 'ic_om'));
+          const isEPC = (categorySlug === 'epc');
+          const categoryLabel = isEPC ? 'EPC Portfolio' : 'I&C / O&M';
+          const imgSrc = projectImageMap[p.client] || fallbackImgs[idx % fallbackImgs.length];
+
+          if (isEPC) {
+            epcCount++;
+            epcRowsHTML += `<tr><td><strong>${p.client}</strong></td><td>${p.location}</td><td class="cap-col" style="color:var(--forest); font-weight:700;">${p.capacity}</td><td><span class="tag-pill" style="font-size:11px;">${p.sector_or_type}</span></td></tr>`;
+          } else {
+            icCount++;
+            icOmRowsHTML += `<tr><td><strong>${p.client}</strong></td><td>${p.location}</td><td class="cap-col" style="color:var(--forest); font-weight:700;">${p.capacity}</td><td><span class="tag-pill" style="font-size:11px;">${p.sector_or_type}</span></td></tr>`;
+          }
+
+          cardsHTML += `
+            <div class="project-card-aesthetic" data-category="${categorySlug}">
+              <div class="project-card-img-wrap">
+                <img src="${imgSrc}" alt="${p.client} ${p.capacity} Solar Project in ${p.location}" loading="lazy">
+                <span class="project-card-type-badge">${categoryLabel}</span>
+                <span class="project-card-capacity-badge">${p.capacity}</span>
+              </div>
+              <div class="project-card-content">
+                <div class="project-card-meta">
+                  <span class="project-sector-tag">${p.sector_or_type} Sector</span>
+                  <span class="project-card-loc">📍 ${p.location}</span>
+                </div>
+                <h3 class="project-card-title">${p.client}</h3>
+                <p class="project-card-desc">Custom solar installation engineered for ${p.sector_or_type} operations delivering reliable renewable energy.</p>
+                <div class="project-card-footer">
+                  <span>Category: ${categoryLabel}</span>
+                  <span style="font-weight:700; color:var(--forest);">${p.capacity}</span>
+                </div>
+              </div>
+            </div>`;
+        });
+
+        featuredProjectsGrid.innerHTML = cardsHTML;
+        if (epcTableBody && epcRowsHTML) epcTableBody.innerHTML = epcRowsHTML;
+        if (icOmTableBody && icOmRowsHTML) icOmTableBody.innerHTML = icOmRowsHTML;
+
+        const countAll = document.getElementById('count-all');
+        const countEpc = document.getElementById('count-epc');
+        const countIc = document.getElementById('count-ic');
+        if (countAll) countAll.textContent = data.length;
+        if (countEpc) countEpc.textContent = epcCount;
+        if (countIc) countIc.textContent = icCount;
+
+        // Re-attach card filter listeners to dynamically loaded cards
+        const updatedCards = document.querySelectorAll('.project-card-aesthetic');
+        projectFilterBtns.forEach(btn => {
+          btn.onclick = function () {
+            projectFilterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const filterValue = this.getAttribute('data-filter');
+            updatedCards.forEach(card => {
+              const cardCategory = card.getAttribute('data-category') || '';
+              const matches = (filterValue === 'all' || cardCategory === filterValue);
+              if (matches) {
+                card.style.display = 'flex';
+                if (typeof gsap !== 'undefined') {
+                  gsap.fromTo(card, { opacity: 0, y: 15, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' });
+                }
+              } else {
+                card.style.display = 'none';
+              }
+            });
+          };
+        });
+      }
+    })
+    .catch(() => {
+      // Keep static verified Supabase HTML
     });
   }
 

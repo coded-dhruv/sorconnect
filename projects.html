@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projects | Sor Connect — 150+ MW Solar Deployments</title>
-<meta name="description" content="Explore Sor Connect's project portfolio: 500+ EPC installations and 150+ I&amp;C/O&amp;M plants across India, including marble, oil, diamond, automotive, STP, and agricultural sectors.">
+<meta name="description" content="Explore Sor Connect's verified project portfolio: 500+ EPC installations and 150+ I&amp;C/O&amp;M plants across India, including marble, oil, diamond, automotive, STP, and agricultural sectors.">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Projects | Sor Connect — 150+ MW Solar Deployments">
@@ -71,9 +71,9 @@
     <div class="page-hero-overlay"></div>
     <div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> / Projects</div>
-      <span class="eyebrow on-dark">Project Portfolio</span>
-      <h1>150+ MW of Clean Solar Infrastructure Engineered &amp; Delivered.</h1>
-      <p>500+ Turnkey EPC projects and 150+ Industrial &amp; Commercial installations across 13 Indian states, powering leading brands in automotive, marble, oil, diamond, environment, and agricultural sectors.</p>
+      <span class="eyebrow on-dark">Verified Deployments</span>
+      <h1>Our Solar Projects &amp; Client Portfolio</h1>
+      <p>500+ Turnkey EPC projects and 150+ Industrial &amp; Commercial installations across 13 Indian states, powering leaders in marble, oil, diamond, automotive, STP and renewable sectors.</p>
 
       <!-- Floating Hero Quick Stats Bar -->
       <div class="about-hero-stats fade-up">
@@ -97,212 +97,231 @@
     </div>
   </section>
 
-  <!-- ============ FEATURED LANDMARK PROJECTS (VISUAL CARDS & FILTERS) ============ -->
+  <!-- ============ FEATURED CLIENT PROJECTS (VISUAL CARDS & FILTERS) ============ -->
   <section class="section">
     <div class="container">
       <div class="section-head text-center fade-up" style="text-align: center; margin-bottom: 24px;">
-        <span class="eyebrow">Landmark Deployments</span>
-        <h2>Explore Our Executed Solar Projects</h2>
-        <p style="max-width: 680px; margin: 10px auto 0; color: var(--ink-soft);">Filter projects by execution model, from massive industrial rooftop EPC installations to high-yield agricultural solar farms.</p>
+        <span class="eyebrow">Project Portfolio</span>
+        <h2>Executed Client Projects</h2>
+        <p style="max-width: 680px; margin: 10px auto 0; color: var(--ink-soft);">Filter verified projects by category, synchronized directly with our project records.</p>
       </div>
 
       <!-- Category Filter Bar -->
       <div class="project-filter-bar fade-up">
-        <button class="project-filter-btn active" data-filter="all" type="button">All Projects (10)</button>
-        <button class="project-filter-btn" data-filter="epc" type="button">EPC Industrial &amp; Commercial</button>
-        <button class="project-filter-btn" data-filter="ic" type="button">Installation &amp; Commissioning</button>
-        <button class="project-filter-btn" data-filter="om" type="button">Operation &amp; Maintenance</button>
-        <button class="project-filter-btn" data-filter="kusum" type="button">PM-KUSUM &amp; Agro Solar</button>
+        <button class="project-filter-btn active" data-filter="all" type="button">All Projects (<span id="count-all">10</span>)</button>
+        <button class="project-filter-btn" data-filter="epc" type="button">EPC Portfolio (<span id="count-epc">5</span>)</button>
+        <button class="project-filter-btn" data-filter="ic_om" type="button">I&amp;C / O&amp;M Portfolio (<span id="count-ic">5</span>)</button>
       </div>
 
-      <!-- Projects Grid -->
+      <!-- Projects Grid (Synced with Supabase Data) -->
       <div class="projects-cards-grid fade-up" id="featured-projects-grid">
         
-        <!-- Project 1: Vishwaraj Environment Ltd -->
+        <!-- 1. Vishwaraj Environment Ltd (EPC) -->
         <div class="project-card-aesthetic" data-category="epc">
           <div class="project-card-img-wrap">
             <img src="assets/svc-epc-1.jpg" alt="Vishwaraj Environment Ltd 2315 KW Solar EPC Project in Agra" loading="lazy">
-            <span class="project-card-type-badge">Turnkey EPC</span>
-            <span class="project-card-capacity-badge">2,315 KW</span>
+            <span class="project-card-type-badge">EPC Portfolio</span>
+            <span class="project-card-capacity-badge">2315 KW</span>
           </div>
           <div class="project-card-content">
             <div class="project-card-meta">
-              <span class="project-sector-tag">STP &amp; Environment</span>
-              <span class="project-card-loc">📍 Agra, Uttar Pradesh</span>
+              <span class="project-sector-tag">STP Sector</span>
+              <span class="project-card-loc">📍 Agra</span>
             </div>
             <h3 class="project-card-title">Vishwaraj Environment Ltd</h3>
-            <p class="project-card-desc">High-capacity mega solar plant engineered for wastewater treatment facilities with continuous grid synchronization and heavy industrial power offset.</p>
+            <p class="project-card-desc">Mega-scale sewage treatment plant solarisation with high-voltage evacuation and seamless DISCOM grid synchronization.</p>
             <div class="project-card-footer">
-              <span>Type: Ground &amp; Rooftop EPC</span>
-              <span style="font-weight:700; color:var(--forest);">Mega Scale</span>
+              <span>Category: EPC Portfolio</span>
+              <span style="font-weight:700; color:var(--forest);">2.3+ MW</span>
             </div>
           </div>
         </div>
 
-        <!-- Project 2: Shreej Solar Solution -->
-        <div class="project-card-aesthetic" data-category="ic">
+        <!-- 2. Shreej Solar Solution (I&C) -->
+        <div class="project-card-aesthetic" data-category="ic_om">
           <div class="project-card-img-wrap">
             <img src="assets/svc-inst-1.jpg" alt="Shreej Solar Solution 1300 KW Solar Installation in Surat" loading="lazy">
-            <span class="project-card-type-badge">I&amp;C Services</span>
-            <span class="project-card-capacity-badge">1,300 KW</span>
+            <span class="project-card-type-badge">I&amp;C / O&amp;M</span>
+            <span class="project-card-capacity-badge">1300 KW</span>
           </div>
           <div class="project-card-content">
             <div class="project-card-meta">
-              <span class="project-sector-tag">Industrial Manufacturing</span>
-              <span class="project-card-loc">📍 Surat, Gujarat</span>
+              <span class="project-sector-tag">I&amp;C Sector</span>
+              <span class="project-card-loc">📍 Surat</span>
             </div>
             <h3 class="project-card-title">Shreej Solar Solution</h3>
-            <p class="project-card-desc">Turnkey electrical installation, precision PV array alignment, and high-voltage grid substation synchronization for Gujarat's textile corridor.</p>
+            <p class="project-card-desc">Turnkey industrial installation and substation commissioning delivering high efficiency power generation.</p>
             <div class="project-card-footer">
-              <span>Type: I&amp;C Substation Sync</span>
-              <span style="font-weight:700; color:var(--forest);">1.3 MW Plant</span>
+              <span>Category: I&amp;C / O&amp;M</span>
+              <span style="font-weight:700; color:var(--forest);">1.3 MW</span>
             </div>
           </div>
         </div>
 
-        <!-- Project 3: Yutaka Autoparts Pvt Ltd -->
-        <div class="project-card-aesthetic" data-category="ic epc">
+        <!-- 3. Yutaka Autoparts Pvt Ltd (I&C) -->
+        <div class="project-card-aesthetic" data-category="ic_om">
           <div class="project-card-img-wrap">
-            <img src="assets/svc-epc-2.jpg" alt="Yutaka Autoparts Pvt Ltd 736 KW Industrial Rooftop Solar in Bhiwadi" loading="lazy">
-            <span class="project-card-type-badge">Rooftop Solar</span>
+            <img src="assets/svc-epc-2.jpg" alt="Yutaka Autoparts Pvt Ltd 736 KW Solar Installation in Bhiwadi" loading="lazy">
+            <span class="project-card-type-badge">I&amp;C / O&amp;M</span>
             <span class="project-card-capacity-badge">736 KW</span>
           </div>
           <div class="project-card-content">
             <div class="project-card-meta">
-              <span class="project-sector-tag">Automotive Sector</span>
-              <span class="project-card-loc">📍 Bhiwadi, Rajasthan</span>
+              <span class="project-sector-tag">I&amp;C Sector</span>
+              <span class="project-card-loc">📍 Bhiwadi</span>
             </div>
             <h3 class="project-card-title">Yutaka Autoparts Pvt Ltd</h3>
-            <p class="project-card-desc">Precision-engineered industrial rooftop solar deployment powering multinational automotive manufacturing with hot-dip galvanized mounting structures.</p>
+            <p class="project-card-desc">Industrial automotive parts manufacturing facility powered by rooftop solar array with heavy-duty mounting.</p>
             <div class="project-card-footer">
-              <span>Type: Industrial Rooftop</span>
-              <span style="font-weight:700; color:var(--forest);">Auto Hub</span>
+              <span>Category: I&amp;C / O&amp;M</span>
+              <span style="font-weight:700; color:var(--forest);">736 KW</span>
             </div>
           </div>
         </div>
 
-        <!-- Project 4: Krishna Ishizaki Auto Ltd -->
-        <div class="project-card-aesthetic" data-category="ic epc">
+        <!-- 4. Krishna Ishizaki Auto Ltd (I&C) -->
+        <div class="project-card-aesthetic" data-category="ic_om">
           <div class="project-card-img-wrap">
-            <img src="assets/svc-design-1.jpg" alt="Krishna Ishizaki Auto Ltd 514 KW Solar Plant in Binola" loading="lazy">
-            <span class="project-card-type-badge">I&amp;C Engineering</span>
+            <img src="assets/svc-design-1.jpg" alt="Krishna Ishizaki Auto Ltd 514 KW Solar Project in Binola" loading="lazy">
+            <span class="project-card-type-badge">I&amp;C / O&amp;M</span>
             <span class="project-card-capacity-badge">514 KW</span>
           </div>
           <div class="project-card-content">
             <div class="project-card-meta">
-              <span class="project-sector-tag">Auto Ancillary</span>
-              <span class="project-card-loc">📍 Binola, Haryana</span>
+              <span class="project-sector-tag">I&amp;C Sector</span>
+              <span class="project-card-loc">📍 Binola</span>
             </div>
             <h3 class="project-card-title">Krishna Ishizaki Auto Ltd</h3>
-            <p class="project-card-desc">End-to-end solar engineering, shadow modeling, and complete electrical balance of system installation designed for heavy machining operations.</p>
+            <p class="project-card-desc">Precision engineering and turnkey industrial rooftop installation for automotive component plant.</p>
             <div class="project-card-footer">
-              <span>Type: Turnkey I&amp;C</span>
-              <span style="font-weight:700; color:var(--forest);">500+ KW</span>
+              <span>Category: I&amp;C / O&amp;M</span>
+              <span style="font-weight:700; color:var(--forest);">514 KW</span>
             </div>
           </div>
         </div>
 
-        <!-- Project 5: Fine Vibes Pvt Ltd -->
-        <div class="project-card-aesthetic" data-category="ic">
+        <!-- 5. Fine Vibes Pvt Ltd (I&C) -->
+        <div class="project-card-aesthetic" data-category="ic_om">
           <div class="project-card-img-wrap">
             <img src="assets/svc-om-1.jpg" alt="Fine Vibes Pvt Ltd 500 KW Solar Installation in Raipur" loading="lazy">
-            <span class="project-card-type-badge">I&amp;C Commercial</span>
+            <span class="project-card-type-badge">I&amp;C / O&amp;M</span>
             <span class="project-card-capacity-badge">500 KW</span>
           </div>
           <div class="project-card-content">
             <div class="project-card-meta">
-              <span class="project-sector-tag">Commercial &amp; Industrial</span>
-              <span class="project-card-loc">📍 Raipur, Chhattisgarh</span>
+              <span class="project-sector-tag">I&amp;C Sector</span>
+              <span class="project-card-loc">📍 Raipur, C.G.</span>
             </div>
             <h3 class="project-card-title">Fine Vibes Pvt Ltd</h3>
-            <p class="project-card-desc">Turnkey solar installation with smart digital inverters and automated cloud SCADA generation monitoring delivering optimal daytime power yields.</p>
+            <p class="project-card-desc">Commercial manufacturing rooftop solar installation optimized for maximum daytime peak energy offset.</p>
             <div class="project-card-footer">
-              <span>Type: Commercial I&amp;C</span>
-              <span style="font-weight:700; color:var(--forest);">Central India</span>
+              <span>Category: I&amp;C / O&amp;M</span>
+              <span style="font-weight:700; color:var(--forest);">500 KW</span>
             </div>
           </div>
         </div>
 
-        <!-- Project 6: Green Energy Solar Farm -->
-        <div class="project-card-aesthetic" data-category="om kusum">
+        <!-- 6. Green Energy (O&M) -->
+        <div class="project-card-aesthetic" data-category="ic_om">
           <div class="project-card-img-wrap">
-            <img src="assets/svc-kusum-1.jpg" alt="Green Energy 420 KW Solar Farm O&M in Kishangarh Ajmer" loading="lazy">
-            <span class="project-card-type-badge">O&amp;M Asset Care</span>
+            <img src="assets/svc-om-2.jpg" alt="Green Energy 420 KW Solar O&M in Kishangarh Ajmer" loading="lazy">
+            <span class="project-card-type-badge">I&amp;C / O&amp;M</span>
             <span class="project-card-capacity-badge">420 KW</span>
           </div>
           <div class="project-card-content">
             <div class="project-card-meta">
-              <span class="project-sector-tag">Solar Farm &amp; O&amp;M</span>
+              <span class="project-sector-tag">O&amp;M Sector</span>
               <span class="project-card-loc">📍 Kishangarh, Ajmer</span>
             </div>
-            <h3 class="project-card-title">Green Energy Solar Plant</h3>
-            <p class="project-card-desc">25-year predictive asset management, scheduled module washing with demineralized water, and thermal drone inspections ensuring 99%+ plant uptime.</p>
+            <h3 class="project-card-title">Green Energy</h3>
+            <p class="project-card-desc">25-year predictive operation &amp; maintenance, scheduled module washing, and SCADA performance monitoring.</p>
             <div class="project-card-footer">
-              <span>Type: 25-Yr O&amp;M Contract</span>
-              <span style="font-weight:700; color:var(--forest);">99%+ Uptime</span>
+              <span>Category: I&amp;C / O&amp;M</span>
+              <span style="font-weight:700; color:var(--forest);">420 KW</span>
             </div>
           </div>
         </div>
 
-        <!-- Project 7: Rana Bai Marble & Granite -->
+        <!-- 7. Rana Bai Marble & Granite (EPC) -->
         <div class="project-card-aesthetic" data-category="epc">
           <div class="project-card-img-wrap">
             <img src="assets/svc-design-2.jpg" alt="Rana Bai Marble & Granite 324 KW Solar EPC in Kishangarh" loading="lazy">
-            <span class="project-card-type-badge">Turnkey EPC</span>
+            <span class="project-card-type-badge">EPC Portfolio</span>
             <span class="project-card-capacity-badge">324 KW</span>
           </div>
           <div class="project-card-content">
             <div class="project-card-meta">
-              <span class="project-sector-tag">Marble &amp; Heavy Stone</span>
+              <span class="project-sector-tag">Marble Sector</span>
               <span class="project-card-loc">📍 Kishangarh, Ajmer</span>
             </div>
             <h3 class="project-card-title">Rana Bai Marble &amp; Granite</h3>
-            <p class="project-card-desc">Custom rooftop solar installation handling intensive vibration and dust conditions, slashing industrial grid energy bills by over 65%.</p>
+            <p class="project-card-desc">Industrial rooftop solar array engineered to power heavy stone cutting and polishing equipment.</p>
             <div class="project-card-footer">
-              <span>Type: Industrial EPC</span>
-              <span style="font-weight:700; color:var(--forest);">Stone Processing</span>
+              <span>Category: EPC Portfolio</span>
+              <span style="font-weight:700; color:var(--forest);">324 KW</span>
             </div>
           </div>
         </div>
 
-        <!-- Project 8: KGK Dia Processing -->
+        <!-- 8. KGK Dia Processing (EPC) -->
         <div class="project-card-aesthetic" data-category="epc">
           <div class="project-card-img-wrap">
             <img src="assets/svc-epc.jpg" alt="KGK Dia Processing 250 KW Solar Plant in Jasdan Rajkot" loading="lazy">
-            <span class="project-card-type-badge">Turnkey EPC</span>
+            <span class="project-card-type-badge">EPC Portfolio</span>
             <span class="project-card-capacity-badge">250 KW</span>
           </div>
           <div class="project-card-content">
             <div class="project-card-meta">
-              <span class="project-sector-tag">Diamond Processing</span>
-              <span class="project-card-loc">📍 Jasdan, Rajkot, Gujarat</span>
+              <span class="project-sector-tag">Diamond Sector</span>
+              <span class="project-card-loc">📍 Jasdan, Rajkot</span>
             </div>
             <h3 class="project-card-title">KGK Dia Processing</h3>
-            <p class="project-card-desc">High-precision solar rooftop engineered for zero-fluctuation precision diamond manufacturing with seamless net-meter export integration.</p>
+            <p class="project-card-desc">High-precision rooftop solar installation ensuring reliable clean power for diamond processing operations.</p>
             <div class="project-card-footer">
-              <span>Type: Precision EPC</span>
-              <span style="font-weight:700; color:var(--forest);">Gujarat Hub</span>
+              <span>Category: EPC Portfolio</span>
+              <span style="font-weight:700; color:var(--forest);">250 KW</span>
             </div>
           </div>
         </div>
 
-        <!-- Project 9: Arihant Oil & Mills Ltd -->
+        <!-- 9. Arihant Oil & Mills Ltd (EPC) -->
         <div class="project-card-aesthetic" data-category="epc">
           <div class="project-card-img-wrap">
             <img src="assets/svc-inst-2.jpg" alt="Arihant Oil & Mills Ltd 240 KW Solar Project in Sri Ganganagar" loading="lazy">
-            <span class="project-card-type-badge">Turnkey EPC</span>
+            <span class="project-card-type-badge">EPC Portfolio</span>
             <span class="project-card-capacity-badge">240 KW</span>
           </div>
           <div class="project-card-content">
             <div class="project-card-meta">
-              <span class="project-sector-tag">Agro &amp; Edible Oil</span>
-              <span class="project-card-loc">📍 Sri Ganganagar, Rajasthan</span>
+              <span class="project-sector-tag">Oil Sector</span>
+              <span class="project-card-loc">📍 Sri Ganganagar</span>
             </div>
             <h3 class="project-card-title">Arihant Oil &amp; Mills Ltd</h3>
-            <p class="project-card-desc">Agricultural and agro-industrial rooftop plant utilizing Tier-1 ALMM panels to power heavy continuous seed-pressing and refining operations.</p>
+            <p class="project-card-desc">Agro-processing solar deployment with high-efficiency Tier-1 panels for continuous mill operations.</p>
             <div class="project-card-footer">
-              <span>Type: Agro-Industrial EPC</span>
-              <span style="font-weight:700; color:var(--forest);">Heavy Duty</span>
+              <span>Category: EPC Portfolio</span>
+              <span style="font-weight:700; color:var(--forest);">240 KW</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. Quality Marble Export (EPC) -->
+        <div class="project-card-aesthetic" data-category="epc">
+          <div class="project-card-img-wrap">
+            <img src="assets/svc-kusum-1.jpg" alt="Quality Marble Export 200 KW Solar Project in Jalore" loading="lazy">
+            <span class="project-card-type-badge">EPC Portfolio</span>
+            <span class="project-card-capacity-badge">200 KW</span>
+          </div>
+          <div class="project-card-content">
+            <div class="project-card-meta">
+              <span class="project-sector-tag">Marble Sector</span>
+              <span class="project-card-loc">📍 Jalore</span>
+            </div>
+            <h3 class="project-card-title">Quality Marble Export</h3>
+            <p class="project-card-desc">Turnkey solar EPC installation delivering substantial energy cost reduction for marble export facilities.</p>
+            <div class="project-card-footer">
+              <span>Category: EPC Portfolio</span>
+              <span style="font-weight:700; color:var(--forest);">200 KW</span>
             </div>
           </div>
         </div>
@@ -315,9 +334,9 @@
   <section class="section section-sage">
     <div class="container">
       <div class="section-head fade-up">
-        <span class="eyebrow">Verified Client Directory</span>
-        <h2>Client Portfolio Breakdown</h2>
-        <p>A reference list of completed Engineering, Procurement, Construction, and ongoing O&amp;M contracts across India.</p>
+        <span class="eyebrow">Client Directory</span>
+        <h2>Verified Project Portfolio Breakdown</h2>
+        <p>Official record of Engineering, Procurement, Construction, and ongoing O&amp;M accounts across India.</p>
       </div>
 
       <div class="card-grid cols-2 fade-up" style="gap: 32px;">
@@ -325,19 +344,19 @@
         <!-- Table 1: EPC Clients -->
         <div class="table-wrap" style="background: #ffffff; border-radius: 12px; padding: 12px 16px;">
           <h3 style="font-size: 17px; margin: 12px 8px 16px; color: var(--forest-deep); display: flex; align-items: center; justify-content: space-between;">
-            <span>⚡ Select EPC Installations</span>
+            <span>⚡ EPC Portfolio</span>
             <span style="font-size: 12px; font-weight: 600; color: var(--leaf); background: rgba(62,143,92,0.12); padding: 3px 10px; border-radius: 20px;">Turnkey Delivery</span>
           </h3>
           <div class="table-scroll">
             <table class="data-table">
               <thead>
-                <tr><th>Client Name</th><th>Location</th><th>Capacity</th><th>Sector</th></tr>
+                <tr><th>Client</th><th>Location</th><th>Capacity</th><th>Sector</th></tr>
               </thead>
               <tbody id="epc-projects-list">
-                <tr><td><strong>Vishwaraj Environment Ltd</strong></td><td>Agra, UP</td><td class="cap-col" style="color:var(--forest); font-weight:700;">2315 KW</td><td><span class="tag-pill" style="font-size:11px;">STP</span></td></tr>
-                <tr><td><strong>Rana Bai Marble &amp; Granite</strong></td><td>Kishangarh</td><td class="cap-col" style="color:var(--forest); font-weight:700;">324 KW</td><td><span class="tag-pill" style="font-size:11px;">Marble</span></td></tr>
+                <tr><td><strong>Vishwaraj Environment Ltd</strong></td><td>Agra</td><td class="cap-col" style="color:var(--forest); font-weight:700;">2315 KW</td><td><span class="tag-pill" style="font-size:11px;">STP</span></td></tr>
+                <tr><td><strong>Rana Bai Marble &amp; Granite</strong></td><td>Kishangarh, Ajmer</td><td class="cap-col" style="color:var(--forest); font-weight:700;">324 KW</td><td><span class="tag-pill" style="font-size:11px;">Marble</span></td></tr>
                 <tr><td><strong>KGK Dia Processing</strong></td><td>Jasdan, Rajkot</td><td class="cap-col" style="color:var(--forest); font-weight:700;">250 KW</td><td><span class="tag-pill" style="font-size:11px;">Diamond</span></td></tr>
-                <tr><td><strong>Arihant Oil &amp; Mills Ltd</strong></td><td>Sri Ganganagar</td><td class="cap-col" style="color:var(--forest); font-weight:700;">240 KW</td><td><span class="tag-pill" style="font-size:11px;">Oil Mills</span></td></tr>
+                <tr><td><strong>Arihant Oil &amp; Mills Ltd</strong></td><td>Sri Ganganagar</td><td class="cap-col" style="color:var(--forest); font-weight:700;">240 KW</td><td><span class="tag-pill" style="font-size:11px;">Oil</span></td></tr>
                 <tr><td><strong>Quality Marble Export</strong></td><td>Jalore</td><td class="cap-col" style="color:var(--forest); font-weight:700;">200 KW</td><td><span class="tag-pill" style="font-size:11px;">Marble</span></td></tr>
               </tbody>
             </table>
@@ -347,20 +366,20 @@
         <!-- Table 2: I&C / O&M Clients -->
         <div class="table-wrap" style="background: #ffffff; border-radius: 12px; padding: 12px 16px;">
           <h3 style="font-size: 17px; margin: 12px 8px 16px; color: var(--forest-deep); display: flex; align-items: center; justify-content: space-between;">
-            <span>🔧 Select I&amp;C &amp; O&amp;M Contracts</span>
+            <span>🔧 I&amp;C / O&amp;M Portfolio</span>
             <span style="font-size: 12px; font-weight: 600; color: var(--leaf); background: rgba(62,143,92,0.12); padding: 3px 10px; border-radius: 20px;">Active Asset Care</span>
           </h3>
           <div class="table-scroll">
             <table class="data-table">
               <thead>
-                <tr><th>Client Name</th><th>Location</th><th>Capacity</th><th>Type</th></tr>
+                <tr><th>Client</th><th>Location</th><th>Capacity</th><th>Type</th></tr>
               </thead>
               <tbody id="ic-om-projects-list">
-                <tr><td><strong>Shreej Solar Solution</strong></td><td>Surat, GJ</td><td class="cap-col" style="color:var(--forest); font-weight:700;">1300 KW</td><td><span class="tag-pill" style="font-size:11px;">I&amp;C</span></td></tr>
-                <tr><td><strong>Yutaka Autoparts Pvt Ltd</strong></td><td>Bhiwadi, RJ</td><td class="cap-col" style="color:var(--forest); font-weight:700;">736 KW</td><td><span class="tag-pill" style="font-size:11px;">I&amp;C</span></td></tr>
-                <tr><td><strong>Krishna Ishizaki Auto Ltd</strong></td><td>Binola, HR</td><td class="cap-col" style="color:var(--forest); font-weight:700;">514 KW</td><td><span class="tag-pill" style="font-size:11px;">I&amp;C</span></td></tr>
-                <tr><td><strong>Fine Vibes Pvt Ltd</strong></td><td>Raipur, CG</td><td class="cap-col" style="color:var(--forest); font-weight:700;">500 KW</td><td><span class="tag-pill" style="font-size:11px;">I&amp;C</span></td></tr>
-                <tr><td><strong>Green Energy Farm</strong></td><td>Kishangarh</td><td class="cap-col" style="color:var(--forest); font-weight:700;">420 KW</td><td><span class="tag-pill" style="font-size:11px;">O&amp;M</span></td></tr>
+                <tr><td><strong>Shreej Solar Solution</strong></td><td>Surat</td><td class="cap-col" style="color:var(--forest); font-weight:700;">1300 KW</td><td><span class="tag-pill" style="font-size:11px;">I&amp;C</span></td></tr>
+                <tr><td><strong>Yutaka Autoparts Pvt Ltd</strong></td><td>Bhiwadi</td><td class="cap-col" style="color:var(--forest); font-weight:700;">736 KW</td><td><span class="tag-pill" style="font-size:11px;">I&amp;C</span></td></tr>
+                <tr><td><strong>Krishna Ishizaki Auto Ltd</strong></td><td>Binola</td><td class="cap-col" style="color:var(--forest); font-weight:700;">514 KW</td><td><span class="tag-pill" style="font-size:11px;">I&amp;C</span></td></tr>
+                <tr><td><strong>Fine Vibes Pvt Ltd</strong></td><td>Raipur, C.G.</td><td class="cap-col" style="color:var(--forest); font-weight:700;">500 KW</td><td><span class="tag-pill" style="font-size:11px;">I&amp;C</span></td></tr>
+                <tr><td><strong>Green Energy</strong></td><td>Kishangarh, Ajmer</td><td class="cap-col" style="color:var(--forest); font-weight:700;">420 KW</td><td><span class="tag-pill" style="font-size:11px;">O&amp;M</span></td></tr>
               </tbody>
             </table>
           </div>
@@ -385,7 +404,7 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20M5 20V8l5 4V4l5 4v12M19 20v-8l-4 3"/></svg>
           </div>
           <h4>Automotive &amp; Heavy Engineering</h4>
-          <p>Heavy duty rooftop solar powering CNC machining, forging, and automated robotic assembly lines.</p>
+          <p>Heavy-duty rooftop solar powering CNC machining, forging, and automated robotic assembly lines.</p>
         </div>
 
         <div class="sector-visual-card">
