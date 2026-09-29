@@ -1,0 +1,68 @@
+[
+  {
+    "id": "slide_team",
+    "title": "Sor Connect Engineering & Operations Team",
+    "subtitle": "130+ dedicated solar specialists driving excellence across 13 Indian states",
+    "badge": "Our People & Leadership",
+    "description": "130+ dedicated solar specialists driving excellence across 13 Indian states",
+    "location": "HQ Jaipur & Pan-India Sites",
+    "image": "assets/our-team.jpg",
+    "order": 1,
+    "created_at": "2026-01-10T10:00:00.000Z"
+  },
+  {
+    "id": "slide_1",
+    "title": "Industrial Rooftop Solar EPC Plant",
+    "subtitle": "2,315 kW Turnkey Industrial Installation in Kishangarh, Rajasthan",
+    "badge": "Turnkey EPC",
+    "description": "2,315 kW Turnkey Industrial Installation in Kishangarh, Rajasthan",
+    "location": "Kishangarh, Rajasthan",
+    "image": "assets/svc-epc-1.jpg",
+    "order": 2,
+    "created_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "id": "slide_2",
+    "title": "3D Plant Modeling & Structural Engineering",
+    "subtitle": "Helioscope & PVsyst Optimized Layouts",
+    "badge": "Engineering & Design",
+    "description": "High-precision solar layout simulation, string routing, and shadow loss analysis ensuring maximum kWh generation across 25-year lifecycle.",
+    "location": "Engineering HQ, Jaipur",
+    "image": "assets/svc-design-1.jpg",
+    "order": 2,
+    "created_at": "2026-01-20T10:00:00.000Z"
+  },
+  {
+    "id": "slide_3",
+    "title": "On-Ground Grid Synchronisation & Commissioning",
+    "subtitle": "State DISCOM Compliant HT Connectivity",
+    "badge": "I&C Execution",
+    "description": "Seamless transmission step-up, CEIG statutory safety clearances, net-metering approvals, and full load grid synchronization executed by certified engineers.",
+    "location": "Bhiwadi Industrial Zone",
+    "image": "assets/svc-inst-1.jpg",
+    "order": 3,
+    "created_at": "2026-02-01T10:00:00.000Z"
+  },
+  {
+    "id": "slide_4",
+    "title": "Predictive O&M & Robotic Module Cleaning",
+    "subtitle": "150+ MW Assets Under Active Management",
+    "badge": "Operation & Maintenance",
+    "description": "24/7 SCADA performance monitoring, thermal drone thermography, string diagnostics, and preventive maintenance ensuring 99.4% plant uptime.",
+    "location": "Agra Regional Hub",
+    "image": "assets/svc-om-1.jpg",
+    "order": 4,
+    "created_at": "2026-02-15T10:00:00.000Z"
+  },
+  {
+    "id": "slide_5",
+    "title": "PM-KUSUM Feeder Solarisation",
+    "subtitle": "Empowering Agricultural Green Energy",
+    "badge": "PM-KUSUM Agri-Solar",
+    "description": "Transforming agricultural grid feeders into dedicated solar supply nodes, providing daytime irrigation electricity and guaranteed revenue for farmers.",
+    "location": "Western Rajasthan",
+    "image": "assets/svc-kusum-1.jpg",
+    "order": 5,
+    "created_at": "2026-03-01T10:00:00.000Z"
+  }
+]

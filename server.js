@@ -24,6 +24,7 @@ const mimeTypes = {
 const SUBMISSIONS_FILE = path.join(__dirname, 'submissions.json');
 const PROJECTS_FILE = path.join(__dirname, 'projects.json');
 const CATEGORIES_FILE = path.join(__dirname, 'categories.json');
+const GALLERY_FILE = path.join(__dirname, 'about_gallery.json');
 
 const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
@@ -164,8 +165,8 @@ async function syncFromSupabase() {
         name: c.name || (c.slug === 'epc' ? 'EPC Projects' : 'I&C / O&M Projects'),
         slug: c.slug || (c.id === 1 ? 'epc' : 'ic_om'),
         eyebrow: (c.name || '').includes('Portfolio') ? c.name : (c.name || 'Portfolio'),
-        description: c.description || (c.slug === 'epc' 
-          ? 'A snapshot of Engineering, Procurement & Construction projects completed for industrial clients across multiple sectors.' 
+        description: c.description || (c.slug === 'epc'
+          ? 'A snapshot of Engineering, Procurement & Construction projects completed for industrial clients across multiple sectors.'
           : 'Industrial & Commercial installations and ongoing operation & maintenance accounts currently managed by our field teams.'),
         table_id: (c.slug || 'category').replace(/_/g, '-') + '-projects-list',
         order: idx + 1
@@ -390,7 +391,7 @@ const server = http.createServer(async (req, res) => {
       capacity: newProject.capacity,
       sector_or_type: newProject.sector_or_type,
       category_id: category_id
-    }]).catch(() => {});
+    }]).catch(() => { });
 
     sendJson(res, 200, { success: true, message: 'Project created successfully', project: newProject });
     return;
@@ -419,7 +420,7 @@ const server = http.createServer(async (req, res) => {
           location: projects[projIndex].location,
           capacity: projects[projIndex].capacity,
           sector_or_type: projects[projIndex].sector_or_type
-        }).catch(() => {});
+        }).catch(() => { });
       }
 
       sendJson(res, 200, { success: true, message: 'Project updated successfully', project: projects[projIndex] });
@@ -440,7 +441,7 @@ const server = http.createServer(async (req, res) => {
       writeJsonFile(PROJECTS_FILE, projects);
 
       if (numericId) {
-        supabaseRestRequest(`/rest/v1/projects?id=eq.${numericId}`, 'DELETE').catch(() => {});
+        supabaseRestRequest(`/rest/v1/projects?id=eq.${numericId}`, 'DELETE').catch(() => { });
       }
 
       sendJson(res, 200, { success: true, message: 'Project deleted successfully' });
@@ -464,7 +465,7 @@ const server = http.createServer(async (req, res) => {
     const categories = readJsonFile(CATEGORIES_FILE, []);
     const name = (payload.name || '').trim();
     const slug = (payload.slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')).trim();
-    
+
     if (!name || !slug) {
       sendJson(res, 400, { success: false, message: 'Name and slug are required' });
       return;
@@ -489,7 +490,7 @@ const server = http.createServer(async (req, res) => {
     writeJsonFile(CATEGORIES_FILE, categories);
 
     // Sync to Supabase
-    supabaseRestRequest('/rest/v1/categories', 'POST', [{ name, slug }]).catch(() => {});
+    supabaseRestRequest('/rest/v1/categories', 'POST', [{ name, slug }]).catch(() => { });
 
     sendJson(res, 200, { success: true, message: 'Category created successfully', category: newCategory });
     return;
@@ -499,7 +500,7 @@ const server = http.createServer(async (req, res) => {
     const payload = await parseBody(req);
     const categories = readJsonFile(CATEGORIES_FILE, []);
     const catIndex = categories.findIndex(c => String(c.id) === String(payload.id) || String(c.slug) === String(payload.old_slug));
-    
+
     if (catIndex !== -1) {
       const oldSlug = categories[catIndex].slug;
       const newSlug = payload.slug ? payload.slug.trim() : oldSlug;
@@ -515,7 +516,7 @@ const server = http.createServer(async (req, res) => {
       writeJsonFile(CATEGORIES_FILE, categories);
 
       if (numericId) {
-        supabaseRestRequest(`/rest/v1/categories?id=eq.${numericId}`, 'PATCH', { name: categories[catIndex].name, slug: newSlug }).catch(() => {});
+        supabaseRestRequest(`/rest/v1/categories?id=eq.${numericId}`, 'PATCH', { name: categories[catIndex].name, slug: newSlug }).catch(() => { });
       }
 
       if (oldSlug !== newSlug) {
@@ -541,14 +542,14 @@ const server = http.createServer(async (req, res) => {
     const payload = await parseBody(req);
     let categories = readJsonFile(CATEGORIES_FILE, []);
     const catToDelete = categories.find(c => String(c.id) === String(payload.id) || String(c.slug) === String(payload.slug));
-    
+
     if (catToDelete) {
       const numericId = parseInt(String(catToDelete.id).replace('cat_', ''), 10);
       categories = categories.filter(c => c.id !== catToDelete.id);
       writeJsonFile(CATEGORIES_FILE, categories);
 
       if (numericId) {
-        supabaseRestRequest(`/rest/v1/categories?id=eq.${numericId}`, 'DELETE').catch(() => {});
+        supabaseRestRequest(`/rest/v1/categories?id=eq.${numericId}`, 'DELETE').catch(() => { });
       }
 
       let projects = readJsonFile(PROJECTS_FILE, []);
@@ -561,6 +562,101 @@ const server = http.createServer(async (req, res) => {
     } else {
       sendJson(res, 404, { success: false, message: 'Category not found' });
     }
+    return;
+  }
+
+  // 7. About Us Gallery Carousel APIs
+  if (urlPath === '/api/about-gallery' || urlPath === '/api/gallery') {
+    if (req.method === 'GET') {
+      const items = readJsonFile(GALLERY_FILE, []);
+      items.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+      sendJson(res, 200, { success: true, items });
+      return;
+    }
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/about-gallery/create') {
+    const payload = await parseBody(req);
+    const items = readJsonFile(GALLERY_FILE, []);
+
+    const title = (payload.title || '').trim();
+    if (!title) {
+      sendJson(res, 400, { success: false, message: 'Slide title is required' });
+      return;
+    }
+
+    const newSlide = {
+      id: 'slide_' + Date.now(),
+      title: title,
+      subtitle: (payload.subtitle || '').trim(),
+      badge: (payload.badge || 'Field Showcase').trim(),
+      description: (payload.description || '').trim(),
+      location: (payload.location || '').trim(),
+      image: (payload.image || 'assets/svc-epc-1.jpg').trim(),
+      order: Number(payload.order) || (items.length + 1),
+      created_at: new Date().toISOString()
+    };
+
+    items.push(newSlide);
+    writeJsonFile(GALLERY_FILE, items);
+    sendJson(res, 200, { success: true, message: 'Carousel slide created successfully', slide: newSlide });
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/about-gallery/update') {
+    const payload = await parseBody(req);
+    const items = readJsonFile(GALLERY_FILE, []);
+    const slideIndex = items.findIndex(s => String(s.id) === String(payload.id));
+
+    if (slideIndex !== -1) {
+      items[slideIndex] = {
+        ...items[slideIndex],
+        title: (payload.title !== undefined ? payload.title : items[slideIndex].title).trim(),
+        subtitle: (payload.subtitle !== undefined ? payload.subtitle : items[slideIndex].subtitle).trim(),
+        badge: (payload.badge !== undefined ? payload.badge : items[slideIndex].badge).trim(),
+        description: (payload.description !== undefined ? payload.description : items[slideIndex].description).trim(),
+        location: (payload.location !== undefined ? payload.location : items[slideIndex].location).trim(),
+        image: (payload.image !== undefined ? payload.image : items[slideIndex].image).trim(),
+        order: payload.order !== undefined ? (Number(payload.order) || items[slideIndex].order) : items[slideIndex].order,
+        updated_at: new Date().toISOString()
+      };
+      writeJsonFile(GALLERY_FILE, items);
+      sendJson(res, 200, { success: true, message: 'Carousel slide updated successfully', slide: items[slideIndex] });
+    } else {
+      sendJson(res, 404, { success: false, message: 'Carousel slide not found' });
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/about-gallery/delete') {
+    const payload = await parseBody(req);
+    let items = readJsonFile(GALLERY_FILE, []);
+    const initialLen = items.length;
+
+    items = items.filter(s => String(s.id) !== String(payload.id));
+    if (items.length < initialLen) {
+      writeJsonFile(GALLERY_FILE, items);
+      sendJson(res, 200, { success: true, message: 'Carousel slide deleted successfully' });
+    } else {
+      sendJson(res, 404, { success: false, message: 'Carousel slide not found' });
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/about-gallery/reorder') {
+    const payload = await parseBody(req);
+    const { orderList } = payload; // Array of { id, order }
+    if (Array.isArray(orderList)) {
+      const items = readJsonFile(GALLERY_FILE, []);
+      orderList.forEach(item => {
+        const found = items.find(s => String(s.id) === String(item.id));
+        if (found) found.order = Number(item.order) || found.order;
+      });
+      writeJsonFile(GALLERY_FILE, items);
+      sendJson(res, 200, { success: true, message: 'Slides reordered successfully' });
+      return;
+    }
+    sendJson(res, 400, { success: false, message: 'Invalid order list payload' });
     return;
   }
 

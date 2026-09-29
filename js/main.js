@@ -1036,6 +1036,221 @@ document.addEventListener('DOMContentLoaded', function () {
     startAutoSlide();
   }
 
+  // ===================== ABOUT US DYNAMIC IMAGE CAROUSEL =====================
+  initAboutCarousel();
+
+  function initAboutCarousel() {
+    const track = document.getElementById('about-carousel-track');
+    const stage = document.getElementById('about-carousel-container');
+    if (!track || !stage) return;
+
+    const dotsWrap = document.getElementById('about-carousel-dots');
+    const prevBtn = document.getElementById('carousel-prev-btn');
+    const nextBtn = document.getElementById('carousel-next-btn');
+    const currNum = document.getElementById('carousel-curr-num');
+    const totalNum = document.getElementById('carousel-total-num');
+
+    let currentIndex = 0;
+    let autoSlideTimer = null;
+    let slidesData = [];
+
+    // Helper to format 2-digit number (e.g. 01, 05)
+    function pad2(n) {
+      return (n < 10 ? '0' : '') + n;
+    }
+
+    // Attach click listeners to initial static dots
+    if (dotsWrap) {
+      dotsWrap.querySelectorAll('.carousel-dot').forEach((dot, idx) => {
+        dot.addEventListener('click', () => {
+          goToSlide(idx);
+          resetAutoSlide();
+        });
+      });
+    }
+
+    function renderSlides(items) {
+      if (!Array.isArray(items) || items.length === 0) return;
+      slidesData = items;
+
+      track.innerHTML = '';
+      if (dotsWrap) dotsWrap.innerHTML = '';
+
+      items.forEach((item, idx) => {
+        const isActive = idx === 0;
+        const slideEl = document.createElement('div');
+        slideEl.className = `about-carousel-slide ${isActive ? 'active' : ''}`;
+        slideEl.setAttribute('data-slide-index', idx);
+
+        const badgeText = item.badge || 'Field Showcase';
+        const titleText = item.title || 'Sor Connect Solar Installation';
+        const descText = item.description || item.subtitle || '';
+        const imgPath = item.image || 'assets/our-team.jpg';
+
+        slideEl.innerHTML = `
+          <div class="about-slide-card">
+            <img src="${imgPath}" alt="${escapeHtml(titleText)}" loading="${idx === 0 ? 'eager' : 'lazy'}" onerror="this.src='assets/our-team.jpg'">
+            <div class="about-slide-scrim"></div>
+            <div class="slide-floating-tag">
+              <span class="tag-dot"></span>
+              <span class="tag-text">${escapeHtml(badgeText)}</span>
+            </div>
+            <div class="about-slide-overlay-content">
+              <h3 class="about-slide-title">${escapeHtml(titleText)}</h3>
+              ${descText ? `<p class="about-slide-desc">${escapeHtml(descText)}</p>` : ''}
+            </div>
+          </div>
+        `;
+        track.appendChild(slideEl);
+
+        if (dotsWrap) {
+          const dotBtn = document.createElement('button');
+          dotBtn.type = 'button';
+          dotBtn.className = `carousel-dot ${isActive ? 'active' : ''}`;
+          dotBtn.setAttribute('data-index', idx);
+          dotBtn.setAttribute('aria-label', `Go to slide ${idx + 1}`);
+          dotBtn.addEventListener('click', () => {
+            goToSlide(idx);
+            resetAutoSlide();
+          });
+          dotsWrap.appendChild(dotBtn);
+        }
+      });
+
+      if (totalNum) totalNum.textContent = pad2(items.length);
+      currentIndex = 0;
+      updateUI();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function updateUI() {
+      const slides = track.querySelectorAll('.about-carousel-slide');
+      if (slides.length === 0) return;
+
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentIndex);
+      });
+
+      if (dotsWrap) {
+        const dots = dotsWrap.querySelectorAll('.carousel-dot');
+        dots.forEach((d, idx) => {
+          d.classList.toggle('active', idx === currentIndex);
+        });
+      }
+
+      if (currNum) currNum.textContent = pad2(currentIndex + 1);
+      if (totalNum) totalNum.textContent = pad2(slides.length);
+    }
+
+    function goToSlide(idx) {
+      const slides = track.querySelectorAll('.about-carousel-slide');
+      if (slides.length === 0) return;
+      currentIndex = (idx + slides.length) % slides.length;
+      updateUI();
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1);
+    }
+
+    function startAutoSlide() {
+      stopAutoSlide();
+      autoSlideTimer = setInterval(() => {
+        nextSlide();
+      }, 5500);
+    }
+
+    function stopAutoSlide() {
+      if (autoSlideTimer) {
+        clearInterval(autoSlideTimer);
+        autoSlideTimer = null;
+      }
+    }
+
+    function resetAutoSlide() {
+      stopAutoSlide();
+      startAutoSlide();
+    }
+
+    // Attach button listeners
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAutoSlide();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoSlide();
+      });
+    }
+
+    // Pause on hover
+    stage.addEventListener('mouseenter', stopAutoSlide);
+    stage.addEventListener('mouseleave', startAutoSlide);
+    stage.addEventListener('touchstart', stopAutoSlide, { passive: true });
+    stage.addEventListener('touchend', startAutoSlide, { passive: true });
+
+    // Touch swipe support
+    let touchStartX = 0;
+    stage.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    stage.addEventListener('touchend', function(e) {
+      const touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 50) {
+        nextSlide();
+        resetAutoSlide();
+      } else if (touchEndX - touchStartX > 50) {
+        prevSlide();
+        resetAutoSlide();
+      }
+    }, { passive: true });
+
+    // Keyboard navigation when hovered
+    stage.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowLeft') {
+        prevSlide();
+        resetAutoSlide();
+      } else if (e.key === 'ArrowRight') {
+        nextSlide();
+        resetAutoSlide();
+      }
+    });
+
+    // Fetch dynamic slides from API
+    fetch('/api/about-gallery')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success && Array.isArray(data.items) && data.items.length > 0) {
+          renderSlides(data.items);
+        }
+      })
+      .catch(err => {
+        console.log('[ABOUT CAROUSEL] Using pre-rendered fallback slides:', err.message);
+      })
+      .finally(() => {
+        updateUI();
+        startAutoSlide();
+      });
+  }
+
   // ===================== GA4 CONTACT & CALL CLICK TRACKING =====================
   document.addEventListener('click', function (e) {
     const telLink = e.target.closest('a[href^="tel:"]');
