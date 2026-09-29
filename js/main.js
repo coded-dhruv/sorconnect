@@ -589,6 +589,15 @@ document.addEventListener('DOMContentLoaded', function () {
     modalOverlay.setAttribute('aria-hidden', 'false');
     document.body.classList.add('modal-open');
 
+    // Google Analytics 4 (GA4) Modal Open Event
+    if (typeof gtag === 'function') {
+      gtag('event', 'quote_modal_opened', {
+        event_category: 'Engagement',
+        event_label: titleText || 'Free Quote Modal',
+        source_page: window.location.pathname
+      });
+    }
+
     // Auto-focus the first input
     setTimeout(() => {
       const firstInput = modalOverlay.querySelector('input[name="name"]');
@@ -854,6 +863,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(() => {});
       } catch (e) {}
 
+      // GA4 (Google Analytics 4) Lead Conversion Event
+      if (typeof gtag === 'function') {
+        gtag('event', 'generate_lead', {
+          event_category: 'Lead',
+          event_label: subject || formId,
+          form_id: formId,
+          source_page: window.location.pathname
+        });
+      }
+
       // UI Success Feedback: Close quote modal immediately if open
       if (formId === 'quote-modal-form' || formEl.closest('.quote-modal-overlay')) {
         closeQuoteModal();
@@ -1016,5 +1035,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     startAutoSlide();
   }
+
+  // ===================== GA4 CONTACT & CALL CLICK TRACKING =====================
+  document.addEventListener('click', function (e) {
+    const telLink = e.target.closest('a[href^="tel:"]');
+    if (telLink && typeof gtag === 'function') {
+      gtag('event', 'contact_call', {
+        event_category: 'Contact',
+        event_label: telLink.getAttribute('href'),
+        source_page: window.location.pathname
+      });
+    }
+
+    const waLink = e.target.closest('a[href*="whatsapp.com"], a[href*="wa.me"]');
+    if (waLink && typeof gtag === 'function') {
+      gtag('event', 'contact_whatsapp', {
+        event_category: 'Contact',
+        event_label: waLink.getAttribute('href'),
+        source_page: window.location.pathname
+      });
+    }
+  });
 
 });
