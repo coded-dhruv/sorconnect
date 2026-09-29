@@ -370,12 +370,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const processSection = document.querySelector('.process-section');
   const processBtns = document.querySelectorAll('.process-nav-btn');
   const processTabs = document.querySelectorAll('.process-tab-content');
-  const processActiveImg = document.getElementById('process-active-img');
+  const processSlideImgs = document.querySelectorAll('.process-slide-img');
   const processCurrentStep = document.getElementById('process-current-step');
   const processPrevBtn = document.getElementById('processPrevBtn');
   const processNextBtn = document.getElementById('processNextBtn');
 
-  if (processBtns.length > 0 && processActiveImg) {
+  if (processBtns.length > 0) {
     let currentProcessIdx = 0;
     let processTimer = null;
     const processInterval = 4500; // 4.5 seconds per slide
@@ -393,7 +393,6 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!activeBtn) return;
 
       const targetTabId = activeBtn.getAttribute('data-tab');
-      const targetImgSrc = activeBtn.getAttribute('data-img');
       const targetStep = activeBtn.getAttribute('data-step') || ('0' + (currentProcessIdx + 1));
       const targetTab = document.getElementById(targetTabId);
 
@@ -416,28 +415,15 @@ document.addEventListener('DOMContentLoaded', function () {
         processCurrentStep.textContent = targetStep;
       }
 
-      // Smooth GSAP Image Crossfade
-      if (typeof gsap !== 'undefined') {
-        gsap.to(processActiveImg, {
-          opacity: 0,
-          scale: 0.96,
-          y: 8,
-          duration: 0.22,
-          ease: 'power2.in',
-          onComplete: () => {
-            processActiveImg.src = targetImgSrc;
-            gsap.fromTo(processActiveImg, 
-              { opacity: 0, scale: 1.04, y: -8 },
-              { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: 'power2.out' }
-            );
+      // INSTANT Zero-Lag Image Switching across preloaded image stack
+      if (processSlideImgs.length > 0) {
+        processSlideImgs.forEach((img, idx) => {
+          if (idx === currentProcessIdx) {
+            img.classList.add('active');
+          } else {
+            img.classList.remove('active');
           }
         });
-      } else {
-        processActiveImg.style.opacity = '0';
-        setTimeout(() => {
-          processActiveImg.src = targetImgSrc;
-          processActiveImg.style.opacity = '1';
-        }, 180);
       }
     }
 

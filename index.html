@@ -391,11 +391,15 @@
               </div>
 
               <div class="process-card-body">
-                <!-- Clean Modern Image Preview -->
+                <!-- Instant Switching Preloaded Image Stack -->
                 <div class="process-image-wrapper">
-                  <div class="process-image-frame">
-                    <img id="process-active-img" src="assets/process-1.jpg" alt="Active Process Step"
-                      onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'240\' height=\'280\'><rect width=\'100%\' height=\'100%\' fill=\'%23122c1e\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-family=\'Montserrat\' font-size=\'16\' fill=\'%23ffffff\'>Phase Photo</text></svg>'">
+                  <div class="process-image-frame" id="processImageStack">
+                    <img class="process-slide-img active" data-step="01" src="assets/process-1.jpg" alt="Phase 1: Discovery & Consultation" loading="eager">
+                    <img class="process-slide-img" data-step="02" src="assets/process-2.jpg" alt="Phase 2: Design & Approvals" loading="eager">
+                    <img class="process-slide-img" data-step="03" src="assets/process-3.jpg" alt="Phase 3: Procurement & Installation" loading="eager">
+                    <img class="process-slide-img" data-step="04" src="assets/process-4.jpg" alt="Phase 4: Commissioning & Handover" loading="eager">
+                    <img class="process-slide-img" data-step="05" src="assets/process-5.jpg" alt="Phase 5: Asset Management" loading="eager">
+                    <div class="process-img-glass-overlay"></div>
                   </div>
                 </div>
 
