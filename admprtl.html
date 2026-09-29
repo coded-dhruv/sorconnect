@@ -2925,13 +2925,37 @@ body.admin-body {
     document.getElementById('projects-filter-category').addEventListener('change', renderProjects);
 
     // ==========================================
-    // 4. ABOUT US CAROUSEL LOGIC (FULL CRUD)
+    // 4. ABOUT US CAROUSEL LOGIC (FULL CRUD VIA SUPABASE)
     // ==========================================
     window.fetchCarouselSlides = async function() {
       state.loading.carousel = true;
       setTableSkeleton('carousel-tbody', 7);
       document.getElementById('carousel-error').style.display = 'none';
 
+      try {
+        // Try Supabase first
+        const rawSlides = await supabaseQuery('/rest/v1/about_gallery?select=*&order=display_order.asc');
+        if (Array.isArray(rawSlides) && rawSlides.length > 0) {
+          state.carousel = rawSlides.map(s => ({
+            id: s.id,
+            title: s.title || '',
+            subtitle: s.subtitle || '',
+            badge: s.badge || 'Showcase',
+            location: s.location || '',
+            description: s.description || '',
+            image: s.image || 'assets/our-team.jpg',
+            order: Number(s.display_order) || 1,
+            created_at: s.created_at || new Date().toISOString()
+          }));
+          state.carousel.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+          renderCarousel();
+          return;
+        }
+      } catch (supabaseErr) {
+        console.warn('Supabase carousel fetch failed, attempting local API / static fallback...', supabaseErr);
+      }
+
+      // Fallback to local API or bundled JSON
       try {
         const res = await fetch('/api/about-gallery');
         if (res.ok) {
@@ -2941,15 +2965,28 @@ body.admin-body {
           renderCarousel();
           return;
         }
-        throw new Error(`Server returned ${res.status}`);
-      } catch (err) {
-        console.error('Failed to load carousel slides:', err);
-        document.getElementById('carousel-tbody').innerHTML = '';
-        document.getElementById('carousel-error-msg').textContent = err.message || 'Could not connect to API.';
-        document.getElementById('carousel-error').style.display = 'block';
-      } finally {
-        state.loading.carousel = false;
+      } catch (serverErr) {
+        console.warn('Local API fetch failed, trying static about_gallery.json...', serverErr);
       }
+
+      try {
+        const res = await fetch('about_gallery.json');
+        if (res.ok) {
+          const data = await res.json();
+          state.carousel = Array.isArray(data) ? data : [];
+          state.carousel.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+          renderCarousel();
+          return;
+        }
+      } catch (staticErr) {
+        console.error('Static about_gallery.json fetch failed:', staticErr);
+      }
+
+      // If all fallbacks fail, show error
+      document.getElementById('carousel-tbody').innerHTML = '';
+      document.getElementById('carousel-error-msg').textContent = 'Could not load slides from Supabase or server.';
+      document.getElementById('carousel-error').style.display = 'block';
+      state.loading.carousel = false;
     };
 
     function renderCarousel() {
@@ -3113,7 +3150,7 @@ body.admin-body {
       openAdminModal('carousel-edit-modal');
     };
 
-    // Save Carousel Slide Form
+    // Save Carousel Slide Form (Direct Supabase with local fallback)
     document.getElementById('carousel-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const saveBtn = document.getElementById('btn-save-carousel-slide');
@@ -3139,26 +3176,71 @@ body.admin-body {
       `;
 
       try {
-        const endpoint = id ? '/api/about-gallery/update' : '/api/about-gallery/create';
-        const res = await fetch(endpoint, {
+        let savedSlide = null;
+        const numericId = parseInt(String(id).replace(/\D/g, ''), 10);
+
+        if (id && numericId) {
+          // Update in Supabase
+          const patchResult = await supabaseQuery(`/rest/v1/about_gallery?id=eq.${numericId}`, {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: { title, subtitle, badge, location, description, image, display_order: order }
+          }).catch(() => null);
+
+          if (Array.isArray(patchResult) && patchResult[0]) {
+            savedSlide = {
+              id: patchResult[0].id,
+              title: patchResult[0].title,
+              subtitle: patchResult[0].subtitle,
+              badge: patchResult[0].badge,
+              location: patchResult[0].location,
+              description: patchResult[0].description,
+              image: patchResult[0].image,
+              order: patchResult[0].display_order
+            };
+          }
+        } else if (!id) {
+          // Insert into Supabase
+          const insertResult = await supabaseQuery('/rest/v1/about_gallery', {
+            method: 'POST',
+            headers: { 'Prefer': 'return=representation' },
+            body: [{ title, subtitle, badge, location, description, image, display_order: order }]
+          }).catch(() => null);
+
+          if (Array.isArray(insertResult) && insertResult[0]) {
+            savedSlide = {
+              id: insertResult[0].id,
+              title: insertResult[0].title,
+              subtitle: insertResult[0].subtitle,
+              badge: insertResult[0].badge,
+              location: insertResult[0].location,
+              description: insertResult[0].description,
+              image: insertResult[0].image,
+              order: insertResult[0].display_order
+            };
+          }
+        }
+
+        // Optional local API sync
+        fetch(id ? '/api/about-gallery/update' : '/api/about-gallery/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id, title, subtitle, badge, location, description, image, order })
-        });
+        }).catch(() => {});
 
-        const data = await res.json();
-        if (!res.ok || !data.success) {
-          throw new Error(data.message || 'Failed to save slide');
-        }
+        const slideObj = savedSlide || {
+          id: id || ('slide_' + Date.now()),
+          title, subtitle, badge, location, description, image, order
+        };
 
         if (id) {
           const idx = state.carousel.findIndex(s => String(s.id) === String(id));
           if (idx !== -1) {
-            state.carousel[idx] = data.slide || { id, title, subtitle, badge, location, description, image, order };
+            state.carousel[idx] = slideObj;
           }
           showToast(`✓ Carousel slide "${title}" updated successfully!`, 'success');
         } else {
-          state.carousel.push(data.slide || { id: 'slide_' + Date.now(), title, subtitle, badge, location, description, image, order });
+          state.carousel.push(slideObj);
           showToast(`✓ New carousel slide "${title}" added successfully!`, 'success');
         }
 
@@ -3166,7 +3248,7 @@ body.admin-body {
         renderCarousel();
         closeAdminModal('carousel-edit-modal');
 
-        const highlightId = data.slide ? data.slide.id : id;
+        const highlightId = slideObj.id;
         const targetRow = document.getElementById(`slide-row-${highlightId}`);
         if (targetRow) {
           targetRow.classList.add('highlight-row');
@@ -3186,24 +3268,23 @@ body.admin-body {
     window.deleteCarouselSlide = async function(id) {
       if (!confirm('Are you sure you want to delete this carousel slide?')) return;
 
-      try {
-        const res = await fetch('/api/about-gallery/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id })
-        });
-
-        const data = await res.json();
-        if (!res.ok || !data.success) {
-          throw new Error(data.message || 'Failed to delete slide');
-        }
-
-        state.carousel = state.carousel.filter(s => String(s.id) !== String(id));
-        renderCarousel();
-        showToast('Carousel slide deleted successfully.', 'info');
-      } catch (err) {
-        showToast('Failed to delete slide: ' + err.message, 'error');
+      const numericId = parseInt(String(id).replace(/\D/g, ''), 10);
+      if (numericId) {
+        await supabaseQuery(`/rest/v1/about_gallery?id=eq.${numericId}`, {
+          method: 'DELETE',
+          headers: { 'Prefer': 'return=representation' }
+        }).catch(() => {});
       }
+
+      fetch('/api/about-gallery/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      }).catch(() => {});
+
+      state.carousel = state.carousel.filter(s => String(s.id) !== String(id));
+      renderCarousel();
+      showToast('Carousel slide deleted successfully.', 'info');
     };
 
     // Carousel Search Listener

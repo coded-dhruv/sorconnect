@@ -1238,16 +1238,51 @@ document.addEventListener('DOMContentLoaded', function () {
     updateUI();
     startAutoSlide();
 
-    // Fetch dynamic slides from API (if available)
-    fetch('/api/about-gallery')
+    // Fetch dynamic slides: Try Supabase -> local API -> bundled JSON
+    const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+
+    fetch(`${SUPABASE_URL}/rest/v1/about_gallery?select=*&order=display_order.asc`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    })
       .then(res => res.json())
       .then(data => {
-        if (data && data.success && Array.isArray(data.items) && data.items.length > 0) {
-          renderSlides(data.items);
+        if (Array.isArray(data) && data.length > 0) {
+          const formatted = data.map(s => ({
+            id: s.id,
+            title: s.title,
+            subtitle: s.subtitle,
+            badge: s.badge,
+            location: s.location,
+            description: s.description,
+            image: s.image,
+            order: s.display_order
+          }));
+          renderSlides(formatted);
+        } else {
+          throw new Error('No slides in Supabase table');
         }
       })
       .catch(err => {
-        console.log('[ABOUT CAROUSEL] Using pre-rendered fallback slides:', err.message);
+        // Fallback to local server API or bundled JSON
+        fetch('/api/about-gallery')
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.success && Array.isArray(data.items) && data.items.length > 0) {
+              renderSlides(data.items);
+            }
+          })
+          .catch(() => {
+            fetch('about_gallery.json')
+              .then(res => res.json())
+              .then(items => {
+                if (Array.isArray(items) && items.length > 0) renderSlides(items);
+              })
+              .catch(e => console.log('[ABOUT CAROUSEL] Using static HTML slides:', e.message));
+          });
       })
       .finally(() => {
         updateUI();
