@@ -29,13 +29,27 @@ document.addEventListener('DOMContentLoaded', function () {
   var toggle = document.querySelector('.nav-toggle');
   var nav = document.querySelector('.main-nav');
   if (toggle && nav) {
-    toggle.addEventListener('click', function () {
-      nav.classList.toggle('open');
-      var expanded = nav.classList.contains('open');
-      toggle.setAttribute('aria-expanded', expanded);
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var willOpen = !nav.classList.contains('open');
+      nav.classList.toggle('open', willOpen);
+      toggle.classList.toggle('open', willOpen);
+      toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
     });
     nav.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () { nav.classList.remove('open'); });
+      link.addEventListener('click', function () { 
+        nav.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+    // Close on outside click
+    document.addEventListener('click', function (e) {
+      if (nav.classList.contains('open') && !nav.contains(e.target) && !toggle.contains(e.target)) {
+        nav.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 
@@ -600,6 +614,80 @@ document.addEventListener('DOMContentLoaded', function () {
     return { valid: true };
   }
 
+  // ===================== ENQUIRY SUCCESS POPUP SYSTEM =====================
+  function createEnquirySuccessPopup() {
+    if (document.getElementById('enquirySuccessPopup')) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'enquiry-success-overlay';
+    overlay.id = 'enquirySuccessPopup';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML = `
+      <div class="enquiry-success-card">
+        <button type="button" class="enquiry-popup-close" id="enquirySuccessClose" aria-label="Close popup">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <div class="enquiry-success-icon-wrap">
+          <div class="enquiry-success-glow"></div>
+          <svg class="enquiry-success-svg" width="60" height="60" viewBox="0 0 56 56" fill="none">
+            <circle cx="28" cy="28" r="25" stroke="#34D399" stroke-width="3" class="svg-circle"/>
+            <path d="M17 28.5L24.5 36L39 20" stroke="#34D399" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="svg-check"/>
+          </svg>
+        </div>
+        <div class="enquiry-success-badge">✦ Enquiry Received ✦</div>
+        <h3 class="enquiry-success-title" id="enquirySuccessTitle">Enquiry Submitted Successfully!</h3>
+        <p class="enquiry-success-desc" id="enquirySuccessDesc">Thank you for choosing Sor Connect. Our solar engineering division has received your enquiry and our team will connect with you via WhatsApp / Phone within 24 hours.</p>
+        <div class="enquiry-success-meta">
+          <div class="meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Consultation Response: <strong>Within 24 Hours</strong></span>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary btn-block enquiry-popup-btn" id="enquirySuccessDone">Done</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const closeBtn = document.getElementById('enquirySuccessClose');
+    const doneBtn = document.getElementById('enquirySuccessDone');
+
+    function hidePopup() {
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', hidePopup);
+    if (doneBtn) doneBtn.addEventListener('click', hidePopup);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) hidePopup();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        hidePopup();
+      }
+    });
+  }
+
+  function showEnquirySuccessPopup(title, desc) {
+    createEnquirySuccessPopup();
+    const overlay = document.getElementById('enquirySuccessPopup');
+    if (!overlay) return;
+
+    if (title) {
+      const titleEl = document.getElementById('enquirySuccessTitle');
+      if (titleEl) titleEl.textContent = title;
+    }
+    if (desc) {
+      const descEl = document.getElementById('enquirySuccessDesc');
+      if (descEl) descEl.textContent = desc;
+    }
+
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+  }
+
   function handleRevampedSubmit(formEl, noteEl, buttonEl, defaultSuccessText) {
     if (!formEl || !buttonEl) return;
 
@@ -648,7 +736,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const payloadObj = {};
       formData.forEach((value, key) => { payloadObj[key] = value; });
 
-      // Direct submission to Sor Connect API database (no email relay)
+      // Direct submission to Sor Connect API database
       fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -681,30 +769,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(() => {});
       } catch (e) {}
 
-      // UI Success Feedback
-      buttonEl.textContent = '✓ Inquiry Sent';
-      if (noteEl) {
-        noteEl.textContent = defaultSuccessText;
-        noteEl.style.color = 'var(--leaf)';
-        noteEl.style.display = 'block';
+      // UI Success Feedback: Close quote modal immediately if open
+      if (formId === 'quote-modal-form' || formEl.closest('.quote-modal-overlay')) {
+        closeQuoteModal();
       }
+
+      // Reset form fields and button state
       formEl.reset();
       const terms = formEl.querySelector('input[name="agree_terms"]');
       if (terms) terms.checked = true;
+      buttonEl.textContent = originalBtnText;
+      buttonEl.disabled = false;
+      if (noteEl) noteEl.style.display = 'none';
 
-      if (formId === 'quote-modal-form') {
-        setTimeout(() => {
-          closeQuoteModal();
-          buttonEl.textContent = originalBtnText;
-          buttonEl.disabled = false;
-          if (noteEl) noteEl.style.display = 'none';
-        }, 2500);
-      } else {
-        setTimeout(() => {
-          buttonEl.textContent = originalBtnText;
-          buttonEl.disabled = false;
-        }, 4000);
-      }
+      // Show user the enquiry success popup
+      showEnquirySuccessPopup(
+        "Enquiry Submitted Successfully!",
+        defaultSuccessText || "Thank you for reaching out to Sor Connect. Our solar engineering team has received your details and will connect with you via WhatsApp / Phone within 24 hours."
+      );
     });
   }
 
