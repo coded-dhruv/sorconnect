@@ -1170,7 +1170,7 @@ document.addEventListener('DOMContentLoaded', function () {
       stopAutoSlide();
       autoSlideTimer = setInterval(() => {
         nextSlide();
-      }, 5500);
+      }, 4000);
     }
 
     function stopAutoSlide() {
@@ -1234,7 +1234,11 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
-    // Fetch dynamic slides from API
+    // Initialize UI and start auto-slide immediately for pre-rendered slides
+    updateUI();
+    startAutoSlide();
+
+    // Fetch dynamic slides from API (if available)
     fetch('/api/about-gallery')
       .then(res => res.json())
       .then(data => {
