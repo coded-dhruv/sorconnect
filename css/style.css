@@ -1172,28 +1172,6 @@ body.scrolled .side-biscuit-contact {
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 0 0 24px rgba(52, 211, 153, 0.22);
 }
 
-/* Auto-slide Countdown Progress Bar on Active Button */
-.process-nav-btn.active::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #34D399 0%, #6EE7B7 100%);
-  border-radius: 0 0 14px 14px;
-  animation: processProgress 4.5s linear infinite;
-  box-shadow: 0 0 10px #34D399;
-}
-
-@keyframes processProgress {
-  0% { width: 0%; }
-  100% { width: 100%; }
-}
-
-.process-section:hover .process-nav-btn.active::after {
-  animation-play-state: paused;
-}
-
 .process-nav-btn .step-num {
   font-family: var(--heading);
   font-weight: 800;
