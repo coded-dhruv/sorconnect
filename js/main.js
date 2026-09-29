@@ -366,56 +366,156 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // ===================== PROCESS TABS (HOME) =====================
+  // ===================== PROCESS TABS / EXECUTION ROADMAP AUTO-SCROLL SLIDESHOW =====================
+  const processSection = document.querySelector('.process-section');
   const processBtns = document.querySelectorAll('.process-nav-btn');
   const processTabs = document.querySelectorAll('.process-tab-content');
   const processActiveImg = document.getElementById('process-active-img');
   const processCurrentStep = document.getElementById('process-current-step');
+  const processPrevBtn = document.getElementById('processPrevBtn');
+  const processNextBtn = document.getElementById('processNextBtn');
 
   if (processBtns.length > 0 && processActiveImg) {
-    processBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const targetTabId = this.getAttribute('data-tab');
-        const targetImgSrc = this.getAttribute('data-img');
-        const targetStep = this.getAttribute('data-step') || '01';
-        const targetTab = document.getElementById(targetTabId);
+    let currentProcessIdx = 0;
+    let processTimer = null;
+    const processInterval = 4500; // 4.5 seconds per slide
 
-        if (targetTab) {
-          processBtns.forEach(b => b.classList.remove('active'));
-          processTabs.forEach(t => t.classList.remove('active'));
+    function showProcessStep(index) {
+      if (index < 0) {
+        currentProcessIdx = processBtns.length - 1;
+      } else if (index >= processBtns.length) {
+        currentProcessIdx = 0;
+      } else {
+        currentProcessIdx = index;
+      }
 
-          this.classList.add('active');
-          targetTab.classList.add('active');
+      const activeBtn = processBtns[currentProcessIdx];
+      if (!activeBtn) return;
 
-          if (processCurrentStep) {
-            processCurrentStep.textContent = targetStep;
-          }
+      const targetTabId = activeBtn.getAttribute('data-tab');
+      const targetImgSrc = activeBtn.getAttribute('data-img');
+      const targetStep = activeBtn.getAttribute('data-step') || ('0' + (currentProcessIdx + 1));
+      const targetTab = document.getElementById(targetTabId);
 
-          if (typeof gsap !== 'undefined') {
-            gsap.to(processActiveImg, {
-              opacity: 0,
-              scale: 0.95,
-              y: 10,
-              duration: 0.2,
-              ease: 'power2.in',
-              onComplete: () => {
-                processActiveImg.src = targetImgSrc;
-                gsap.fromTo(processActiveImg, 
-                  { opacity: 0, scale: 1.05, y: -10 },
-                  { opacity: 1, scale: 1, y: 0, duration: 0.4, ease: 'back.out(1.2)' }
-                );
-              }
-            });
-          } else {
-            processActiveImg.style.opacity = '0';
-            setTimeout(() => {
-              processActiveImg.src = targetImgSrc;
-              processActiveImg.style.opacity = '1';
-            }, 150);
-          }
+      // Reset and trigger progress bar animation on the active button
+      processBtns.forEach((b, idx) => {
+        b.classList.remove('active');
+        if (idx === currentProcessIdx) {
+          b.classList.add('active');
         }
       });
+
+      // Update active tab content
+      if (targetTab) {
+        processTabs.forEach(t => t.classList.remove('active'));
+        targetTab.classList.add('active');
+      }
+
+      // Update badge counter
+      if (processCurrentStep) {
+        processCurrentStep.textContent = targetStep;
+      }
+
+      // Smooth GSAP Image Crossfade
+      if (typeof gsap !== 'undefined') {
+        gsap.to(processActiveImg, {
+          opacity: 0,
+          scale: 0.96,
+          y: 8,
+          duration: 0.22,
+          ease: 'power2.in',
+          onComplete: () => {
+            processActiveImg.src = targetImgSrc;
+            gsap.fromTo(processActiveImg, 
+              { opacity: 0, scale: 1.04, y: -8 },
+              { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: 'power2.out' }
+            );
+          }
+        });
+      } else {
+        processActiveImg.style.opacity = '0';
+        setTimeout(() => {
+          processActiveImg.src = targetImgSrc;
+          processActiveImg.style.opacity = '1';
+        }, 180);
+      }
+    }
+
+    function nextProcessStep() {
+      showProcessStep(currentProcessIdx + 1);
+    }
+
+    function prevProcessStep() {
+      showProcessStep(currentProcessIdx - 1);
+    }
+
+    function startProcessTimer() {
+      stopProcessTimer();
+      processTimer = setInterval(nextProcessStep, processInterval);
+    }
+
+    function stopProcessTimer() {
+      if (processTimer) {
+        clearInterval(processTimer);
+        processTimer = null;
+      }
+    }
+
+    // Nav button clicks
+    processBtns.forEach((btn, idx) => {
+      btn.addEventListener('click', function() {
+        showProcessStep(idx);
+        startProcessTimer();
+      });
     });
+
+    // Arrow button controls
+    if (processPrevBtn) {
+      processPrevBtn.addEventListener('click', function() {
+        prevProcessStep();
+        startProcessTimer();
+      });
+    }
+
+    if (processNextBtn) {
+      processNextBtn.addEventListener('click', function() {
+        nextProcessStep();
+        startProcessTimer();
+      });
+    }
+
+    // Start auto slide
+    startProcessTimer();
+
+    // Hover pause / resume on process section & showcase card
+    if (processSection) {
+      processSection.addEventListener('mouseenter', stopProcessTimer);
+      processSection.addEventListener('mouseleave', startProcessTimer);
+      processSection.addEventListener('touchstart', stopProcessTimer, { passive: true });
+      processSection.addEventListener('touchend', startProcessTimer, { passive: true });
+    }
+
+    // Touch swipe support on showcase card
+    const showcaseCard = document.querySelector('.process-showcase-card');
+    if (showcaseCard) {
+      let touchStartX = 0;
+      showcaseCard.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      showcaseCard.addEventListener('touchend', function(e) {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diffX = touchStartX - touchEndX;
+        if (Math.abs(diffX) > 40) {
+          if (diffX > 0) {
+            nextProcessStep();
+          } else {
+            prevProcessStep();
+          }
+          startProcessTimer();
+        }
+      }, { passive: true });
+    }
   }
 
   // ===================== MODAL OVERLAY INJECTION & MANAGEMENT =====================

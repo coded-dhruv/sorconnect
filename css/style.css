@@ -1151,6 +1151,7 @@ body.scrolled .side-biscuit-contact {
   text-align: left;
   cursor: pointer;
   position: relative;
+  overflow: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -1166,6 +1167,28 @@ body.scrolled .side-biscuit-contact {
   border-color: #34D399;
   color: var(--white);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 0 20px rgba(52, 211, 153, 0.16);
+}
+
+/* Auto-slide Countdown Progress Bar on Active Button */
+.process-nav-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #34D399, #6EE7B7);
+  border-radius: 0 0 12px 12px;
+  animation: processProgress 4.5s linear infinite;
+  box-shadow: 0 0 8px #34D399;
+}
+
+@keyframes processProgress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.process-section:hover .process-nav-btn.active::after {
+  animation-play-state: paused;
 }
 
 .process-nav-btn .step-num {
@@ -1248,6 +1271,39 @@ body.scrolled .side-biscuit-contact {
   justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, 0.09);
   padding-bottom: 18px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.process-slide-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.process-prev-btn,
+.process-next-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 0;
+}
+
+.process-prev-btn:hover,
+.process-next-btn:hover {
+  background: #34D399;
+  color: #0A221A;
+  border-color: #34D399;
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
 }
 
 .stage-counter-badge {
