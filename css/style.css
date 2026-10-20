@@ -1900,8 +1900,36 @@ table.data-table td.cap-col {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 22px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
+}
+
+.partner-visual-preview {
+  width: 100%;
+  height: 175px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  background: #081C15;
+  border: 1px solid rgba(62, 143, 92, 0.18);
+  box-shadow: 0 4px 14px rgba(14, 44, 34, 0.08);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.partner-visual-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.partner-card:hover .partner-visual-preview img {
+  transform: scale(1.04);
 }
 
 .partner-logo-box {
@@ -4588,8 +4616,8 @@ footer.site-footer .container { position: relative; }
 /* --- 5. Awards & Industry Recognition Visual Gallery --- */
 .awards-gallery-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 28px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
   margin-top: 36px;
 }
 
@@ -4612,12 +4640,14 @@ footer.site-footer .container { position: relative; }
 
 .award-img-box {
   width: 100%;
-  aspect-ratio: 1024 / 468;
+  aspect-ratio: 16 / 11;
   height: auto;
   overflow: hidden;
   background: #081C15;
   position: relative;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0;
   box-sizing: border-box;
 }
@@ -4681,10 +4711,17 @@ footer.site-footer .container { position: relative; }
   margin: 0;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+  .awards-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 640px) {
   .awards-gallery-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 18px;
   }
 }
 
