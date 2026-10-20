@@ -730,6 +730,20 @@ body.admin-body {
   border: 1px solid #FFE0B2;
 }
 
+.admin-slide-thumb, .admin-award-thumb {
+  width: 64px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #081C15;
+  border: 1px solid var(--admin-border);
+  display: block;
+}
+
+.admin-award-thumb {
+  object-fit: contain;
+}
+
 .whatsapp-link-btn {
   display: inline-flex;
   align-items: center;
@@ -1197,6 +1211,12 @@ body.admin-body {
           <span>About Us Carousel</span>
           <span class="tab-badge" id="carousel-count-badge">0</span>
         </button>
+
+        <button type="button" class="admin-tab-btn" data-tab="awards-panel">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          <span>Awards &amp; Recognitions</span>
+          <span class="tab-badge" id="awards-count-badge">0</span>
+        </button>
       </div>
 
       <!-- ==================== TAB 1: SUBMISSIONS ==================== -->
@@ -1484,6 +1504,63 @@ body.admin-body {
         </div>
       </section>
 
+      <!-- ==================== TAB 5: AWARDS & RECOGNITIONS ==================== -->
+      <section id="awards-panel" class="admin-tab-panel">
+        
+        <!-- Controls & Add Button -->
+        <div class="admin-control-bar">
+          <div class="control-bar-left">
+            <div class="search-input-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="awards-search" placeholder="Search awards by title, badge, or description...">
+            </div>
+          </div>
+
+          <div class="control-bar-right">
+            <button type="button" class="btn-secondary-admin" onclick="fetchAwards()" title="Refresh awards">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span>Refresh</span>
+            </button>
+            <button type="button" class="btn-primary-admin" id="btn-add-new-award">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Add New Award</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Awards Table Card -->
+        <div class="admin-table-card">
+          <div class="admin-table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width: 80px;">Visual</th>
+                  <th>Award / Recognition Title</th>
+                  <th>Badge Pill</th>
+                  <th>Description / Significance</th>
+                  <th style="width: 70px;">Order</th>
+                  <th style="text-align: right; width: 100px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="awards-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="awards-empty" class="admin-empty-state" style="display: none;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            <h4>No awards or recognitions found</h4>
+            <p>Click "Add New Award" above to create one.</p>
+          </div>
+          <div id="awards-error" class="admin-error-state" style="display: none;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <h4>Failed to load awards</h4>
+            <p id="awards-error-msg">Could not connect to database.</p>
+            <button type="button" class="btn-secondary-admin" onclick="fetchAwards()">Retry Connection</button>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -1752,6 +1829,86 @@ body.admin-body {
     </div>
   </div>
 
+  <!-- ==================== MODAL: ADD / EDIT AWARD ==================== -->
+  <div class="admin-modal" id="award-edit-modal">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <h3 id="award-modal-title">Add Award / Recognition</h3>
+        <button type="button" class="admin-modal-close" onclick="closeAdminModal('award-edit-modal')" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="award-form">
+        <div class="admin-modal-body">
+          <div id="award-modal-error" class="modal-error-alert" style="display: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span class="msg-text">Error message here</span>
+          </div>
+
+          <input type="hidden" id="award-form-id" name="id">
+
+          <div class="modal-form-group">
+            <label for="award-title">Award / Recognition Title <span style="color:var(--admin-accent);">*</span></label>
+            <input type="text" id="award-title" name="title" required placeholder="e.g. SolarQuarter Top Contractors 2025">
+          </div>
+
+          <div class="modal-form-group">
+            <label for="award-badge">Badge Pill Text <span style="color:var(--admin-accent);">*</span></label>
+            <input type="text" id="award-badge" name="badge" required placeholder="e.g. Company of the Year, Official Alliance, State Leadership">
+          </div>
+
+          <div class="modal-form-group">
+            <label for="award-desc">Description / Significance <span style="color:var(--admin-accent);">*</span></label>
+            <textarea id="award-desc" name="description" rows="3" required placeholder="Brief description of the award or accreditation..."></textarea>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="award-image">Award Image Path or URL <span style="color:var(--admin-accent);">*</span></label>
+            <input type="text" id="award-image" name="image" required placeholder="assets/award-solarquarter-2025-stage.jpg">
+            
+            <!-- Quick Preset Selector for uploaded award assets -->
+            <div style="margin-top: 8px;">
+              <span style="font-size: 11.5px; color: var(--admin-muted); font-weight: 600;">Pick from verified awards &amp; certificates in assets/:</span>
+              <div class="asset-options-grid" style="margin-top: 6px;">
+                <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-solarquarter-2025-stage.jpg"><img src="assets/award-solarquarter-2025-stage.jpg"> SolarQuarter Stage</button>
+                <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-bharat-renewable-2026.jpg"><img src="assets/award-bharat-renewable-2026.jpg"> Bharat Renewable Stage</button>
+                <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-reliance.jpg"><img src="assets/award-reliance.jpg"> Reliance Certificate</button>
+                <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-hitachi.jpg"><img src="assets/award-hitachi.jpg"> Hitachi Certificate</button>
+                <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-solarquarter-2024-trophy.jpg"><img src="assets/award-solarquarter-2024-trophy.jpg"> SolarQuarter Trophy</button>
+                <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-eps-agra-trophy.jpg"><img src="assets/award-eps-agra-trophy.jpg"> EPS Agra Trophy</button>
+                <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/partner-reliance-expo.jpg"><img src="assets/partner-reliance-expo.jpg"> Reliance Expo</button>
+                <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/partner-sungrow-expo.jpg"><img src="assets/partner-sungrow-expo.jpg"> Sungrow Expo</button>
+              </div>
+            </div>
+
+            <!-- Upload Custom File -->
+            <div style="margin-top: 10px;">
+              <span style="font-size: 11.5px; color: var(--admin-muted); font-weight: 600;">Or upload an image file from device:</span>
+              <input type="file" id="award-file-input" accept="image/*" style="display: block; margin-top: 4px; font-size: 12px;">
+            </div>
+
+            <!-- Live Image Preview -->
+            <div class="image-preview-box" id="award-image-preview">
+              <div class="image-preview-placeholder">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Image preview will appear here</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="award-order">Display Sequence Order</label>
+            <input type="number" id="award-order" name="order" min="1" max="99" value="1" style="width: 120px;">
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn-secondary-admin" onclick="closeAdminModal('award-edit-modal')">Cancel</button>
+          <button type="submit" class="btn-primary-admin" id="btn-save-award">
+            <span>Save Award</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Toast Container -->
   <div id="admin-toast-container" class="admin-toast-container"></div>
 
@@ -1771,12 +1928,14 @@ body.admin-body {
       projects: [],
       categories: [],
       carousel: [],
+      awards: [],
       activeSubmissionId: null,
       loading: {
         submissions: false,
         projects: false,
         categories: false,
-        carousel: false
+        carousel: false,
+        awards: false
       }
     };
 
@@ -2021,7 +2180,8 @@ body.admin-body {
         fetchSubmissions(),
         fetchCategories(),
         fetchProjects(),
-        fetchCarouselSlides()
+        fetchCarouselSlides(),
+        fetchAwards()
       ]);
       setDbStatus('live', 'Supabase Live');
     }
@@ -3289,6 +3449,366 @@ body.admin-body {
 
     // Carousel Search Listener
     document.getElementById('carousel-search').addEventListener('input', renderCarousel);
+
+    // ==========================================
+    // 5. AWARDS & RECOGNITIONS MANAGEMENT
+    // ==========================================
+    window.fetchAwards = async function() {
+      state.loading.awards = true;
+      setTableSkeleton('awards-tbody', 6);
+      const errBox = document.getElementById('awards-error');
+      if (errBox) errBox.style.display = 'none';
+
+      try {
+        // Try Supabase directly
+        const data = await supabaseQuery('/rest/v1/awards?select=*&order=display_order.asc');
+        if (Array.isArray(data) && data.length > 0) {
+          state.awards = data.map(a => ({
+            id: a.id,
+            title: a.title,
+            badge: a.badge,
+            description: a.description,
+            image: a.image,
+            order: a.display_order,
+            created_at: a.created_at
+          }));
+          state.awards.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+          renderAwards();
+          return;
+        }
+      } catch (supabaseErr) {
+        console.warn('Supabase awards fetch failed, attempting local API / static fallback...', supabaseErr);
+      }
+
+      // Fallback to local server API
+      try {
+        const res = await fetch('/api/awards');
+        if (res.ok) {
+          const data = await res.json();
+          state.awards = Array.isArray(data.awards) ? data.awards : [];
+          state.awards.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+          renderAwards();
+          return;
+        }
+      } catch (serverErr) {
+        console.warn('Local API fetch failed, trying static awards.json...', serverErr);
+      }
+
+      // Fallback to static awards.json
+      try {
+        const res = await fetch('awards.json');
+        if (res.ok) {
+          const data = await res.json();
+          state.awards = Array.isArray(data) ? data : [];
+          state.awards.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+          renderAwards();
+          return;
+        }
+      } catch (staticErr) {
+        console.error('Static awards.json fetch failed:', staticErr);
+      }
+
+      document.getElementById('awards-tbody').innerHTML = '';
+      document.getElementById('awards-error-msg').textContent = 'Could not load awards from Supabase or server.';
+      document.getElementById('awards-error').style.display = 'block';
+      state.loading.awards = false;
+    };
+
+    function renderAwards() {
+      const tbody = document.getElementById('awards-tbody');
+      const emptyState = document.getElementById('awards-empty');
+      const errorState = document.getElementById('awards-error');
+      const countBadge = document.getElementById('awards-count-badge');
+
+      if (!tbody) return;
+      if (errorState) errorState.style.display = 'none';
+      const searchVal = (document.getElementById('awards-search').value || '').toLowerCase();
+
+      const filtered = state.awards.filter(a => {
+        return !searchVal || 
+          (a.title && a.title.toLowerCase().includes(searchVal)) ||
+          (a.badge && a.badge.toLowerCase().includes(searchVal)) ||
+          (a.description && a.description.toLowerCase().includes(searchVal));
+      });
+
+      if (countBadge) countBadge.textContent = state.awards.length;
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+      if (emptyState) emptyState.style.display = 'none';
+
+      filtered.forEach(award => {
+        const tr = document.createElement('tr');
+        tr.id = `award-row-${award.id}`;
+        tr.innerHTML = `
+          <td>
+            <img src="${award.image || 'assets/award-solarquarter-2025-stage.jpg'}" alt="${escapeHtml(award.title)}" class="admin-award-thumb" onerror="this.src='assets/award-solarquarter-2025-stage.jpg'">
+          </td>
+          <td>
+            <div style="font-weight: 700; color: var(--admin-primary); font-size: 14px;">${escapeHtml(award.title || 'Untitled Award')}</div>
+          </td>
+          <td>
+            <span class="status-badge" style="background:#E8F3EE; color:var(--admin-accent); font-weight:700;">${escapeHtml(award.badge || 'Accreditation')}</span>
+          </td>
+          <td>
+            <div style="max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12.5px; color: var(--admin-text);" title="${escapeHtml(award.description || '')}">
+              ${escapeHtml(award.description || '—')}
+            </div>
+          </td>
+          <td>
+            <span class="bill-badge" style="font-weight:700;">#${award.order || 1}</span>
+          </td>
+          <td style="text-align: right;">
+            <div class="table-action-btns" style="justify-content: flex-end;">
+              <button type="button" class="btn-icon-action" onclick="editAward('${award.id}')" title="Edit Award">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button type="button" class="btn-icon-action delete-btn" onclick="deleteAward('${award.id}')" title="Delete Award">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Modal Image Preview update for Awards
+    function updateAwardModalImagePreview(url) {
+      const previewBox = document.getElementById('award-image-preview');
+      if (!previewBox) return;
+      if (url && url.trim()) {
+        previewBox.innerHTML = `<img src="${url.trim()}" alt="Preview" style="max-height: 140px; width: auto; object-fit: contain; margin: 0 auto; display: block;" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'image-preview-placeholder\\'><span>Failed to load image</span></div>';">`;
+      } else {
+        previewBox.innerHTML = `
+          <div class="image-preview-placeholder">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Image preview will appear here</span>
+          </div>
+        `;
+      }
+    }
+
+    // Input listeners for award image URL
+    const awardImageInput = document.getElementById('award-image');
+    if (awardImageInput) {
+      awardImageInput.addEventListener('input', function() {
+        updateAwardModalImagePreview(this.value);
+      });
+    }
+
+    // Quick award preset selector buttons
+    document.querySelectorAll('.award-preset-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const src = this.getAttribute('data-src');
+        if (src && awardImageInput) {
+          awardImageInput.value = src;
+          updateAwardModalImagePreview(src);
+          document.querySelectorAll('.award-preset-btn').forEach(b => b.classList.remove('selected'));
+          this.classList.add('selected');
+        }
+      });
+    });
+
+    // File Upload Handler for Awards
+    const awardFileInput = document.getElementById('award-file-input');
+    if (awardFileInput) {
+      awardFileInput.addEventListener('change', function(e) {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            const dataUrl = evt.target.result;
+            if (awardImageInput) {
+              awardImageInput.value = dataUrl;
+              updateAwardModalImagePreview(dataUrl);
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // Add New Award Button Listener
+    const btnAddNewAward = document.getElementById('btn-add-new-award');
+    if (btnAddNewAward) {
+      btnAddNewAward.addEventListener('click', function() {
+        document.getElementById('award-modal-title').textContent = 'Add Award / Recognition';
+        document.getElementById('award-form-id').value = '';
+        document.getElementById('award-title').value = '';
+        document.getElementById('award-badge').value = 'Accreditation';
+        document.getElementById('award-desc').value = '';
+        document.getElementById('award-image').value = 'assets/award-solarquarter-2025-stage.jpg';
+        document.getElementById('award-order').value = state.awards.length + 1;
+        updateAwardModalImagePreview('assets/award-solarquarter-2025-stage.jpg');
+        clearModalError('award-modal-error');
+        openAdminModal('award-edit-modal');
+      });
+    }
+
+    window.editAward = function(id) {
+      const award = state.awards.find(a => String(a.id) === String(id));
+      if (!award) return;
+
+      document.getElementById('award-modal-title').textContent = 'Edit Award / Recognition';
+      document.getElementById('award-form-id').value = award.id;
+      document.getElementById('award-title').value = award.title || '';
+      document.getElementById('award-badge').value = award.badge || '';
+      document.getElementById('award-desc').value = award.description || '';
+      document.getElementById('award-image').value = award.image || '';
+      document.getElementById('award-order').value = award.order || 1;
+      updateAwardModalImagePreview(award.image || '');
+      clearModalError('award-modal-error');
+      openAdminModal('award-edit-modal');
+    };
+
+    // Save Award Form (Direct Supabase with local fallback)
+    const awardForm = document.getElementById('award-form');
+    if (awardForm) {
+      awardForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const saveBtn = document.getElementById('btn-save-award');
+        const id = document.getElementById('award-form-id').value;
+        const title = document.getElementById('award-title').value.trim();
+        const badge = document.getElementById('award-badge').value.trim();
+        const description = document.getElementById('award-desc').value.trim();
+        const image = document.getElementById('award-image').value.trim();
+        const order = Number(document.getElementById('award-order').value) || 1;
+
+        if (!title || !description || !image || !badge) {
+          showModalError('award-modal-error', 'Title, badge, description, and image are required.');
+          return;
+        }
+
+        clearModalError('award-modal-error');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = `
+          <svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+          <span>${id ? 'Updating...' : 'Saving...'}</span>
+        `;
+
+        try {
+          let savedAward = null;
+          const numericId = parseInt(String(id).replace(/\D/g, ''), 10);
+
+          if (id && numericId) {
+            // Update in Supabase
+            const patchResult = await supabaseQuery(`/rest/v1/awards?id=eq.${numericId}`, {
+              method: 'PATCH',
+              headers: { 'Prefer': 'return=representation' },
+              body: { title, badge, description, image, display_order: order }
+            }).catch(() => null);
+
+            if (Array.isArray(patchResult) && patchResult[0]) {
+              savedAward = {
+                id: patchResult[0].id,
+                title: patchResult[0].title,
+                badge: patchResult[0].badge,
+                description: patchResult[0].description,
+                image: patchResult[0].image,
+                order: patchResult[0].display_order
+              };
+            }
+          } else if (!id) {
+            // Create in Supabase
+            const insertResult = await supabaseQuery('/rest/v1/awards', {
+              method: 'POST',
+              headers: { 'Prefer': 'return=representation' },
+              body: [{ title, badge, description, image, display_order: order }]
+            }).catch(() => null);
+
+            if (Array.isArray(insertResult) && insertResult[0]) {
+              savedAward = {
+                id: insertResult[0].id,
+                title: insertResult[0].title,
+                badge: insertResult[0].badge,
+                description: insertResult[0].description,
+                image: insertResult[0].image,
+                order: insertResult[0].display_order
+              };
+            }
+          }
+
+          // Also call local server endpoint for JSON sync
+          const apiEndpoint = id ? '/api/awards/update' : '/api/awards/create';
+          const serverRes = await fetch(apiEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, title, badge, description, image, order })
+          }).catch(() => null);
+
+          if (serverRes && serverRes.ok) {
+            const sData = await serverRes.json();
+            if (sData.award) savedAward = sData.award;
+          }
+
+          if (!savedAward) {
+            savedAward = {
+              id: id || ('award_' + Date.now()),
+              title,
+              badge,
+              description,
+              image,
+              order
+            };
+          }
+
+          // Update local state
+          const existingIdx = state.awards.findIndex(a => String(a.id) === String(id));
+          if (existingIdx !== -1) {
+            state.awards[existingIdx] = savedAward;
+          } else {
+            state.awards.push(savedAward);
+          }
+
+          state.awards.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+          renderAwards();
+          closeAdminModal('award-edit-modal');
+          showToast(id ? 'Award updated successfully!' : 'Award added successfully!', 'success');
+        } catch (err) {
+          showModalError('award-modal-error', 'Failed to save award: ' + err.message);
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = `<span>Save Award</span>`;
+        }
+      });
+    }
+
+    window.deleteAward = async function(id) {
+      const award = state.awards.find(a => String(a.id) === String(id));
+      const awardTitle = award ? award.title : 'this item';
+
+      if (!confirm(`Are you sure you want to delete "${awardTitle}"? This will remove it from both the About page grid and the Home page slideshow.`)) {
+        return;
+      }
+
+      const numericId = parseInt(String(id).replace(/\D/g, ''), 10);
+      if (numericId) {
+        await supabaseQuery(`/rest/v1/awards?id=eq.${numericId}`, {
+          method: 'DELETE',
+          headers: { 'Prefer': 'return=representation' }
+        }).catch(() => {});
+      }
+
+      fetch('/api/awards/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      }).catch(() => {});
+
+      state.awards = state.awards.filter(a => String(a.id) !== String(id));
+      renderAwards();
+      showToast('Award deleted successfully.', 'info');
+    };
+
+    // Awards Search Listener
+    const awardsSearchInput = document.getElementById('awards-search');
+    if (awardsSearchInput) {
+      awardsSearchInput.addEventListener('input', renderAwards);
+    }
 
     // Helper to escape HTML safely
     function escapeHtml(str) {

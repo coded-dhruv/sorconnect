@@ -930,15 +930,25 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ===================== CERTIFICATES & AWARDS AUTO-SLIDING SLIDESHOW =====================
-  const certSlideshow = document.getElementById('homeCertSlideshow');
-  if (certSlideshow) {
+  let certAutoSlideTimer = null;
+
+  function initCertSlideshow() {
+    const certSlideshow = document.getElementById('homeCertSlideshow');
+    if (!certSlideshow) return;
+
+    if (certAutoSlideTimer) {
+      clearInterval(certAutoSlideTimer);
+      certAutoSlideTimer = null;
+    }
+
     const slides = certSlideshow.querySelectorAll('.cert-slide');
+    if (slides.length === 0) return;
+
     const dotsContainer = document.getElementById('certDotsContainer');
     const dots = dotsContainer ? dotsContainer.querySelectorAll('.cert-dot') : [];
     const prevBtn = document.getElementById('certPrevBtn');
     const nextBtn = document.getElementById('certNextBtn');
     let currentIndex = 0;
-    let autoSlideTimer = null;
     const intervalTime = 3800;
 
     function goToSlide(index) {
@@ -951,19 +961,11 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       slides.forEach((slide, idx) => {
-        if (idx === currentIndex) {
-          slide.classList.add('active');
-        } else {
-          slide.classList.remove('active');
-        }
+        slide.classList.toggle('active', idx === currentIndex);
       });
 
       dots.forEach((dot, idx) => {
-        if (idx === currentIndex) {
-          dot.classList.add('active');
-        } else {
-          dot.classList.remove('active');
-        }
+        dot.classList.toggle('active', idx === currentIndex);
       });
     }
 
@@ -977,52 +979,52 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function startAutoSlide() {
       stopAutoSlide();
-      autoSlideTimer = setInterval(nextSlide, intervalTime);
+      certAutoSlideTimer = setInterval(nextSlide, intervalTime);
     }
 
     function stopAutoSlide() {
-      if (autoSlideTimer) {
-        clearInterval(autoSlideTimer);
-        autoSlideTimer = null;
+      if (certAutoSlideTimer) {
+        clearInterval(certAutoSlideTimer);
+        certAutoSlideTimer = null;
       }
     }
 
     if (nextBtn) {
-      nextBtn.addEventListener('click', function () {
+      nextBtn.onclick = function () {
         nextSlide();
         startAutoSlide();
-      });
+      };
     }
 
     if (prevBtn) {
-      prevBtn.addEventListener('click', function () {
+      prevBtn.onclick = function () {
         prevSlide();
         startAutoSlide();
-      });
+      };
     }
 
     dots.forEach((dot, idx) => {
-      dot.addEventListener('click', function () {
+      dot.onclick = function () {
         goToSlide(idx);
         startAutoSlide();
-      });
+      };
     });
 
     const wrapper = certSlideshow.closest('.cert-slideshow-wrapper');
     if (wrapper) {
-      wrapper.addEventListener('mouseenter', stopAutoSlide);
-      wrapper.addEventListener('mouseleave', startAutoSlide);
-      wrapper.addEventListener('touchstart', stopAutoSlide, { passive: true });
-      wrapper.addEventListener('touchend', startAutoSlide, { passive: true });
+      wrapper.onmouseenter = stopAutoSlide;
+      wrapper.onmouseleave = startAutoSlide;
+      wrapper.ontouchstart = stopAutoSlide;
+      wrapper.ontouchend = startAutoSlide;
     }
 
     // Touch swipe support
     let touchStartX = 0;
-    certSlideshow.addEventListener('touchstart', function(e) {
+    certSlideshow.ontouchstart = function(e) {
       touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
+    };
 
-    certSlideshow.addEventListener('touchend', function(e) {
+    certSlideshow.ontouchend = function(e) {
       let touchEndX = e.changedTouches[0].screenX;
       if (touchStartX - touchEndX > 50) {
         nextSlide();
@@ -1031,10 +1033,139 @@ document.addEventListener('DOMContentLoaded', function () {
         prevSlide();
         startAutoSlide();
       }
-    }, { passive: true });
+    };
 
+    goToSlide(0);
     startAutoSlide();
   }
+
+  // ===================== DYNAMIC AWARDS & RECOGNITIONS SYNC =====================
+  function initDynamicAwards() {
+    const certSlideshow = document.getElementById('homeCertSlideshow');
+    const awardsGrid = document.querySelector('.awards-gallery-grid');
+    if (!certSlideshow && !awardsGrid) return;
+
+    const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+
+    function renderDynamicAwards(awards) {
+      if (!Array.isArray(awards) || awards.length === 0) return;
+      awards.sort((a, b) => (Number(a.order !== undefined ? a.order : a.display_order) || 0) - (Number(b.order !== undefined ? b.order : b.display_order) || 0));
+
+      // 1. Sync Grid on about.html
+      if (awardsGrid) {
+        awardsGrid.innerHTML = awards.map(a => {
+          const badgeText = a.badge || 'Accreditation';
+          const titleText = a.title || 'Award';
+          const descText = a.description || '';
+          const imgPath = a.image || 'assets/award-solarquarter-2025-stage.jpg';
+          return `
+            <div class="award-card-aesthetic" data-id="${a.id || ''}">
+              <div class="award-img-box">
+                <img src="${escapeHtmlUtil(imgPath)}" alt="${escapeHtmlUtil(titleText)}" loading="lazy" onerror="this.src='assets/award-solarquarter-2025-stage.jpg'">
+                <span class="award-badge-pill">${escapeHtmlUtil(badgeText)}</span>
+              </div>
+              <div class="award-info-box">
+                <h4>${escapeHtmlUtil(titleText)}</h4>
+                <p>${escapeHtmlUtil(descText)}</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 2. Sync Slideshow on index.html
+      if (certSlideshow) {
+        certSlideshow.innerHTML = awards.map((a, idx) => {
+          const badgeText = a.badge || 'Official Recognition';
+          const titleText = a.title || 'Certified Excellence';
+          const descText = a.description || '';
+          const imgPath = a.image || 'assets/award-solarquarter-2025-stage.jpg';
+          return `
+            <div class="cert-slide ${idx === 0 ? 'active' : ''}" data-id="${a.id || ''}">
+              <div class="cert-image-card">
+                <img src="${escapeHtmlUtil(imgPath)}" alt="${escapeHtmlUtil(titleText)}" loading="${idx === 0 ? 'eager' : 'lazy'}" onerror="this.src='assets/award-solarquarter-2025-stage.jpg'">
+              </div>
+              <div class="cert-caption">
+                <div class="cert-badge">${escapeHtmlUtil(badgeText)}</div>
+                <h4>${escapeHtmlUtil(titleText)}</h4>
+                <p>${escapeHtmlUtil(descText)}</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const dotsContainer = document.getElementById('certDotsContainer');
+        if (dotsContainer) {
+          dotsContainer.innerHTML = awards.map((_, idx) => 
+            `<span class="cert-dot ${idx === 0 ? 'active' : ''}" data-index="${idx}"></span>`
+          ).join('');
+        }
+
+        // Re-initialize slideshow event handlers with the newly rendered slides
+        initCertSlideshow();
+      }
+    }
+
+    function escapeHtmlUtil(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Try Supabase directly -> fallback to local API -> fallback to awards.json
+    fetch(`${SUPABASE_URL}/rest/v1/awards?select=*&order=display_order.asc`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const formatted = data.map(a => ({
+            id: a.id,
+            title: a.title,
+            badge: a.badge,
+            description: a.description,
+            image: a.image,
+            order: a.display_order
+          }));
+          renderDynamicAwards(formatted);
+        } else {
+          throw new Error('No awards in Supabase table');
+        }
+      })
+      .catch(() => {
+        fetch('/api/awards')
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.success && Array.isArray(data.awards) && data.awards.length > 0) {
+              renderDynamicAwards(data.awards);
+            } else {
+              throw new Error('API failed');
+            }
+          })
+          .catch(() => {
+            fetch('awards.json')
+              .then(res => res.json())
+              .then(items => {
+                if (Array.isArray(items) && items.length > 0) {
+                  renderDynamicAwards(items);
+                }
+              })
+              .catch(e => console.log('[AWARDS SYNC] Using pre-rendered static HTML:', e.message));
+          });
+      });
+  }
+
+  // Initialize both static slideshow & dynamic awards sync
+  initCertSlideshow();
+  initDynamicAwards();
 
   // ===================== ABOUT US DYNAMIC IMAGE CAROUSEL =====================
   initAboutCarousel();

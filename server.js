@@ -25,6 +25,7 @@ const SUBMISSIONS_FILE = path.join(__dirname, 'submissions.json');
 const PROJECTS_FILE = path.join(__dirname, 'projects.json');
 const CATEGORIES_FILE = path.join(__dirname, 'categories.json');
 const GALLERY_FILE = path.join(__dirname, 'about_gallery.json');
+const AWARDS_FILE = path.join(__dirname, 'awards.json');
 
 const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
@@ -187,6 +188,25 @@ async function syncFromSupabase() {
       }));
       writeJsonFile(PROJECTS_FILE, formattedProjects);
       console.log(`[SUPABASE SYNC] Successfully synced ${formattedProjects.length} projects.`);
+    }
+
+    try {
+      const rawAwards = await fetchFromSupabase('/rest/v1/awards?select=*&order=display_order.asc');
+      if (Array.isArray(rawAwards) && rawAwards.length > 0) {
+        const formattedAwards = rawAwards.map(a => ({
+          id: a.id,
+          title: a.title || '',
+          badge: a.badge || 'Accreditation',
+          description: a.description || '',
+          image: a.image || 'assets/award-solarquarter-2025-stage.jpg',
+          order: Number(a.display_order) || 1,
+          created_at: a.created_at || new Date().toISOString()
+        }));
+        writeJsonFile(AWARDS_FILE, formattedAwards);
+        console.log(`[SUPABASE SYNC] Successfully synced ${formattedAwards.length} awards.`);
+      }
+    } catch (e) {
+      console.warn('[SUPABASE SYNC] Awards table not found in Supabase, maintaining local awards.json fallback.');
     }
 
     return {
@@ -654,6 +674,125 @@ const server = http.createServer(async (req, res) => {
       });
       writeJsonFile(GALLERY_FILE, items);
       sendJson(res, 200, { success: true, message: 'Slides reordered successfully' });
+      return;
+    }
+    sendJson(res, 400, { success: false, message: 'Invalid order list payload' });
+    return;
+  }
+
+  // 8. Awards & Recognitions APIs
+  if (urlPath === '/api/awards') {
+    if (req.method === 'GET') {
+      const awards = readJsonFile(AWARDS_FILE, []);
+      awards.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+      sendJson(res, 200, { success: true, awards });
+      return;
+    }
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/awards/create') {
+    const payload = await parseBody(req);
+    const awards = readJsonFile(AWARDS_FILE, []);
+
+    const title = (payload.title || '').trim();
+    if (!title) {
+      sendJson(res, 400, { success: false, message: 'Award title is required' });
+      return;
+    }
+
+    const newAward = {
+      id: 'award_' + Date.now(),
+      title: title,
+      badge: (payload.badge || 'Accreditation').trim(),
+      description: (payload.description || '').trim(),
+      image: (payload.image || 'assets/award-solarquarter-2025-stage.jpg').trim(),
+      order: Number(payload.order) || (awards.length + 1),
+      created_at: new Date().toISOString()
+    };
+
+    awards.push(newAward);
+    writeJsonFile(AWARDS_FILE, awards);
+
+    // Sync to Supabase if table exists
+    supabaseRestRequest('/rest/v1/awards', 'POST', [{
+      title: newAward.title,
+      badge: newAward.badge,
+      description: newAward.description,
+      image: newAward.image,
+      display_order: newAward.order
+    }]).catch(() => { });
+
+    sendJson(res, 200, { success: true, message: 'Award created successfully', award: newAward });
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/awards/update') {
+    const payload = await parseBody(req);
+    const awards = readJsonFile(AWARDS_FILE, []);
+    const awardIndex = awards.findIndex(a => String(a.id) === String(payload.id));
+
+    if (awardIndex !== -1) {
+      const numericId = parseInt(String(payload.id).replace(/\D/g, ''), 10);
+      awards[awardIndex] = {
+        ...awards[awardIndex],
+        title: (payload.title !== undefined ? payload.title : awards[awardIndex].title).trim(),
+        badge: (payload.badge !== undefined ? payload.badge : awards[awardIndex].badge).trim(),
+        description: (payload.description !== undefined ? payload.description : awards[awardIndex].description).trim(),
+        image: (payload.image !== undefined ? payload.image : awards[awardIndex].image).trim(),
+        order: payload.order !== undefined ? (Number(payload.order) || awards[awardIndex].order) : awards[awardIndex].order,
+        updated_at: new Date().toISOString()
+      };
+      writeJsonFile(AWARDS_FILE, awards);
+
+      if (numericId) {
+        supabaseRestRequest(`/rest/v1/awards?id=eq.${numericId}`, 'PATCH', {
+          title: awards[awardIndex].title,
+          badge: awards[awardIndex].badge,
+          description: awards[awardIndex].description,
+          image: awards[awardIndex].image,
+          display_order: awards[awardIndex].order
+        }).catch(() => { });
+      }
+
+      sendJson(res, 200, { success: true, message: 'Award updated successfully', award: awards[awardIndex] });
+    } else {
+      sendJson(res, 404, { success: false, message: 'Award not found' });
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/awards/delete') {
+    const payload = await parseBody(req);
+    let awards = readJsonFile(AWARDS_FILE, []);
+    const initialLen = awards.length;
+    const numericId = parseInt(String(payload.id).replace(/\D/g, ''), 10);
+
+    awards = awards.filter(a => String(a.id) !== String(payload.id));
+    if (awards.length < initialLen) {
+      writeJsonFile(AWARDS_FILE, awards);
+
+      if (numericId) {
+        supabaseRestRequest(`/rest/v1/awards?id=eq.${numericId}`, 'DELETE').catch(() => { });
+      }
+
+      sendJson(res, 200, { success: true, message: 'Award deleted successfully' });
+    } else {
+      sendJson(res, 404, { success: false, message: 'Award not found' });
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/awards/reorder') {
+    const payload = await parseBody(req);
+    const { orderList } = payload;
+    if (Array.isArray(orderList)) {
+      const awards = readJsonFile(AWARDS_FILE, []);
+      orderList.forEach(item => {
+        const found = awards.find(a => String(a.id) === String(item.id));
+        if (found) found.order = Number(item.order) || found.order;
+      });
+      writeJsonFile(AWARDS_FILE, awards);
+      sendJson(res, 200, { success: true, message: 'Awards reordered successfully' });
       return;
     }
     sendJson(res, 400, { success: false, message: 'Invalid order list payload' });

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "award_1",
+    "title": "SolarQuarter Top Contractors 2025",
+    "badge": "Company of the Year",
+    "description": "Company of the Year — Solar EPC (Residential) awarded to Sor Connect at national stage ceremony.",
+    "image": "assets/award-solarquarter-2025-stage.jpg",
+    "order": 1,
+    "created_at": "2026-03-01T10:00:00.000Z"
+  },
+  {
+    "id": "award_2",
+    "title": "Bharat Renewable Expo 2026",
+    "badge": "MNRE & RREC Supported",
+    "description": "Stage felicitation at India's flagship clean energy expo supported by MNRE & Govt of Rajasthan.",
+    "image": "assets/award-bharat-renewable-2026.jpg",
+    "order": 2,
+    "created_at": "2026-02-15T10:00:00.000Z"
+  },
+  {
+    "id": "award_3",
+    "title": "Reliance New Energy",
+    "badge": "Official Alliance",
+    "description": "Authorized Channel Partner for Rooftop Solar Business supporting India's Net Zero Carbon initiatives.",
+    "image": "assets/award-reliance.jpg",
+    "order": 3,
+    "created_at": "2026-01-20T10:00:00.000Z"
+  },
+  {
+    "id": "award_4",
+    "title": "Hitachi Hi-Rel Power",
+    "badge": "Distribution Partner",
+    "description": "Authorized Distributor for high-efficiency solar grid-tied inverters and power conversion systems.",
+    "image": "assets/award-hitachi.jpg",
+    "order": 4,
+    "created_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "id": "award_5",
+    "title": "SolarQuarter Leadership Awards 2024",
+    "badge": "State Leadership",
+    "description": "Solar EPC Company of the Year (Residential) — Rajasthan State Leadership trophy.",
+    "image": "assets/award-solarquarter-2024-trophy.jpg",
+    "order": 5,
+    "created_at": "2026-01-10T10:00:00.000Z"
+  },
+  {
+    "id": "award_6",
+    "title": "EPS Energy Awards Uttar Pradesh",
+    "badge": "Commercial EPC",
+    "description": "Best Commercial Rooftop Solar Project presented to Sor Connect at DoubleTree by Hilton, Agra.",
+    "image": "assets/award-eps-agra-trophy.jpg",
+    "order": 6,
+    "created_at": "2026-01-05T10:00:00.000Z"
+  }
+]
