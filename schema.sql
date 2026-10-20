@@ -282,7 +282,7 @@ FROM (
         (
             'Hitachi Hi-Rel Power',
             'Distribution Partner',
-            'Authorized Distributor for high-efficiency solar grid-tied inverters and power conversion systems.',
+            'Distributor for high-efficiency solar grid-tied inverters and power conversion systems.',
             'assets/award-hitachi.jpg',
             4
         ),
