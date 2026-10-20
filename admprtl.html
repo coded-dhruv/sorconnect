@@ -1023,6 +1023,81 @@ body.admin-body {
   margin-top: 5px;
 }
 
+/* Quick Asset Selector & Preview */
+.quick-asset-selector, .asset-options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 140px;
+  overflow-y: auto;
+  padding: 8px;
+  background: #F8FAF9;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+}
+
+.asset-option-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px;
+  font-size: 11.5px;
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--admin-text);
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.asset-option-btn:hover {
+  border-color: var(--admin-leaf);
+  background: #F0FDF4;
+}
+
+.asset-option-btn.selected {
+  border-color: var(--admin-primary);
+  background: #E8F5E9;
+  font-weight: 600;
+}
+
+.asset-option-btn img {
+  width: 22px;
+  height: 22px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.image-preview-box {
+  margin-top: 10px;
+  border: 1.5px dashed var(--admin-border);
+  border-radius: 8px;
+  background: #F9FAFB;
+  min-height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 8px;
+}
+
+.image-preview-box img {
+  max-height: 140px;
+  max-width: 100%;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.image-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--admin-muted);
+  font-size: 12px;
+}
+
 /* Toast Notifications */
 .admin-toast-container {
   position: fixed;
@@ -1830,8 +1905,8 @@ body.admin-body {
   </div>
 
   <!-- ==================== MODAL: ADD / EDIT AWARD ==================== -->
-  <div class="admin-modal" id="award-edit-modal">
-    <div class="admin-modal-card">
+  <div id="award-edit-modal" class="admin-modal-overlay">
+    <div class="admin-modal-box" style="max-width: 640px;">
       <div class="admin-modal-header">
         <h3 id="award-modal-title">Add Award / Recognition</h3>
         <button type="button" class="admin-modal-close" onclick="closeAdminModal('award-edit-modal')" aria-label="Close modal">&times;</button>
@@ -2004,6 +2079,15 @@ body.admin-body {
       const modal = document.getElementById(modalId);
       if (modal) modal.classList.remove('active');
     };
+
+    // Close any modal overlay when clicking backdrop
+    document.querySelectorAll('.admin-modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+        }
+      });
+    });
 
     // Password toggle
     if (togglePwdBtn && pwdInput) {
@@ -3245,13 +3329,13 @@ body.admin-body {
     }
 
     // Quick asset selector buttons
-    document.querySelectorAll('.asset-option-btn').forEach(btn => {
+    document.querySelectorAll('#carousel-edit-modal .asset-option-btn').forEach(btn => {
       btn.addEventListener('click', function() {
         const src = this.getAttribute('data-src');
         if (src && slideImageInput) {
           slideImageInput.value = src;
           updateModalImagePreview(src);
-          document.querySelectorAll('.asset-option-btn').forEach(b => b.classList.remove('selected'));
+          document.querySelectorAll('#carousel-edit-modal .asset-option-btn').forEach(b => b.classList.remove('selected'));
           this.classList.add('selected');
         }
       });
