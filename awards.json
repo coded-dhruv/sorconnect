@@ -52,5 +52,23 @@
     "image": "assets/award-eps-agra-trophy.jpg",
     "order": 6,
     "created_at": "2026-01-05T10:00:00.000Z"
+  },
+  {
+    "id": "award_7",
+    "title": "Rooftop Solar Grid Engineer (NISE & REIL)",
+    "badge": "MNRE Certified",
+    "description": "Certified Rooftop Solar Grid Engineer qualification conducted by REIL Jaipur in association with National Institute of Solar Energy (NISE, MNRE Govt. of India).",
+    "image": "assets/award-nise-reil-engineer.jpg",
+    "order": 7,
+    "created_at": "2026-01-02T10:00:00.000Z"
+  },
+  {
+    "id": "award_8",
+    "title": "MSME Solar Energy Certification",
+    "badge": "Govt. of India (MSME)",
+    "description": "Entrepreneurship Development Program in Solar Energy certification awarded by Ministry of Micro, Small & Medium Enterprises (PPDC Agra).",
+    "image": "assets/award-msme-solar-energy.jpg",
+    "order": 8,
+    "created_at": "2026-01-01T10:00:00.000Z"
   }
 ]

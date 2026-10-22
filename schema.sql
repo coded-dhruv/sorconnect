@@ -299,6 +299,20 @@ FROM (
             'Best Commercial Rooftop Solar Project presented to Sor Connect at DoubleTree by Hilton, Agra.',
             'assets/award-eps-agra-trophy.jpg',
             6
+        ),
+        (
+            'Rooftop Solar Grid Engineer (NISE & REIL)',
+            'MNRE Certified',
+            'Certified Rooftop Solar Grid Engineer qualification conducted by REIL Jaipur in association with National Institute of Solar Energy (NISE, MNRE Govt. of India).',
+            'assets/award-nise-reil-engineer.jpg',
+            7
+        ),
+        (
+            'MSME Solar Energy Certification',
+            'Govt. of India (MSME)',
+            'Entrepreneurship Development Program in Solar Energy certification awarded by Ministry of Micro, Small & Medium Enterprises (PPDC Agra).',
+            'assets/award-msme-solar-energy.jpg',
+            8
         )
 ) AS a(title, badge, description, image, display_order)
 WHERE NOT EXISTS (SELECT 1 FROM public.awards LIMIT 1);
