@@ -1166,6 +1166,419 @@ document.addEventListener('DOMContentLoaded', function () {
   // Initialize both static slideshow & dynamic awards sync
   initCertSlideshow();
   initDynamicAwards();
+  initDynamicServices();
+  initDynamicPartners();
+
+  // ===================== DYNAMIC SERVICES CMS SYNC =====================
+  function initDynamicServices() {
+    const contentArea = document.querySelector('.services-content-main');
+    const sidebarNav = document.querySelector('.sidebar-nav-menu');
+    if (!contentArea || !sidebarNav) return;
+
+    const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+
+    function escapeHtmlUtil(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function renderDynamicServices(services) {
+      if (!Array.isArray(services) || services.length === 0) return;
+      const activeServices = services.filter(s => s.is_active !== false);
+      activeServices.sort((a, b) => (Number(a.display_order !== undefined ? a.display_order : a.order) || 0) - (Number(b.display_order !== undefined ? b.display_order : b.order) || 0));
+      if (activeServices.length === 0) return;
+
+      const currentHash = (window.location.hash || '').replace('#', '');
+      let activeSlug = activeServices[0].slug;
+      if (currentHash && activeServices.some(s => s.slug === currentHash)) {
+        activeSlug = currentHash;
+      }
+
+      // 1. Render Sidebar Navigation
+      sidebarNav.innerHTML = activeServices.map(s => {
+        const isActive = s.slug === activeSlug;
+        return `
+          <a href="#${escapeHtmlUtil(s.slug)}" class="${isActive ? 'active' : ''}">
+            <span>${escapeHtmlUtil(s.nav_title || s.title)}</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        `;
+      }).join('');
+
+      // 2. Render Main Service Tabs Content
+      contentArea.innerHTML = activeServices.map(s => {
+        const isActive = s.slug === activeSlug;
+        const slug = escapeHtmlUtil(s.slug);
+        const offers = Array.isArray(s.offers) ? s.offers : [];
+        const standoutPoints = Array.isArray(s.standout_points) ? s.standout_points : [];
+        const faqs = Array.isArray(s.faqs) ? s.faqs : [];
+
+        return `
+          <div id="${slug}" class="svc-tab-content ${isActive ? 'active' : ''}">
+            <div class="svc-header-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span>${escapeHtmlUtil(s.badge || 'Turnkey EPC Solutions')}</span>
+            </div>
+            <h2 class="svc-content-title">${escapeHtmlUtil(s.title)}</h2>
+            ${s.subtitle ? `<div class="svc-content-subtitle">${escapeHtmlUtil(s.subtitle)}</div>` : ''}
+            ${s.description ? `<p class="svc-content-desc">${escapeHtmlUtil(s.description)}</p>` : ''}
+
+            ${(s.image_1 || s.image_2) ? `
+            <div class="svc-img-row">
+              ${s.image_1 ? `
+              <div class="svc-img-item">
+                <img src="${escapeHtmlUtil(s.image_1)}" alt="${escapeHtmlUtil(s.title)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">${escapeHtmlUtil(s.nav_title || s.title)}</span>
+                </div>
+                ${s.image_1_caption ? `<span class="svc-img-caption-pill">${escapeHtmlUtil(s.image_1_caption)}</span>` : ''}
+              </div>` : ''}
+              ${s.image_2 ? `
+              <div class="svc-img-item">
+                <img src="${escapeHtmlUtil(s.image_2)}" alt="${escapeHtmlUtil(s.title)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="svc-img-fallback-text" style="display:none; flex-direction:column; justify-content:center; align-items:center; color:rgba(255,255,255,0.75); font-family:var(--label); font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">
+                  <span>Sor Connect</span>
+                  <span style="font-size:10px; font-weight:500; opacity:0.6; margin-top:4px;">${escapeHtmlUtil(s.nav_title || s.title)}</span>
+                </div>
+                ${s.image_2_caption ? `<span class="svc-img-caption-pill">${escapeHtmlUtil(s.image_2_caption)}</span>` : ''}
+              </div>` : ''}
+            </div>` : ''}
+
+            ${offers.length > 0 ? `
+            <div class="svc-offer-box">
+              <h3>${escapeHtmlUtil(s.offers_heading || 'What We Offer')}</h3>
+              <div class="svc-offer-grid">
+                ${offers.map(off => `
+                <div class="svc-offer-card">
+                  <div class="svc-offer-card-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  </div>
+                  <div class="svc-offer-card-text">
+                    <strong>${escapeHtmlUtil(off.title || '')}</strong>
+                    ${escapeHtmlUtil(off.desc || '')}
+                  </div>
+                </div>
+                `).join('')}
+              </div>
+            </div>` : ''}
+
+            ${standoutPoints.length > 0 ? `
+            <div class="svc-standout-box">
+              <h3>${escapeHtmlUtil(s.standout_heading || 'Why Our Services Stand Out')}</h3>
+              <div class="svc-index-list">
+                ${standoutPoints.map((pt, pidx) => `
+                <div class="svc-index-item">
+                  <div class="svc-index-num">${escapeHtmlUtil(pt.num || (pidx + 1 < 10 ? '0' + (pidx + 1) : String(pidx + 1)))}</div>
+                  <div class="svc-index-content">
+                    <h4>${escapeHtmlUtil(pt.title || '')}</h4>
+                    <p>${escapeHtmlUtil(pt.desc || '')}</p>
+                  </div>
+                </div>
+                `).join('')}
+              </div>
+            </div>` : ''}
+
+            ${faqs.length > 0 ? `
+            <div class="svc-faq-box">
+              <h3>Frequently Asked Questions</h3>
+              <div class="faq-accordion">
+                ${faqs.map(faq => `
+                <div class="faq-item">
+                  <button class="faq-trigger" type="button">
+                    <span>${escapeHtmlUtil(faq.q || '')}</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="faq-content">
+                    <div class="faq-content-inner">
+                      ${escapeHtmlUtil(faq.a || '')}
+                    </div>
+                  </div>
+                </div>
+                `).join('')}
+              </div>
+            </div>` : ''}
+
+            <!-- In-page form -->
+            <div class="svc-form-box">
+              <div class="svc-form-info">
+                <span class="sub">${escapeHtmlUtil(s.form_sub || (s.title + ' Consultation'))}</span>
+                <h3>${escapeHtmlUtil(s.form_title || 'Get a Turnkey Quote for Your Project')}</h3>
+                <p>${escapeHtmlUtil(s.form_desc || 'Submit your site requirements and contact details. Our engineering division will share a custom quote within 24 hours.')}</p>
+              </div>
+              <div class="svc-form-inputs">
+                <form class="contact-form svc-dynamic-form" id="svc-${slug}-form" data-service="${escapeHtmlUtil(s.title)}" style="padding:0; border:none;">
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label for="${slug}-name">Name <span class="req">*</span></label>
+                      <input type="text" id="${slug}-name" name="name" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-row">
+                      <label for="${slug}-whatsapp">WhatsApp Number <span class="req">*</span></label>
+                      <input type="tel" id="${slug}-whatsapp" name="whatsapp" required placeholder="10-digit WhatsApp number" pattern="[0-9]{10}" maxlength="10">
+                    </div>
+                  </div>
+                  <div class="form-two">
+                    <div class="form-row">
+                      <label for="${slug}-bill">Monthly Electricity Bill <span class="req">*</span></label>
+                      <select id="${slug}-bill" name="monthly_bill" required>
+                        <option value="" disabled selected>Select Monthly Bill</option>
+                        <option value="Under ₹1500">Under ₹1500</option>
+                        <option value="₹1500-₹2000">₹1500 - ₹2000</option>
+                        <option value="₹2500-₹4000">₹2500 - ₹4000</option>
+                        <option value="₹4000-₹8000">₹4000 - ₹8000</option>
+                        <option value="More than ₹8000">More than ₹8000</option>
+                      </select>
+                    </div>
+                    <div class="form-row">
+                      <label for="${slug}-pincode">PIN Code <span class="req">*</span></label>
+                      <input type="text" id="${slug}-pincode" name="pincode" required placeholder="6-digit PIN code" pattern="[0-9]{6}" maxlength="6">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <label for="${slug}-note">Additional Note <span class="opt">(Optional)</span></label>
+                    <textarea id="${slug}-note" name="note" rows="2" placeholder="Tell us about your requirements..."></textarea>
+                  </div>
+                  <div class="form-terms-row">
+                    <label class="terms-label">
+                      <input type="checkbox" name="agree_terms" checked required onclick="return false;" onkeydown="return false;">
+                      <span class="terms-text">I agree to the <a href="terms.html" target="_blank" class="terms-link">Terms of Use</a> &amp; <a href="privacy.html" target="_blank" class="terms-link">Privacy Policy</a> and authorize Sor Connect to contact me via WhatsApp/Call.</span>
+                    </label>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">${escapeHtmlUtil(s.form_btn || 'Get Quotation')}</button>
+                  <p class="form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
+                </form>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Wire up tab switching on newly rendered elements
+      const sidebarLinks = sidebarNav.querySelectorAll('a');
+      const tabs = contentArea.querySelectorAll('.svc-tab-content');
+
+      function switchTab(targetId) {
+        if (!targetId) return;
+        const id = targetId.replace('#', '');
+        const activeTab = document.getElementById(id);
+        const activeLink = sidebarNav.querySelector(`a[href="#${id}"]`);
+
+        if (activeTab && activeLink) {
+          sidebarLinks.forEach(link => link.classList.remove('active'));
+          tabs.forEach(tab => tab.classList.remove('active'));
+          activeLink.classList.add('active');
+          activeTab.classList.add('active');
+
+          if (window.innerWidth < 992) {
+            contentArea.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      }
+
+      sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          switchTab(targetId);
+          history.pushState(null, null, targetId);
+        });
+      });
+
+      // Wire up FAQ Accordions
+      const faqItems = contentArea.querySelectorAll('.faq-item');
+      faqItems.forEach(item => {
+        const trigger = item.querySelector('.faq-trigger');
+        const content = item.querySelector('.faq-content');
+        if (trigger && content) {
+          trigger.addEventListener('click', function() {
+            const isActive = item.classList.contains('active');
+            faqItems.forEach(el => {
+              el.classList.remove('active');
+              const c = el.querySelector('.faq-content');
+              if (c) c.style.maxHeight = null;
+            });
+            if (!isActive) {
+              item.classList.add('active');
+              content.style.maxHeight = content.scrollHeight + 'px';
+            }
+          });
+        }
+      });
+
+      // Wire up Consultation Forms to Submissions API
+      const dynamicForms = contentArea.querySelectorAll('.svc-dynamic-form');
+      dynamicForms.forEach(formEl => {
+        const btn = formEl.querySelector('button[type="submit"]');
+        const note = formEl.querySelector('.form-note');
+        handleRevampedSubmit(formEl, note, btn, "Thank you! Your quotation request has been received. Our engineering division will share a customized proposal on your WhatsApp.");
+      });
+    }
+
+    // Direct Supabase -> local API -> services.json
+    fetch(`${SUPABASE_URL}/rest/v1/services?select=*&order=display_order.asc`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          renderDynamicServices(data);
+        } else {
+          throw new Error('No services in Supabase');
+        }
+      })
+      .catch(() => {
+        fetch('/api/services')
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.success && Array.isArray(data.services) && data.services.length > 0) {
+              renderDynamicServices(data.services);
+            } else {
+              throw new Error('API failed');
+            }
+          })
+          .catch(() => {
+            fetch('services.json')
+              .then(res => res.json())
+              .then(items => {
+                if (Array.isArray(items) && items.length > 0) {
+                  renderDynamicServices(items);
+                }
+              })
+              .catch(e => console.log('[SERVICES SYNC] Using pre-rendered static HTML:', e.message));
+          });
+      });
+  }
+
+  // ===================== DYNAMIC PARTNERS CMS SYNC =====================
+  function initDynamicPartners() {
+    const partnerStrips = document.querySelectorAll('.partner-strip');
+    if (!partnerStrips || partnerStrips.length === 0) return;
+
+    const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+
+    function escapeHtmlUtil(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function renderDynamicPartners(partners) {
+      if (!Array.isArray(partners) || partners.length === 0) return;
+      const activePartners = partners.filter(p => p.is_active !== false);
+      activePartners.sort((a, b) => (Number(a.display_order !== undefined ? a.display_order : a.order) || 0) - (Number(b.display_order !== undefined ? b.display_order : b.order) || 0));
+      if (activePartners.length === 0) return;
+
+      const isAboutPage = window.location.pathname.includes('about.html');
+
+      partnerStrips.forEach(strip => {
+        strip.innerHTML = activePartners.map(p => {
+          const logoSrc = p.logo || 'assets/reliance-logo.jpeg';
+          const tierBadge = p.tier_badge || 'Channel Partner';
+          const name = p.name || 'Partner';
+          const role = p.role || tierBadge;
+          const previewImg = p.preview_image;
+          const desc = p.description || '';
+          const features = Array.isArray(p.features) ? p.features : [];
+
+          if (isAboutPage) {
+            return `
+              <div class="partner-card" data-id="${p.id || ''}">
+                <div class="partner-card-header">
+                  <div class="partner-logo-box"><img src="${escapeHtmlUtil(logoSrc)}" alt="${escapeHtmlUtil(name)} logo" onerror="this.parentElement.classList.add('logo--fallback');"></div>
+                  <span class="partner-tier-badge">${escapeHtmlUtil(tierBadge)}</span>
+                </div>
+                ${previewImg ? `
+                <div class="partner-visual-preview">
+                  <img src="${escapeHtmlUtil(previewImg)}" alt="${escapeHtmlUtil(name)}" loading="lazy" style="object-fit: contain; padding: 6px;">
+                </div>` : ''}
+                <div class="pname">${escapeHtmlUtil(name)}</div>
+                ${role ? `<div class="prole" style="font-weight: 600; font-size: 13.5px; color: var(--leaf); margin-bottom: 8px;">${escapeHtmlUtil(role)}</div>` : ''}
+                <p>${escapeHtmlUtil(desc)}</p>
+              </div>
+            `;
+          }
+
+          // Home page index.html
+          return `
+            <div class="partner-card" data-id="${p.id || ''}">
+              <div class="partner-card-header">
+                <div class="partner-logo-box">
+                  <img src="${escapeHtmlUtil(logoSrc)}" alt="${escapeHtmlUtil(name)} logo" onerror="this.parentElement.classList.add('logo--fallback');">
+                </div>
+                <span class="partner-tier-badge">${escapeHtmlUtil(tierBadge)}</span>
+              </div>
+              ${previewImg ? `
+              <div class="partner-visual-preview">
+                <img src="${escapeHtmlUtil(previewImg)}" alt="${escapeHtmlUtil(name)}" loading="lazy" style="object-fit: contain; padding: 6px;">
+              </div>` : ''}
+              <div class="pname">${escapeHtmlUtil(name)}</div>
+              <p>${escapeHtmlUtil(desc)}</p>
+              ${features.length > 0 ? `
+              <ul class="partner-features">
+                ${features.map(f => `
+                <li>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5" /></svg>
+                  <span>${escapeHtmlUtil(f)}</span>
+                </li>
+                `).join('')}
+              </ul>` : ''}
+            </div>
+          `;
+        }).join('');
+      });
+    }
+
+    fetch(`${SUPABASE_URL}/rest/v1/partners?select=*&order=display_order.asc`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          renderDynamicPartners(data);
+        } else {
+          throw new Error('No partners in Supabase');
+        }
+      })
+      .catch(() => {
+        fetch('/api/partners')
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.success && Array.isArray(data.partners) && data.partners.length > 0) {
+              renderDynamicPartners(data.partners);
+            } else {
+              throw new Error('API failed');
+            }
+          })
+          .catch(() => {
+            fetch('partners.json')
+              .then(res => res.json())
+              .then(items => {
+                if (Array.isArray(items) && items.length > 0) {
+                  renderDynamicPartners(items);
+                }
+              })
+              .catch(e => console.log('[PARTNERS SYNC] Using pre-rendered static HTML:', e.message));
+          });
+      });
+  }
 
   // ===================== ABOUT US DYNAMIC IMAGE CAROUSEL =====================
   initAboutCarousel();

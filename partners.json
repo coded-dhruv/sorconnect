@@ -1,0 +1,50 @@
+[
+  {
+    "id": "partner_1",
+    "name": "Reliance New Energy",
+    "tier_badge": "Channel Partner",
+    "role": "Official Channel Partner",
+    "logo": "assets/reliance-logo.jpeg",
+    "preview_image": "assets/partner-reliance-expo.jpg",
+    "description": "Authorised partner for rooftop solar business, driving India's clean energy transition and Net-Zero carbon initiatives with world-class engineering standards.",
+    "features": [
+      "Rooftop Solar Solutions",
+      "Net-Zero Carbon Deployments",
+      "Pan-India Residential & C&I"
+    ],
+    "display_order": 1,
+    "is_active": true
+  },
+  {
+    "id": "partner_2",
+    "name": "Hitachi Energy",
+    "tier_badge": "Distributor",
+    "role": "Distributor",
+    "logo": "assets/hitachi-logo.jpeg",
+    "preview_image": "assets/award-hitachi.jpg",
+    "description": "Distributor of high-efficiency on-grid string and central inverters, ensuring superior uptime, rugged reliability, and full warranty support.",
+    "features": [
+      "High Yield On-Grid Inverters",
+      "Direct Factory Regional Stock",
+      "Jaipur, Ajmer & Alwar Hubs"
+    ],
+    "display_order": 2,
+    "is_active": true
+  },
+  {
+    "id": "partner_3",
+    "name": "Sungrow Power",
+    "tier_badge": "Channel Partner",
+    "role": "Authorized Channel Partner (Agra Region)",
+    "logo": "assets/sungrow-logo.png",
+    "preview_image": "assets/partner-sungrow-expo.jpg",
+    "description": "Authorized Channel Partner for Agra Region. Global leader in smart solar conversion with 99%+ inverter efficiency, intelligent IV curve diagnostics, and reliable performance across utility and industrial plants.",
+    "features": [
+      "Authorized Channel Partner — Agra Region",
+      "99%+ Power Conversion Yield",
+      "25-Year Reliability & IV Diagnostics"
+    ],
+    "display_order": 3,
+    "is_active": true
+  }
+]

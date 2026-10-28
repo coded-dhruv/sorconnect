@@ -316,3 +316,199 @@ FROM (
         )
 ) AS a(title, badge, description, image, display_order)
 WHERE NOT EXISTS (SELECT 1 FROM public.awards LIMIT 1);
+
+-- ==========================================================
+-- 6. SERVICES CMS TABLE
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS public.services (
+    id TEXT PRIMARY KEY,
+    slug TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    nav_title TEXT,
+    badge TEXT,
+    subtitle TEXT,
+    description TEXT,
+    image_1 TEXT,
+    image_1_caption TEXT,
+    image_2 TEXT,
+    image_2_caption TEXT,
+    offers_heading TEXT DEFAULT 'What We Offer',
+    offers JSONB DEFAULT '[]'::jsonb,
+    standout_heading TEXT DEFAULT 'Why Choose Our Service',
+    standout_points JSONB DEFAULT '[]'::jsonb,
+    faqs JSONB DEFAULT '[]'::jsonb,
+    form_sub TEXT,
+    form_title TEXT,
+    form_desc TEXT,
+    form_btn TEXT DEFAULT 'Get Quotation',
+    display_order INT NOT NULL DEFAULT 1,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access on services"
+    ON public.services FOR SELECT USING (true);
+
+CREATE POLICY "Allow public insert/update/delete on services"
+    ON public.services FOR ALL USING (true);
+
+-- Seed Services
+INSERT INTO public.services (
+    id, slug, title, nav_title, badge, subtitle, description,
+    image_1, image_1_caption, image_2, image_2_caption,
+    offers_heading, offers, standout_heading, standout_points, faqs,
+    form_sub, form_title, form_desc, form_btn, display_order, is_active
+)
+SELECT * FROM (
+    VALUES
+        (
+            'epc', 'epc', 'EPC Services', 'EPC Services', 'Turnkey EPC Solutions',
+            'Complete Turnkey Solar Power Solutions, Built for Maximum Efficiency.',
+            'We deliver end-to-end EPC (Engineering, Procurement, and Construction) services for industrial, commercial, residential, and agricultural solar power installations. By partnering with Tier-1 component manufacturers and executing all civil and electrical processes in-house, we construct highly optimized solar systems that generate clean power reliably for over 25 years.',
+            'assets/svc-epc-1.jpg', 'Turnkey Solar Engineering', 'assets/svc-epc-2.jpg', 'Tier-1 Industrial Plant',
+            'What We Offer',
+            '[{"title":"Comprehensive Engineering","desc":"Custom structural calculation, yield analysis, and detailed cable schedules."},{"title":"Tier-1 Sourcing","desc":"Direct commercial channels for premium panels, inverters, and galvanized structures."},{"title":"Turnkey Construction","desc":"Piling foundation, hot-dip structures mounting, panel wiring, and AC/DC box setups."},{"title":"Quality & Compliance","desc":"Standardized test reports (string, earthing, insulation) ensuring full DISCOM eligibility."}]'::jsonb,
+            'Why Our EPC Services Stand Out',
+            '[{"num":"01","title":"In-House Engineering Force","desc":"Unlike other installers, Sor Connect utilizes 130+ in-house field engineers and technicians. This guarantees stringent quality control, clear accountability, and timely project delivery."},{"num":"02","title":"High-Wind Load Mounts","desc":"We supply hot-dip galvanized mounting structures engineered to survive extreme wind speeds up to 150 km/h, securing your plant against severe weather events."},{"num":"03","title":"Tier-1 Brand Affiliation","desc":"We maintain direct commercial relationships with top-tier panel brands (Tata, Adani, Waaree) and inverter leaders (Hitachi, Solis, Growatt) to preserve manufacturer warranties."}]'::jsonb,
+            '[{"q":"What is included in your solar EPC contract?","a":"Our EPC contract covers feasibility studies, structural and electrical design, component sourcing, site preparation, complete mechanical and electrical installation, safety testing, and utility grid interconnection."},{"q":"How do you handle structural safety for rooftop installations?","a":"Our design engineers run Staad Pro simulations to check wind loads and load-bearing capacities. We utilize chemical anchors for structural columns and apply double waterproofing coats to prevent roof leakages."}]'::jsonb,
+            'EPC Consultation', 'Get a Turnkey Quote for Your Project',
+            'Submit your site requirements and contact details. Our engineering division will analyze your details and share a custom quotation within 24 hours.',
+            'Get EPC Quotation', 1, true
+        ),
+        (
+            'installation', 'installation', 'Installation & Commissioning', 'Installation & Commissioning', 'Precision Installation',
+            'Seamless Setup. Maximum Performance. Long-Term Assurance.',
+            'Our Installation & Commissioning service goes beyond basic mechanical setup. It forms the core foundation of a safe, efficient solar system. We handle mechanical frame mounting, panel alignment, inverter integration, routing protection, DISCOM net-metering synchronization, and power evacuation to your LT panel with zero downtime transition.',
+            'assets/svc-inst-1.jpg', 'Precision Panel Mounting', 'assets/svc-inst-2.jpg', 'Grid Net-Metering Sync',
+            'What We Offer',
+            '[{"title":"Optimal Angle Mounts","desc":"Structural positioning calibrated using geo-mapping to maximize year-round solar capture."},{"title":"Secure Cabling Setup","desc":"Outdoor-rated, UV-protected copper and aluminum cables routed in protective conduits."},{"title":"Grid Synchronization","desc":"NET-meter configuration, solar meter integration, and DISCOM test coordination."},{"title":"Safety Earthing","desc":"Dedicated maintenance-free chemical earth pits for AC/DC loops and lightning arresters."}]'::jsonb,
+            'Why Our Installation Services Stand Out',
+            '[{"num":"01","title":"Precision Engineering","desc":"We use laser alignment and torque wrenches to mount panel structures. Certified technicians follow clear manufacturer guidelines to ensure mechanical fits do not stress modules."},{"num":"02","title":"Safety-First Grounding","desc":"We install copper-bonded earth rods and chemical fillings to guarantee earth resistance under 2 Ohms, protecting panels, inverters, and human personnel from ground surges."},{"num":"03","title":"Zero Downtime Transition","desc":"We plan LT panel linkages systematically. Power cutovers are scheduled at off-peak hours, ensuring zero disruption to industrial lines or operations during connection."}]'::jsonb,
+            '[{"q":"How long does the installation and commissioning process take?","a":"For a standard rooftop system (10kW - 100kW), installation takes 5 to 10 days. Commissioning approvals and net meter swap by the DISCOM can take an additional 15 to 30 days depending on department processes."},{"q":"What testing is performed before the system goes live?","a":"We perform Open Circuit Voltage (Voc), Short Circuit Current (Isc), insulation resistance checks, earth resistance verification, polarity mapping, thermal hot-spot check, and anti-islanding safety tests."}]'::jsonb,
+            'I&C Booking', 'Schedule Installation & Commissioning',
+            'Already have hardware or planning a plant expansion? Our field crews provide rapid, certified execution.',
+            'Book Installation Team', 2, true
+        ),
+        (
+            'om', 'om', 'Operation & Maintenance (O&M)', 'Operation & Maintenance (O&M)', '25-Year Asset Care',
+            'Proactive Asset Care and 24/7 Monitoring to Protect Your Yield.',
+            'Solar plants are 25-year income assets. Without systematic panel washing, wiring checks, and thermal monitoring, generation can drop by up to 25% due to soilage and hotspots. We offer daily remote performance tracking, chemical-free panel washing, string audits, and instant on-site troubleshooting to ensure maximum uptime.',
+            'assets/svc-om-1.jpg', 'Panel Cleaning & Washing', 'assets/svc-om-2.jpg', 'SCADA & Health Monitoring',
+            'What We Offer',
+            '[{"title":"Panel Soiling Audits","desc":"Periodic panel washing scheduled using local environmental dusting indices."},{"title":"SCADA Cloud Monitoring","desc":"Daily logs, alarm alerts, and inverter performance telemetry via mobile apps."},{"title":"Thermal Imagery Scan","desc":"Infrared inspections to identify faulty modules, micro-cracks, and micro-hotspots."},{"title":"On-Site Repairs","desc":"Fast spare replacements, wiring fixes, inverter calibrations, and fuse changes."}]'::jsonb,
+            'Why Our O&M Services Stand Out',
+            '[{"num":"01","title":"SCADA Remote Analytics","desc":"Our centralized desk monitors inverter parameters. If generation dips at a particular inverter string, our team receives an immediate warning, triggering a priority inspection visit."},{"num":"02","title":"De-Ionized Water Wash","desc":"We wash panel structures with soft, de-mineralized water. This prevents calcium scale scaling on glass surfaces, preserving light absorption coefficients."},{"num":"03","title":"Guaranteed 99% Uptime","desc":"Rapid field response teams across Rajasthan and UP resolve breakdown faults and inverter alarms swiftly to prevent revenue loss."}]'::jsonb,
+            '[{"q":"How frequently should solar panels be cleaned?","a":"For cities and dry regions, cleaning panels every 12 to 15 days is recommended to prevent dust layers from blocking sunlight. High-dust regions near quarries or dry land may require a weekly wash."},{"q":"Do you offer AMC (Annual Maintenance Contracts) for plants built by other companies?","a":"Yes. We conduct a complete health audit of your existing plant, correct any initial cable/structural defects, and take over the system under standard monthly or quarterly O&M plans."}]'::jsonb,
+            'O&M Service', 'Sign Up for Annual Solar Maintenance',
+            'Protect your generation output. Choose from standard monthly washing or full 24/7 technical monitoring packages.',
+            'Request Maintenance Plan', 3, true
+        ),
+        (
+            'design', 'design', 'Solar Designing', 'Solar Designing', 'PVsyst & CAD Engineering',
+            'Advanced Yield Simulation and Custom Engineering Before Installation.',
+            'Engineering is the blueprint of solar viability. Poor structural designs fail in storms, while wrong electrical sizing creates unsafe wiring runs. We perform 3D shadings simulations, string matching checks, electrical single-line diagram layout drafting, and wind stability analysis reports using global design software.',
+            'assets/svc-design-1.jpg', 'PVsyst Yield Simulation', 'assets/svc-design-2.jpg', '3D CAD Structural Layouts',
+            'What We Offer',
+            '[{"title":"3D Shade Simulations","desc":"SketchUp and PVsyst shade maps outlining shadow projections throughout the year."},{"title":"Staad Pro Structure Design","desc":"Stress analyses calculating anchor weights and purlin requirements."},{"title":"Cable Routing Layout","desc":"Wiring path design prioritizing minimum length to keep loop losses below 1.5%."},{"title":"Electrical SLDs","desc":"Full single-line schematics specifying protection levels, DCDB/ACDB fuses, and breaker values."}]'::jsonb,
+            'Why Our Solar Designing Stands Out',
+            '[{"num":"01","title":"PVsyst Yield Verification","desc":"We generate precise PVsyst simulations using coordinates and solar irradiation database inputs. This gives clients realistic generation numbers to check ROI before spending."},{"num":"02","title":"Wind-Resilient Structure Models","desc":"Mount designs conform strictly to IS-875 wind code parameters. Structures are engineered to withstand region-specific storm drafts, ensuring safety on high buildings."},{"num":"03","title":"Optimized Materials Lists","desc":"Detailed engineering drawing packages outline cut lengths and terminal counts. This helps clients purchase exact component quantities, saving on wastage."}]'::jsonb,
+            '[{"q":"What software package do you use for modeling?","a":"We execute energy simulations in PVsyst and Helioscope, mechanical modeling in AutoCAD and SolidWorks, and structural stress validations using Bentley Staad Pro."},{"q":"Why is 3D shading analysis critical?","a":"Even small shade spots on single panels can drag down string generation via panel mismatch. A 3D model identifies parapet or tree shadows, placing strings outside blocked sectors."}]'::jsonb,
+            'Engineering', 'Order Custom Solar Layout Designs',
+            'Hire our engineering desk to model your rooftop layout and simulate yearly solar yields. Enter details below to begin.',
+            'Order Solar Design Proposal', 4, true
+        ),
+        (
+            'kusum', 'kusum', 'PM-KUSUM Consultation', 'PM-KUSUM Consultation', 'Agriculture Solar Subsidy',
+            'Grid-Connected Agriculture Solar Schemes and Government Subsidy Processing.',
+            'The Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan (PM-KUSUM) scheme helps agricultural landholders and farming groups secure up to 60% government subsidy to install solar water pumps and grid-connected mini solar plants. We provide complete administrative, legal, and operational coordination to help you clear applications, secure clearances, and construct plants safely.',
+            'assets/svc-kusum-1.jpg', 'Solar Agriculture Pumps', 'assets/svc-kusum-2.jpg', 'Farmer Subsidy Execution',
+            'What We Offer',
+            '[{"title":"Component A/B/C Support","desc":"Complete application assistance for mini grid-tied plants and solar pump set conversions."},{"title":"Documentation & Filing","desc":"Land coordinate mapping, water level verification, and applicant folder generation."},{"title":"Turnkey Construction","desc":"Subsidy-compliant equipment installation, water flow checks, and structure setups."},{"title":"Liaison Support","desc":"Coordinating with state energy departments, MNRE, and local DISCOMs for quick file clearings."}]'::jsonb,
+            'Why Our Consultation Services Stand Out',
+            '[{"num":"01","title":"Scheme-Compliant Equipment","desc":"We source pumps and module components that match strict MNRE quality criteria. This guarantees that your installation passes department reviews and secures funding approvals."},{"num":"02","title":"Subsidy Clearing Liaison","desc":"Our dedicated operations division works directly with local department officers in Rajasthan and Uttar Pradesh to resolve documentation issues and expedite pump approvals."},{"num":"03","title":"Comprehensive Farm Feasibility","desc":"We verify nearby grid lines and test water tables before starting. This ensures we install the correct pump capacity (HP) and panel tilt for optimal daily irrigation."}]'::jsonb,
+            '[{"q":"What is the farmer share of cost under the KUSUM scheme?","a":"Under PM-KUSUM, the central and state governments cover 60% of the cost as direct subsidies. The farmer pays 40%, which can often be split into a 10% cash contribution and 30% secured via bank loan."},{"q":"What is the difference between KUSUM Component B and Component C?","a":"Component B focuses on installing stand-alone off-grid solar agricultural pumps. Component C provides support to solarize existing grid-connected agriculture pumps, allowing farmers to sell excess power to utility lines."}]'::jsonb,
+            'KUSUM Scheme', 'Check Your KUSUM Scheme Eligibility',
+            'Do you own agricultural land and want to register under the national solar subsidy program? Fill out your details and our team will check your eligibility.',
+            'Check KUSUM Eligibility', 5, true
+        ),
+        (
+            'surya-ghar', 'surya-ghar', 'PM Surya Ghar Yojana', 'PM Surya Ghar Yojana', 'Residential Rooftop Scheme',
+            'Government-Backed Rooftop Solar Subsidy for Residential Consumers.',
+            'PM Surya Ghar: Muft Bijli Yojana is the Government of India''s flagship rooftop solar initiative, targeting 1 crore households with free solar electricity. Under this scheme, eligible residential homeowners can install rooftop solar power plants and receive direct central subsidies of up to ₹78,000 via Direct Benefit Transfer (DBT). Sor Connect is an officially empanelled EPC installer — we manage the entire lifecycle from portal registration and DISCOM net-metering to turnkey rooftop installation and subsidy release with zero hassle.',
+            'assets/svc-epc-1.jpg', 'Rooftop Solar Installation', 'assets/svc-inst-1.jpg', 'Direct Subsidy DBT Sync',
+            'What We Offer Under PM Surya Ghar',
+            '[{"title":"Central Subsidy Filing","desc":"Full assistance for ₹30,000/kW (up to 2kW) and ₹78,000 max direct bank DBT disbursement."},{"title":"DISCOM Net-Metering","desc":"Seamless coordination with state DISCOMs for net meter swap, line sync, and export billing."},{"title":"Turnkey EPC Execution","desc":"BIS-approved DCR modules, IP65 string inverters, HDGI elevated mounting structures."},{"title":"5-Year Free Maintenance","desc":"Comprehensive plant care, quarterly system health checkups, and priority breakdown support."}]'::jsonb,
+            'Why Choose Sor Connect for PM Surya Ghar',
+            '[{"num":"01","title":"National Portal Empanelled","desc":"Officially registered vendor on the PM Surya Ghar National Portal across Rajasthan and UP DISCOMs, guaranteeing 100% eligibility for your direct subsidy release."},{"num":"02","title":"DCR Compliant Modules Only","desc":"We deploy exclusively Domestic Content Requirement (DCR) ALMM-listed solar panels manufactured in India, mandatory for government subsidy eligibility."},{"num":"03","title":"Guaranteed Subsidy Assistance","desc":"Our team handles end-to-end documentation from application submission and DISCOM feasibility approval to meter commissioning and final DBT credit."}]'::jsonb,
+            '[{"q":"How much subsidy do I get under PM Surya Ghar Yojana?","a":"The central government provides ₹30,000 for 1kW systems, ₹60,000 for 2kW systems, and a maximum of ₹78,000 for systems 3kW and above. The subsidy is directly credited to the consumer''s bank account via DBT after installation and net-meter commissioning."},{"q":"How much roof space is required for a 3kW solar system?","a":"A typical 3kW solar system requires approximately 250 to 300 square feet of shadow-free rooftop space. Our engineers conduct a free site assessment to verify your roof''s feasibility and optimal layout."}]'::jsonb,
+            'PM Surya Ghar', 'Claim Up to ₹78,000 Solar Subsidy',
+            'Ready to get free electricity for your home under PM Surya Ghar Yojana? Share your details for a free site assessment and subsidy eligibility check.',
+            'Claim PM Surya Ghar Subsidy', 6, true
+        )
+) AS s(
+    id, slug, title, nav_title, badge, subtitle, description,
+    image_1, image_1_caption, image_2, image_2_caption,
+    offers_heading, offers, standout_heading, standout_points, faqs,
+    form_sub, form_title, form_desc, form_btn, display_order, is_active
+)
+WHERE NOT EXISTS (SELECT 1 FROM public.services LIMIT 1);
+
+-- ==========================================================
+-- 7. PARTNERS CMS TABLE
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS public.partners (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    tier_badge TEXT NOT NULL DEFAULT 'Channel Partner',
+    role TEXT,
+    logo TEXT,
+    preview_image TEXT,
+    description TEXT,
+    features JSONB DEFAULT '[]'::jsonb,
+    display_order INT NOT NULL DEFAULT 1,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.partners ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access on partners"
+    ON public.partners FOR SELECT USING (true);
+
+CREATE POLICY "Allow public insert/update/delete on partners"
+    ON public.partners FOR ALL USING (true);
+
+-- Seed Partners
+INSERT INTO public.partners (
+    id, name, tier_badge, role, logo, preview_image, description, features, display_order, is_active
+)
+SELECT * FROM (
+    VALUES
+        (
+            'partner_1', 'Reliance New Energy', 'Channel Partner', 'Official Channel Partner',
+            'assets/reliance-logo.jpeg', 'assets/partner-reliance-expo.jpg',
+            'Authorised partner for rooftop solar business, driving India''s clean energy transition and Net-Zero carbon initiatives with world-class engineering standards.',
+            '["Rooftop Solar Solutions", "Net-Zero Carbon Deployments", "Pan-India Residential & C&I"]'::jsonb,
+            1, true
+        ),
+        (
+            'partner_2', 'Hitachi Energy', 'Distributor', 'Distributor',
+            'assets/hitachi-logo.jpeg', 'assets/award-hitachi.jpg',
+            'Distributor of high-efficiency on-grid string and central inverters, ensuring superior uptime, rugged reliability, and full warranty support.',
+            '["High Yield On-Grid Inverters", "Direct Factory Regional Stock", "Jaipur, Ajmer & Alwar Hubs"]'::jsonb,
+            2, true
+        ),
+        (
+            'partner_3', 'Sungrow Power', 'Channel Partner', 'Authorized Channel Partner (Agra Region)',
+            'assets/sungrow-logo.png', 'assets/partner-sungrow-expo.jpg',
+            'Authorized Channel Partner for Agra Region. Global leader in smart solar conversion with 99%+ inverter efficiency, intelligent IV curve diagnostics, and reliable performance across utility and industrial plants.',
+            '["Authorized Channel Partner — Agra Region", "99%+ Power Conversion Yield", "25-Year Reliability & IV Diagnostics"]'::jsonb,
+            3, true
+        )
+) AS p(id, name, tier_badge, role, logo, preview_image, description, features, display_order, is_active)
+WHERE NOT EXISTS (SELECT 1 FROM public.partners LIMIT 1);
+
