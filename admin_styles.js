@@ -904,13 +904,14 @@ table.admin-table tbody tr:last-child td {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(15, 23, 42, 0.5);
   backdrop-filter: blur(4px);
   display: none;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 20px;
+  padding: 24px 16px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-modal-overlay.active {
@@ -923,11 +924,20 @@ table.admin-table tbody tr:last-child td {
   border-radius: 12px;
   width: 100%;
   max-width: 760px;
-  max-height: 90vh;
+  max-height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   position: relative;
+  overflow: hidden;
+  margin: auto 0;
+}
+
+.admin-modal-box form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -942,6 +952,7 @@ table.admin-table tbody tr:last-child td {
   align-items: center;
   justify-content: space-between;
   background: #ffffff;
+  flex-shrink: 0;
 }
 
 .admin-modal-header h3 {
@@ -970,6 +981,25 @@ table.admin-table tbody tr:last-child td {
   padding: 24px;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-modal-body::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.admin-modal-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.admin-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .admin-modal-footer {
@@ -980,6 +1010,7 @@ table.admin-table tbody tr:last-child td {
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .modal-form-group {
@@ -1041,9 +1072,13 @@ table.admin-table tbody tr:last-child td {
   display: flex;
   gap: 6px;
   border-bottom: 1px solid var(--border);
-  margin: -10px -24px 20px -24px;
-  padding: 0 24px 8px 24px;
+  margin: -24px -24px 20px -24px;
+  padding: 14px 24px 10px 24px;
   overflow-x: auto;
+  position: sticky;
+  top: -24px;
+  background: #ffffff;
+  z-index: 20;
 }
 
 .modal-subtab-btn {
