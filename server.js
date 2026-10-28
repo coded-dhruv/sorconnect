@@ -1263,6 +1263,54 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // 11. Media Upload API (Accepts Base64 image and saves to assets/uploads/)
+  if (req.method === 'POST' && urlPath === '/api/upload') {
+    try {
+      const payload = await parseBody(req);
+      const { filename, data } = payload;
+      if (!data) {
+        sendJson(res, 400, { success: false, message: 'Missing image data' });
+        return;
+      }
+
+      let buffer;
+      let ext = '.jpg';
+      const matches = data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+      if (matches && matches.length === 3) {
+        const mime = matches[1].toLowerCase();
+        buffer = Buffer.from(matches[2], 'base64');
+        if (mime.includes('png')) ext = '.png';
+        else if (mime.includes('webp')) ext = '.webp';
+        else if (mime.includes('svg')) ext = '.svg';
+        else if (mime.includes('gif')) ext = '.gif';
+        else if (mime.includes('jpeg') || mime.includes('jpg')) ext = '.jpg';
+      } else {
+        buffer = Buffer.from(data, 'base64');
+      }
+
+      const uploadsDir = path.join(__dirname, 'assets', 'uploads');
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      const cleanBase = (filename || 'media')
+        .replace(/\.[^/.]+$/, '')
+        .replace(/[^a-zA-Z0-9_-]/g, '_')
+        .substring(0, 30);
+      const uniqueFilename = `${Date.now()}_${cleanBase}${ext}`;
+      const filePath = path.join(uploadsDir, uniqueFilename);
+      fs.writeFileSync(filePath, buffer);
+
+      const relativeUrl = `assets/uploads/${uniqueFilename}`;
+      console.log(`[MEDIA UPLOAD] Successfully stored ${relativeUrl}`);
+      sendJson(res, 200, { success: true, url: relativeUrl, filename: uniqueFilename });
+    } catch (err) {
+      console.error('[MEDIA UPLOAD ERROR]', err);
+      sendJson(res, 500, { success: false, message: 'Upload failed: ' + err.message });
+    }
+    return;
+  }
+
   // ==========================================
   // PAGE ROUTING & STATIC FILE SERVING
   // ==========================================

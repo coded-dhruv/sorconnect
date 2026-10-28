@@ -847,33 +847,167 @@ module.exports = {
       document.getElementById('count-svc-faqs').textContent = faqs;
     }
 
-    // Image Presets and Previews for Services
-    function updateSvcImgPreview(boxId, url) {
+    // Image Presets and Previews for Services & Media
+    function updateSvcImgPreview(boxId, url, statusId) {
       const box = document.getElementById(boxId);
       if (!box) return;
-      if (url && (url.startsWith('http') || url.startsWith('assets/'))) {
-        box.innerHTML = \`<img src="\${escapeHtml(url)}" alt="Preview" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\\'image-preview-placeholder\\\'>Image not found</span>';">\`;
+      if (url && (url.startsWith('http') || url.startsWith('assets/') || url.startsWith('data:image/'))) {
+        box.innerHTML = \`<img src="\${escapeHtml(url)}" alt="Preview" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\\'image-preview-placeholder\\\'><span class=\\\'drop-title\\\'>Image not found</span></span>';">\`;
+        if (statusId) {
+          const st = document.getElementById(statusId);
+          if (st) { st.textContent = 'Active Media'; st.className = 'badge badge-emerald'; }
+        }
       } else {
-        box.innerHTML = '<span class="image-preview-placeholder">Preview</span>';
+        box.innerHTML = \`
+          <span class="image-preview-placeholder">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            <span class="drop-title">Click to upload media or drag and drop</span>
+            <span class="drop-sub">PNG, JPG, WebP, or SVG up to 8MB</span>
+          </span>
+        \`;
+        if (statusId) {
+          const st = document.getElementById(statusId);
+          if (st) { st.textContent = 'No Media'; st.className = 'badge badge-slate'; }
+        }
       }
+    }
+
+    // Media Upload Handler (Base64 + Server sync)
+    async function handleMediaUpload(file, targetHiddenInputId, targetPreviewBoxId, targetStatusId) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select a valid image file (PNG, JPG, WebP, SVG).', 'error');
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        showToast('Image size exceeds 8MB limit.', 'error');
+        return;
+      }
+
+      if (targetStatusId) {
+        const st = document.getElementById(targetStatusId);
+        if (st) { st.textContent = 'Uploading...'; st.className = 'badge badge-amber'; }
+      }
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64Data = e.target.result;
+        updateSvcImgPreview(targetPreviewBoxId, base64Data, targetStatusId);
+
+        let finalUrl = base64Data;
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: file.name, data: base64Data })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.url) finalUrl = data.url;
+          }
+        } catch (uploadErr) {
+          console.warn('Local /api/upload endpoint unavailable, using Base64 data URL directly:', uploadErr);
+        }
+
+        const hiddenInput = document.getElementById(targetHiddenInputId);
+        if (hiddenInput) hiddenInput.value = finalUrl;
+
+        if (targetStatusId) {
+          const st = document.getElementById(targetStatusId);
+          if (st) { st.textContent = 'Uploaded & Ready'; st.className = 'badge badge-emerald'; }
+        }
+        showToast('Media uploaded and ready to update!', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Setup File Upload Listeners
+    const svcFile1 = document.getElementById('svc-file-1');
+    const svcFile2 = document.getElementById('svc-file-2');
+    if (svcFile1) {
+      svcFile1.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          handleMediaUpload(this.files[0], 'svc-image-1', 'svc-image-1-preview', 'svc-image-1-status');
+        }
+      });
+    }
+    if (svcFile2) {
+      svcFile2.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          handleMediaUpload(this.files[0], 'svc-image-2', 'svc-image-2-preview', 'svc-image-2-status');
+        }
+      });
+    }
+
+    // Drag and Drop on Dropzones
+    function setupDropzone(dropzoneId, fileInputId, hiddenInputId, previewId, statusId) {
+      const dropzone = document.getElementById(dropzoneId);
+      const fileInput = document.getElementById(fileInputId);
+      if (!dropzone || !fileInput) return;
+
+      dropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+      });
+
+      dropzone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+      });
+
+      dropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleMediaUpload(e.dataTransfer.files[0], hiddenInputId, previewId, statusId);
+        }
+      });
+    }
+
+    setupDropzone('svc-dropzone-1', 'svc-file-1', 'svc-image-1', 'svc-image-1-preview', 'svc-image-1-status');
+    setupDropzone('svc-dropzone-2', 'svc-file-2', 'svc-image-2', 'svc-image-2-preview', 'svc-image-2-status');
+
+    // Remove buttons
+    const removeImg1Btn = document.getElementById('btn-remove-svc-img1');
+    if (removeImg1Btn) {
+      removeImg1Btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('svc-image-1').value = '';
+        updateSvcImgPreview('svc-image-1-preview', '', 'svc-image-1-status');
+        showToast('Primary photo cleared.', 'info');
+      });
+    }
+    const removeImg2Btn = document.getElementById('btn-remove-svc-img2');
+    if (removeImg2Btn) {
+      removeImg2Btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('svc-image-2').value = '';
+        updateSvcImgPreview('svc-image-2-preview', '', 'svc-image-2-status');
+        showToast('Secondary photo cleared.', 'info');
+      });
     }
 
     const svcImg1Input = document.getElementById('svc-image-1');
     const svcImg2Input = document.getElementById('svc-image-2');
-    svcImg1Input.addEventListener('input', () => updateSvcImgPreview('svc-image-1-preview', svcImg1Input.value.trim()));
-    svcImg2Input.addEventListener('input', () => updateSvcImgPreview('svc-image-2-preview', svcImg2Input.value.trim()));
 
     document.querySelectorAll('.svc-img1-preset').forEach(btn => {
-      btn.addEventListener('click', function() {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
         svcImg1Input.value = this.getAttribute('data-src');
-        updateSvcImgPreview('svc-image-1-preview', svcImg1Input.value);
+        updateSvcImgPreview('svc-image-1-preview', svcImg1Input.value, 'svc-image-1-status');
+        showToast('Primary image preset selected.', 'info');
       });
     });
 
     document.querySelectorAll('.svc-img2-preset').forEach(btn => {
-      btn.addEventListener('click', function() {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
         svcImg2Input.value = this.getAttribute('data-src');
-        updateSvcImgPreview('svc-image-2-preview', svcImg2Input.value);
+        updateSvcImgPreview('svc-image-2-preview', svcImg2Input.value, 'svc-image-2-status');
+        showToast('Secondary image preset selected.', 'info');
       });
     });
 
@@ -909,11 +1043,11 @@ module.exports = {
 
         document.getElementById('svc-image-1').value = svc.image_1 || '';
         document.getElementById('svc-image-1-caption').value = svc.image_1_caption || '';
-        updateSvcImgPreview('svc-image-1-preview', svc.image_1);
+        updateSvcImgPreview('svc-image-1-preview', svc.image_1, 'svc-image-1-status');
 
         document.getElementById('svc-image-2').value = svc.image_2 || '';
         document.getElementById('svc-image-2-caption').value = svc.image_2_caption || '';
-        updateSvcImgPreview('svc-image-2-preview', svc.image_2);
+        updateSvcImgPreview('svc-image-2-preview', svc.image_2, 'svc-image-2-status');
 
         document.getElementById('svc-form-sub').value = svc.form_sub || '';
         document.getElementById('svc-form-title').value = svc.form_title || '';
@@ -933,8 +1067,8 @@ module.exports = {
         document.getElementById('svc-standout-heading').value = 'Why Our Services Stand Out';
         document.getElementById('svc-image-1').value = 'assets/svc-epc-1.jpg';
         document.getElementById('svc-image-2').value = 'assets/svc-epc-2.jpg';
-        updateSvcImgPreview('svc-image-1-preview', 'assets/svc-epc-1.jpg');
-        updateSvcImgPreview('svc-image-2-preview', 'assets/svc-epc-2.jpg');
+        updateSvcImgPreview('svc-image-1-preview', 'assets/svc-epc-1.jpg', 'svc-image-1-status');
+        updateSvcImgPreview('svc-image-2-preview', 'assets/svc-epc-2.jpg', 'svc-image-2-status');
         renderOfferItems([
           { title: 'Turnkey Feasibility & Site Survey', desc: 'Complete structural load calculation, shadow analysis, and optimal azimuth angle engineering.' },
           { title: 'Tier-1 Procurement & Installation', desc: 'Direct supply chain of high-efficiency mono PERC modules and grid-tied smart inverters.' }

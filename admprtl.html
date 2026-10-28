@@ -1296,6 +1296,131 @@ table.admin-table tbody tr:last-child td {
   opacity: 0.9;
 }
 
+/* Media Upload Card & Dropzone */
+.media-upload-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.media-upload-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.media-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.media-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.media-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.media-dropzone {
+  position: relative;
+  width: 100%;
+  height: 190px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.media-dropzone:hover, .media-dropzone.dragover {
+  border-color: var(--primary);
+  background: #f0fdf4;
+}
+
+.media-dropzone-preview {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-dropzone-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.media-dropzone-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.media-dropzone:hover .media-dropzone-overlay {
+  opacity: 1;
+}
+
+.media-dropzone-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  text-align: center;
+  padding: 16px;
+}
+
+.media-dropzone-placeholder svg {
+  color: #94a3b8;
+}
+
+.media-dropzone-placeholder .drop-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.media-dropzone-placeholder .drop-sub {
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.media-upload-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--primary);
+  transition: width 0.3s;
+}
+
 </style>
 </head>
 <body class="admin-body">
@@ -2179,59 +2304,119 @@ table.admin-table tbody tr:last-child td {
             </div>
           </div>
 
-          <!-- SUBTAB 3: Visual Media -->
+          <!-- SUBTAB 3: Visual Media (Direct Upload & Preview) -->
           <div id="svc-tab-media" class="modal-subpanel">
-            <!-- Image 1 -->
-            <div class="modal-form-group" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
-              <label for="svc-image-1">Primary Image 1 Path / URL <span style="color:red;">*</span></label>
-              <input type="text" id="svc-image-1" name="image_1" required placeholder="assets/svc-epc-1.jpg">
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
-                <div>
-                  <label for="svc-image-1-caption" style="font-size: 12px; margin-bottom: 4px;">Image 1 Caption</label>
-                  <input type="text" id="svc-image-1-caption" name="image_1_caption" placeholder="Turnkey Engineering">
+            <!-- Media Upload Card 1 (Primary) -->
+            <div class="media-upload-card">
+              <div class="media-upload-header">
+                <div class="media-title-group">
+                  <span class="media-label">Primary Section Image</span>
+                  <span class="badge badge-emerald" id="svc-image-1-status">Active Media</span>
                 </div>
-                <div>
-                  <div class="image-preview-box" id="svc-image-1-preview" style="height: 70px;">
-                    <span class="image-preview-placeholder">Preview 1</span>
-                  </div>
+                <div class="media-action-buttons">
+                  <label class="btn-shadcn-primary" style="cursor: pointer; height: 32px; font-size: 12px; margin: 0;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <span>Upload Image</span>
+                    <input type="file" id="svc-file-1" accept="image/*" style="display: none;">
+                  </label>
+                  <button type="button" class="btn-action-icon danger" id="btn-remove-svc-img1" title="Clear image">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                  </button>
                 </div>
               </div>
 
-              <div class="asset-options-grid">
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-epc-1.jpg"><img src="assets/svc-epc-1.jpg"> EPC 1</button>
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-inst-1.jpg"><img src="assets/svc-inst-1.jpg"> Inst 1</button>
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-om-1.jpg"><img src="assets/svc-om-1.jpg"> O&amp;M 1</button>
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-design-1.jpg"><img src="assets/svc-design-1.jpg"> Design 1</button>
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-kusum-1.jpg"><img src="assets/svc-kusum-1.jpg"> KUSUM 1</button>
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/hero-bg.jpg"><img src="assets/hero-bg.jpg"> Hero Plant</button>
+              <!-- Drag & Drop / Preview Box -->
+              <div class="media-dropzone" id="svc-dropzone-1">
+                <div class="media-dropzone-preview" id="svc-image-1-preview">
+                  <span class="image-preview-placeholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <span class="drop-title">Click to upload media or drag and drop</span>
+                    <span class="drop-sub">PNG, JPG, WebP, or SVG up to 5MB</span>
+                  </span>
+                </div>
+                <div class="media-dropzone-overlay">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  <span>Click or Drop New Image to Replace</span>
+                </div>
+              </div>
+
+              <!-- Hidden input holding actual URL/data -->
+              <input type="hidden" id="svc-image-1" name="image_1" value="assets/svc-epc-1.jpg">
+
+              <!-- Caption -->
+              <div style="margin-top: 10px;">
+                <label for="svc-image-1-caption" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Image 1 Caption / Description</label>
+                <input type="text" id="svc-image-1-caption" name="image_1_caption" placeholder="e.g. Turnkey Solar Engineering &amp; Ground Mount" style="width: 100%; padding: 7px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
+              </div>
+
+              <!-- Quick Gallery Presets -->
+              <div style="margin-top: 10px;">
+                <span style="font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Or pick from existing plant gallery:</span>
+                <div class="asset-options-grid" style="margin-top: 4px;">
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-epc-1.jpg"><img src="assets/svc-epc-1.jpg"> EPC 1</button>
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-inst-1.jpg"><img src="assets/svc-inst-1.jpg"> Inst 1</button>
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-om-1.jpg"><img src="assets/svc-om-1.jpg"> O&amp;M 1</button>
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-design-1.jpg"><img src="assets/svc-design-1.jpg"> Design 1</button>
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-kusum-1.jpg"><img src="assets/svc-kusum-1.jpg"> KUSUM 1</button>
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/hero-bg.jpg"><img src="assets/hero-bg.jpg"> Hero Plant</button>
+                </div>
               </div>
             </div>
 
-            <!-- Image 2 -->
-            <div class="modal-form-group" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid var(--border); margin-top: 14px;">
-              <label for="svc-image-2">Secondary Image 2 Path / URL <span style="color:red;">*</span></label>
-              <input type="text" id="svc-image-2" name="image_2" required placeholder="assets/svc-epc-2.jpg">
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
-                <div>
-                  <label for="svc-image-2-caption" style="font-size: 12px; margin-bottom: 4px;">Image 2 Caption</label>
-                  <input type="text" id="svc-image-2-caption" name="image_2_caption" placeholder="Industrial Installation">
+            <!-- Media Upload Card 2 (Secondary) -->
+            <div class="media-upload-card">
+              <div class="media-upload-header">
+                <div class="media-title-group">
+                  <span class="media-label">Secondary Section Image</span>
+                  <span class="badge badge-emerald" id="svc-image-2-status">Active Media</span>
                 </div>
-                <div>
-                  <div class="image-preview-box" id="svc-image-2-preview" style="height: 70px;">
-                    <span class="image-preview-placeholder">Preview 2</span>
-                  </div>
+                <div class="media-action-buttons">
+                  <label class="btn-shadcn-primary" style="cursor: pointer; height: 32px; font-size: 12px; margin: 0;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <span>Upload Image</span>
+                    <input type="file" id="svc-file-2" accept="image/*" style="display: none;">
+                  </label>
+                  <button type="button" class="btn-action-icon danger" id="btn-remove-svc-img2" title="Clear image">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                  </button>
                 </div>
               </div>
 
-              <div class="asset-options-grid">
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-epc-2.jpg"><img src="assets/svc-epc-2.jpg"> EPC 2</button>
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-inst-2.jpg"><img src="assets/svc-inst-2.jpg"> Inst 2</button>
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-om-2.jpg"><img src="assets/svc-om-2.jpg"> O&amp;M 2</button>
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-design-2.jpg"><img src="assets/svc-design-2.jpg"> Design 2</button>
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-kusum-2.jpg"><img src="assets/svc-kusum-2.jpg"> KUSUM 2</button>
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/our-team.jpg"><img src="assets/our-team.jpg"> Our Team</button>
+              <!-- Drag & Drop / Preview Box -->
+              <div class="media-dropzone" id="svc-dropzone-2">
+                <div class="media-dropzone-preview" id="svc-image-2-preview">
+                  <span class="image-preview-placeholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <span class="drop-title">Click to upload media or drag and drop</span>
+                    <span class="drop-sub">PNG, JPG, WebP, or SVG up to 5MB</span>
+                  </span>
+                </div>
+                <div class="media-dropzone-overlay">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  <span>Click or Drop New Image to Replace</span>
+                </div>
+              </div>
+
+              <!-- Hidden input holding actual URL/data -->
+              <input type="hidden" id="svc-image-2" name="image_2" value="assets/svc-epc-2.jpg">
+
+              <!-- Caption -->
+              <div style="margin-top: 10px;">
+                <label for="svc-image-2-caption" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Image 2 Caption / Description</label>
+                <input type="text" id="svc-image-2-caption" name="image_2_caption" placeholder="e.g. Precision Rooftop Setup &amp; Inverter Integration" style="width: 100%; padding: 7px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
+              </div>
+
+              <!-- Quick Gallery Presets -->
+              <div style="margin-top: 10px;">
+                <span style="font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Or pick from existing plant gallery:</span>
+                <div class="asset-options-grid" style="margin-top: 4px;">
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-epc-2.jpg"><img src="assets/svc-epc-2.jpg"> EPC 2</button>
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-inst-2.jpg"><img src="assets/svc-inst-2.jpg"> Inst 2</button>
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-om-2.jpg"><img src="assets/svc-om-2.jpg"> O&amp;M 2</button>
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-design-2.jpg"><img src="assets/svc-design-2.jpg"> Design 2</button>
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-kusum-2.jpg"><img src="assets/svc-kusum-2.jpg"> KUSUM 2</button>
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/our-team.jpg"><img src="assets/our-team.jpg"> Our Team</button>
+                </div>
               </div>
             </div>
           </div>
@@ -3520,33 +3705,167 @@ table.admin-table tbody tr:last-child td {
       document.getElementById('count-svc-faqs').textContent = faqs;
     }
 
-    // Image Presets and Previews for Services
-    function updateSvcImgPreview(boxId, url) {
+    // Image Presets and Previews for Services & Media
+    function updateSvcImgPreview(boxId, url, statusId) {
       const box = document.getElementById(boxId);
       if (!box) return;
-      if (url && (url.startsWith('http') || url.startsWith('assets/'))) {
-        box.innerHTML = `<img src="${escapeHtml(url)}" alt="Preview" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'image-preview-placeholder\'>Image not found</span>';">`;
+      if (url && (url.startsWith('http') || url.startsWith('assets/') || url.startsWith('data:image/'))) {
+        box.innerHTML = `<img src="${escapeHtml(url)}" alt="Preview" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'image-preview-placeholder\'><span class=\'drop-title\'>Image not found</span></span>';">`;
+        if (statusId) {
+          const st = document.getElementById(statusId);
+          if (st) { st.textContent = 'Active Media'; st.className = 'badge badge-emerald'; }
+        }
       } else {
-        box.innerHTML = '<span class="image-preview-placeholder">Preview</span>';
+        box.innerHTML = `
+          <span class="image-preview-placeholder">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            <span class="drop-title">Click to upload media or drag and drop</span>
+            <span class="drop-sub">PNG, JPG, WebP, or SVG up to 8MB</span>
+          </span>
+        `;
+        if (statusId) {
+          const st = document.getElementById(statusId);
+          if (st) { st.textContent = 'No Media'; st.className = 'badge badge-slate'; }
+        }
       }
+    }
+
+    // Media Upload Handler (Base64 + Server sync)
+    async function handleMediaUpload(file, targetHiddenInputId, targetPreviewBoxId, targetStatusId) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select a valid image file (PNG, JPG, WebP, SVG).', 'error');
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        showToast('Image size exceeds 8MB limit.', 'error');
+        return;
+      }
+
+      if (targetStatusId) {
+        const st = document.getElementById(targetStatusId);
+        if (st) { st.textContent = 'Uploading...'; st.className = 'badge badge-amber'; }
+      }
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64Data = e.target.result;
+        updateSvcImgPreview(targetPreviewBoxId, base64Data, targetStatusId);
+
+        let finalUrl = base64Data;
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: file.name, data: base64Data })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.url) finalUrl = data.url;
+          }
+        } catch (uploadErr) {
+          console.warn('Local /api/upload endpoint unavailable, using Base64 data URL directly:', uploadErr);
+        }
+
+        const hiddenInput = document.getElementById(targetHiddenInputId);
+        if (hiddenInput) hiddenInput.value = finalUrl;
+
+        if (targetStatusId) {
+          const st = document.getElementById(targetStatusId);
+          if (st) { st.textContent = 'Uploaded & Ready'; st.className = 'badge badge-emerald'; }
+        }
+        showToast('Media uploaded and ready to update!', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Setup File Upload Listeners
+    const svcFile1 = document.getElementById('svc-file-1');
+    const svcFile2 = document.getElementById('svc-file-2');
+    if (svcFile1) {
+      svcFile1.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          handleMediaUpload(this.files[0], 'svc-image-1', 'svc-image-1-preview', 'svc-image-1-status');
+        }
+      });
+    }
+    if (svcFile2) {
+      svcFile2.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          handleMediaUpload(this.files[0], 'svc-image-2', 'svc-image-2-preview', 'svc-image-2-status');
+        }
+      });
+    }
+
+    // Drag and Drop on Dropzones
+    function setupDropzone(dropzoneId, fileInputId, hiddenInputId, previewId, statusId) {
+      const dropzone = document.getElementById(dropzoneId);
+      const fileInput = document.getElementById(fileInputId);
+      if (!dropzone || !fileInput) return;
+
+      dropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+      });
+
+      dropzone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+      });
+
+      dropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleMediaUpload(e.dataTransfer.files[0], hiddenInputId, previewId, statusId);
+        }
+      });
+    }
+
+    setupDropzone('svc-dropzone-1', 'svc-file-1', 'svc-image-1', 'svc-image-1-preview', 'svc-image-1-status');
+    setupDropzone('svc-dropzone-2', 'svc-file-2', 'svc-image-2', 'svc-image-2-preview', 'svc-image-2-status');
+
+    // Remove buttons
+    const removeImg1Btn = document.getElementById('btn-remove-svc-img1');
+    if (removeImg1Btn) {
+      removeImg1Btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('svc-image-1').value = '';
+        updateSvcImgPreview('svc-image-1-preview', '', 'svc-image-1-status');
+        showToast('Primary photo cleared.', 'info');
+      });
+    }
+    const removeImg2Btn = document.getElementById('btn-remove-svc-img2');
+    if (removeImg2Btn) {
+      removeImg2Btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('svc-image-2').value = '';
+        updateSvcImgPreview('svc-image-2-preview', '', 'svc-image-2-status');
+        showToast('Secondary photo cleared.', 'info');
+      });
     }
 
     const svcImg1Input = document.getElementById('svc-image-1');
     const svcImg2Input = document.getElementById('svc-image-2');
-    svcImg1Input.addEventListener('input', () => updateSvcImgPreview('svc-image-1-preview', svcImg1Input.value.trim()));
-    svcImg2Input.addEventListener('input', () => updateSvcImgPreview('svc-image-2-preview', svcImg2Input.value.trim()));
 
     document.querySelectorAll('.svc-img1-preset').forEach(btn => {
-      btn.addEventListener('click', function() {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
         svcImg1Input.value = this.getAttribute('data-src');
-        updateSvcImgPreview('svc-image-1-preview', svcImg1Input.value);
+        updateSvcImgPreview('svc-image-1-preview', svcImg1Input.value, 'svc-image-1-status');
+        showToast('Primary image preset selected.', 'info');
       });
     });
 
     document.querySelectorAll('.svc-img2-preset').forEach(btn => {
-      btn.addEventListener('click', function() {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
         svcImg2Input.value = this.getAttribute('data-src');
-        updateSvcImgPreview('svc-image-2-preview', svcImg2Input.value);
+        updateSvcImgPreview('svc-image-2-preview', svcImg2Input.value, 'svc-image-2-status');
+        showToast('Secondary image preset selected.', 'info');
       });
     });
 
@@ -3582,11 +3901,11 @@ table.admin-table tbody tr:last-child td {
 
         document.getElementById('svc-image-1').value = svc.image_1 || '';
         document.getElementById('svc-image-1-caption').value = svc.image_1_caption || '';
-        updateSvcImgPreview('svc-image-1-preview', svc.image_1);
+        updateSvcImgPreview('svc-image-1-preview', svc.image_1, 'svc-image-1-status');
 
         document.getElementById('svc-image-2').value = svc.image_2 || '';
         document.getElementById('svc-image-2-caption').value = svc.image_2_caption || '';
-        updateSvcImgPreview('svc-image-2-preview', svc.image_2);
+        updateSvcImgPreview('svc-image-2-preview', svc.image_2, 'svc-image-2-status');
 
         document.getElementById('svc-form-sub').value = svc.form_sub || '';
         document.getElementById('svc-form-title').value = svc.form_title || '';
@@ -3606,8 +3925,8 @@ table.admin-table tbody tr:last-child td {
         document.getElementById('svc-standout-heading').value = 'Why Our Services Stand Out';
         document.getElementById('svc-image-1').value = 'assets/svc-epc-1.jpg';
         document.getElementById('svc-image-2').value = 'assets/svc-epc-2.jpg';
-        updateSvcImgPreview('svc-image-1-preview', 'assets/svc-epc-1.jpg');
-        updateSvcImgPreview('svc-image-2-preview', 'assets/svc-epc-2.jpg');
+        updateSvcImgPreview('svc-image-1-preview', 'assets/svc-epc-1.jpg', 'svc-image-1-status');
+        updateSvcImgPreview('svc-image-2-preview', 'assets/svc-epc-2.jpg', 'svc-image-2-status');
         renderOfferItems([
           { title: 'Turnkey Feasibility & Site Survey', desc: 'Complete structural load calculation, shadow analysis, and optimal azimuth angle engineering.' },
           { title: 'Tier-1 Procurement & Installation', desc: 'Direct supply chain of high-efficiency mono PERC modules and grid-tied smart inverters.' }

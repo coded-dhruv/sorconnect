@@ -1285,5 +1285,130 @@ table.admin-table tbody tr:last-child td {
 .whatsapp-link-btn:hover {
   opacity: 0.9;
 }
+
+/* Media Upload Card & Dropzone */
+.media-upload-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.media-upload-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.media-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.media-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.media-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.media-dropzone {
+  position: relative;
+  width: 100%;
+  height: 190px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.media-dropzone:hover, .media-dropzone.dragover {
+  border-color: var(--primary);
+  background: #f0fdf4;
+}
+
+.media-dropzone-preview {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-dropzone-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.media-dropzone-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.media-dropzone:hover .media-dropzone-overlay {
+  opacity: 1;
+}
+
+.media-dropzone-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  text-align: center;
+  padding: 16px;
+}
+
+.media-dropzone-placeholder svg {
+  color: #94a3b8;
+}
+
+.media-dropzone-placeholder .drop-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.media-dropzone-placeholder .drop-sub {
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.media-upload-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--primary);
+  transition: width 0.3s;
+}
 `
 };

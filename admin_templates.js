@@ -888,59 +888,119 @@ module.exports = {
             </div>
           </div>
 
-          <!-- SUBTAB 3: Visual Media -->
+          <!-- SUBTAB 3: Visual Media (Direct Upload & Preview) -->
           <div id="svc-tab-media" class="modal-subpanel">
-            <!-- Image 1 -->
-            <div class="modal-form-group" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
-              <label for="svc-image-1">Primary Image 1 Path / URL <span style="color:red;">*</span></label>
-              <input type="text" id="svc-image-1" name="image_1" required placeholder="assets/svc-epc-1.jpg">
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
-                <div>
-                  <label for="svc-image-1-caption" style="font-size: 12px; margin-bottom: 4px;">Image 1 Caption</label>
-                  <input type="text" id="svc-image-1-caption" name="image_1_caption" placeholder="Turnkey Engineering">
+            <!-- Media Upload Card 1 (Primary) -->
+            <div class="media-upload-card">
+              <div class="media-upload-header">
+                <div class="media-title-group">
+                  <span class="media-label">Primary Section Image</span>
+                  <span class="badge badge-emerald" id="svc-image-1-status">Active Media</span>
                 </div>
-                <div>
-                  <div class="image-preview-box" id="svc-image-1-preview" style="height: 70px;">
-                    <span class="image-preview-placeholder">Preview 1</span>
-                  </div>
+                <div class="media-action-buttons">
+                  <label class="btn-shadcn-primary" style="cursor: pointer; height: 32px; font-size: 12px; margin: 0;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <span>Upload Image</span>
+                    <input type="file" id="svc-file-1" accept="image/*" style="display: none;">
+                  </label>
+                  <button type="button" class="btn-action-icon danger" id="btn-remove-svc-img1" title="Clear image">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                  </button>
                 </div>
               </div>
 
-              <div class="asset-options-grid">
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-epc-1.jpg"><img src="assets/svc-epc-1.jpg"> EPC 1</button>
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-inst-1.jpg"><img src="assets/svc-inst-1.jpg"> Inst 1</button>
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-om-1.jpg"><img src="assets/svc-om-1.jpg"> O&amp;M 1</button>
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-design-1.jpg"><img src="assets/svc-design-1.jpg"> Design 1</button>
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-kusum-1.jpg"><img src="assets/svc-kusum-1.jpg"> KUSUM 1</button>
-                <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/hero-bg.jpg"><img src="assets/hero-bg.jpg"> Hero Plant</button>
+              <!-- Drag & Drop / Preview Box -->
+              <div class="media-dropzone" id="svc-dropzone-1">
+                <div class="media-dropzone-preview" id="svc-image-1-preview">
+                  <span class="image-preview-placeholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <span class="drop-title">Click to upload media or drag and drop</span>
+                    <span class="drop-sub">PNG, JPG, WebP, or SVG up to 5MB</span>
+                  </span>
+                </div>
+                <div class="media-dropzone-overlay">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  <span>Click or Drop New Image to Replace</span>
+                </div>
+              </div>
+
+              <!-- Hidden input holding actual URL/data -->
+              <input type="hidden" id="svc-image-1" name="image_1" value="assets/svc-epc-1.jpg">
+
+              <!-- Caption -->
+              <div style="margin-top: 10px;">
+                <label for="svc-image-1-caption" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Image 1 Caption / Description</label>
+                <input type="text" id="svc-image-1-caption" name="image_1_caption" placeholder="e.g. Turnkey Solar Engineering &amp; Ground Mount" style="width: 100%; padding: 7px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
+              </div>
+
+              <!-- Quick Gallery Presets -->
+              <div style="margin-top: 10px;">
+                <span style="font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Or pick from existing plant gallery:</span>
+                <div class="asset-options-grid" style="margin-top: 4px;">
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-epc-1.jpg"><img src="assets/svc-epc-1.jpg"> EPC 1</button>
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-inst-1.jpg"><img src="assets/svc-inst-1.jpg"> Inst 1</button>
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-om-1.jpg"><img src="assets/svc-om-1.jpg"> O&amp;M 1</button>
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-design-1.jpg"><img src="assets/svc-design-1.jpg"> Design 1</button>
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/svc-kusum-1.jpg"><img src="assets/svc-kusum-1.jpg"> KUSUM 1</button>
+                  <button type="button" class="asset-option-btn svc-img1-preset" data-src="assets/hero-bg.jpg"><img src="assets/hero-bg.jpg"> Hero Plant</button>
+                </div>
               </div>
             </div>
 
-            <!-- Image 2 -->
-            <div class="modal-form-group" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid var(--border); margin-top: 14px;">
-              <label for="svc-image-2">Secondary Image 2 Path / URL <span style="color:red;">*</span></label>
-              <input type="text" id="svc-image-2" name="image_2" required placeholder="assets/svc-epc-2.jpg">
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
-                <div>
-                  <label for="svc-image-2-caption" style="font-size: 12px; margin-bottom: 4px;">Image 2 Caption</label>
-                  <input type="text" id="svc-image-2-caption" name="image_2_caption" placeholder="Industrial Installation">
+            <!-- Media Upload Card 2 (Secondary) -->
+            <div class="media-upload-card">
+              <div class="media-upload-header">
+                <div class="media-title-group">
+                  <span class="media-label">Secondary Section Image</span>
+                  <span class="badge badge-emerald" id="svc-image-2-status">Active Media</span>
                 </div>
-                <div>
-                  <div class="image-preview-box" id="svc-image-2-preview" style="height: 70px;">
-                    <span class="image-preview-placeholder">Preview 2</span>
-                  </div>
+                <div class="media-action-buttons">
+                  <label class="btn-shadcn-primary" style="cursor: pointer; height: 32px; font-size: 12px; margin: 0;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <span>Upload Image</span>
+                    <input type="file" id="svc-file-2" accept="image/*" style="display: none;">
+                  </label>
+                  <button type="button" class="btn-action-icon danger" id="btn-remove-svc-img2" title="Clear image">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                  </button>
                 </div>
               </div>
 
-              <div class="asset-options-grid">
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-epc-2.jpg"><img src="assets/svc-epc-2.jpg"> EPC 2</button>
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-inst-2.jpg"><img src="assets/svc-inst-2.jpg"> Inst 2</button>
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-om-2.jpg"><img src="assets/svc-om-2.jpg"> O&amp;M 2</button>
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-design-2.jpg"><img src="assets/svc-design-2.jpg"> Design 2</button>
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-kusum-2.jpg"><img src="assets/svc-kusum-2.jpg"> KUSUM 2</button>
-                <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/our-team.jpg"><img src="assets/our-team.jpg"> Our Team</button>
+              <!-- Drag & Drop / Preview Box -->
+              <div class="media-dropzone" id="svc-dropzone-2">
+                <div class="media-dropzone-preview" id="svc-image-2-preview">
+                  <span class="image-preview-placeholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <span class="drop-title">Click to upload media or drag and drop</span>
+                    <span class="drop-sub">PNG, JPG, WebP, or SVG up to 5MB</span>
+                  </span>
+                </div>
+                <div class="media-dropzone-overlay">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  <span>Click or Drop New Image to Replace</span>
+                </div>
+              </div>
+
+              <!-- Hidden input holding actual URL/data -->
+              <input type="hidden" id="svc-image-2" name="image_2" value="assets/svc-epc-2.jpg">
+
+              <!-- Caption -->
+              <div style="margin-top: 10px;">
+                <label for="svc-image-2-caption" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Image 2 Caption / Description</label>
+                <input type="text" id="svc-image-2-caption" name="image_2_caption" placeholder="e.g. Precision Rooftop Setup &amp; Inverter Integration" style="width: 100%; padding: 7px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
+              </div>
+
+              <!-- Quick Gallery Presets -->
+              <div style="margin-top: 10px;">
+                <span style="font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Or pick from existing plant gallery:</span>
+                <div class="asset-options-grid" style="margin-top: 4px;">
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-epc-2.jpg"><img src="assets/svc-epc-2.jpg"> EPC 2</button>
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-inst-2.jpg"><img src="assets/svc-inst-2.jpg"> Inst 2</button>
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-om-2.jpg"><img src="assets/svc-om-2.jpg"> O&amp;M 2</button>
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-design-2.jpg"><img src="assets/svc-design-2.jpg"> Design 2</button>
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/svc-kusum-2.jpg"><img src="assets/svc-kusum-2.jpg"> KUSUM 2</button>
+                  <button type="button" class="asset-option-btn svc-img2-preset" data-src="assets/our-team.jpg"><img src="assets/our-team.jpg"> Our Team</button>
+                </div>
               </div>
             </div>
           </div>
