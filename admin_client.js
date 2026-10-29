@@ -2668,16 +2668,39 @@ module.exports = {
     }
 
     function updateModalImagePreview(url) {
-      updateSvcImgPreview('slide-image-preview', url);
+      updateSvcImgPreview('slide-image-preview', url, 'slide-image-status');
     }
 
     const slideImgInput = document.getElementById('slide-image');
-    slideImgInput.addEventListener('input', () => updateModalImagePreview(slideImgInput.value.trim()));
+    if (slideImgInput) {
+      slideImgInput.addEventListener('input', () => updateModalImagePreview(slideImgInput.value.trim()));
+    }
+
+    const slideFileInput = document.getElementById('slide-file');
+    if (slideFileInput) {
+      slideFileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          handleMediaUpload(this.files[0], 'slide-image', 'slide-image-preview', 'slide-image-status');
+        }
+      });
+    }
+
+    setupDropzone('slide-dropzone', 'slide-file', 'slide-image', 'slide-image-preview', 'slide-image-status');
+
+    const removeSlideImgBtn = document.getElementById('btn-remove-slide-img');
+    if (removeSlideImgBtn) {
+      removeSlideImgBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (slideImgInput) slideImgInput.value = '';
+        updateSvcImgPreview('slide-image-preview', '', 'slide-image-status');
+        showToast('Slide photo cleared.', 'info');
+      });
+    }
 
     document.querySelectorAll('.slide-preset-btn').forEach(btn => {
       btn.addEventListener('click', function() {
-        slideImgInput.value = this.getAttribute('data-src');
-        updateModalImagePreview(slideImgInput.value);
+        if (slideImgInput) slideImgInput.value = this.getAttribute('data-src');
+        updateModalImagePreview(this.getAttribute('data-src'));
       });
     });
 
@@ -2902,16 +2925,39 @@ module.exports = {
     }
 
     function updateAwardModalImagePreview(url) {
-      updateSvcImgPreview('award-image-preview', url);
+      updateSvcImgPreview('award-image-preview', url, 'award-image-status');
     }
 
     const awardImgInput = document.getElementById('award-image');
-    awardImgInput.addEventListener('input', () => updateAwardModalImagePreview(awardImgInput.value.trim()));
+    if (awardImgInput) {
+      awardImgInput.addEventListener('input', () => updateAwardModalImagePreview(awardImgInput.value.trim()));
+    }
+
+    const awardFileInput = document.getElementById('award-file');
+    if (awardFileInput) {
+      awardFileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          handleMediaUpload(this.files[0], 'award-image', 'award-image-preview', 'award-image-status');
+        }
+      });
+    }
+
+    setupDropzone('award-dropzone', 'award-file', 'award-image', 'award-image-preview', 'award-image-status');
+
+    const removeAwardImgBtn = document.getElementById('btn-remove-award-img');
+    if (removeAwardImgBtn) {
+      removeAwardImgBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (awardImgInput) awardImgInput.value = '';
+        updateSvcImgPreview('award-image-preview', '', 'award-image-status');
+        showToast('Award photo cleared.', 'info');
+      });
+    }
 
     document.querySelectorAll('.award-preset-btn').forEach(btn => {
       btn.addEventListener('click', function() {
-        awardImgInput.value = this.getAttribute('data-src');
-        updateAwardModalImagePreview(awardImgInput.value);
+        if (awardImgInput) awardImgInput.value = this.getAttribute('data-src');
+        updateAwardModalImagePreview(this.getAttribute('data-src'));
       });
     });
 

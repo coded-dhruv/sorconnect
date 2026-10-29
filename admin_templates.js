@@ -1468,24 +1468,52 @@ module.exports = {
             <textarea id="slide-desc" name="description" rows="3" required placeholder="Provide an informative overview of the project, technology used, or milestone..."></textarea>
           </div>
 
-          <div class="modal-form-group">
-            <label for="slide-image">Slide Image URL / Asset Path <span style="color:red;">*</span></label>
-            <input type="text" id="slide-image" name="image" required placeholder="assets/svc-epc-1.jpg">
-
-            <div style="margin-top: 8px; font-size: 11.5px; font-weight: 600; color: #64748b;">
-              Quick Select from Verified Library:
+          <div class="media-upload-card" style="margin-bottom: 14px;">
+            <div class="media-upload-header">
+              <div class="media-title-group">
+                <span class="media-label">Slide Visual Image <span style="color:red;">*</span></span>
+                <span class="badge badge-emerald" id="slide-image-status">Active Media</span>
+              </div>
+              <div class="media-action-buttons">
+                <label class="btn-shadcn-primary" style="cursor: pointer; height: 32px; font-size: 12px; margin: 0;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  <span>Upload Image</span>
+                  <input type="file" id="slide-file" accept="image/*" style="display: none;">
+                </label>
+                <button type="button" class="btn-action-icon danger" id="btn-remove-slide-img" title="Clear image">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                </button>
+              </div>
             </div>
-            <div class="asset-options-grid">
+
+            <!-- Drag & Drop / Preview Box -->
+            <div class="media-dropzone" id="slide-dropzone">
+              <div class="media-dropzone-preview" id="slide-image-preview">
+                <span class="image-preview-placeholder">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  <span class="drop-title">Click to upload image or drag and drop</span>
+                  <span class="drop-sub">PNG, JPG, WebP up to 8MB</span>
+                </span>
+              </div>
+              <div class="media-dropzone-overlay">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                <span>Click or Drop New Image to Replace</span>
+              </div>
+            </div>
+
+            <!-- Hidden input holding actual URL/data -->
+            <input type="hidden" id="slide-image" name="image" value="assets/svc-epc-1.jpg">
+
+            <div style="margin-top: 10px; font-size: 11.5px; font-weight: 600; color: #64748b;">
+              Or select from verified library:
+            </div>
+            <div class="asset-options-grid" style="margin-top: 6px;">
               <button type="button" class="asset-option-btn slide-preset-btn" data-src="assets/svc-epc-1.jpg"><img src="assets/svc-epc-1.jpg"> EPC 1</button>
               <button type="button" class="asset-option-btn slide-preset-btn" data-src="assets/svc-epc-2.jpg"><img src="assets/svc-epc-2.jpg"> EPC 2</button>
               <button type="button" class="asset-option-btn slide-preset-btn" data-src="assets/svc-inst-1.jpg"><img src="assets/svc-inst-1.jpg"> I&amp;C 1</button>
               <button type="button" class="asset-option-btn slide-preset-btn" data-src="assets/svc-om-1.jpg"><img src="assets/svc-om-1.jpg"> O&amp;M 1</button>
               <button type="button" class="asset-option-btn slide-preset-btn" data-src="assets/hero-bg.jpg"><img src="assets/hero-bg.jpg"> Hero Solar</button>
               <button type="button" class="asset-option-btn slide-preset-btn" data-src="assets/our-team.jpg"><img src="assets/our-team.jpg"> Our Team</button>
-            </div>
-
-            <div class="image-preview-box" id="slide-image-preview">
-              <span class="image-preview-placeholder">Slide image preview</span>
             </div>
           </div>
 
@@ -1535,21 +1563,52 @@ module.exports = {
             <textarea id="award-desc" name="description" rows="3" required placeholder="Brief description of the award or accreditation..."></textarea>
           </div>
 
-          <div class="modal-form-group">
-            <label for="award-image">Award Image Path or URL <span style="color:red;">*</span></label>
-            <input type="text" id="award-image" name="image" required placeholder="assets/award-solarquarter-2025-stage.jpg">
-            
-            <div class="asset-options-grid">
-              <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-solarquarter-2025-stage.jpg"><img src="assets/award-solarquarter-2025-stage.jpg"> SolarQuarter Stage</button>
+          <div class="media-upload-card" style="margin-bottom: 14px;">
+            <div class="media-upload-header">
+              <div class="media-title-group">
+                <span class="media-label">Award / Recognition Photo <span style="color:red;">*</span></span>
+                <span class="badge badge-emerald" id="award-image-status">Active Media</span>
+              </div>
+              <div class="media-action-buttons">
+                <label class="btn-shadcn-primary" style="cursor: pointer; height: 32px; font-size: 12px; margin: 0;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  <span>Upload Image</span>
+                  <input type="file" id="award-file" accept="image/*" style="display: none;">
+                </label>
+                <button type="button" class="btn-action-icon danger" id="btn-remove-award-img" title="Clear image">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Drag & Drop / Preview Box -->
+            <div class="media-dropzone" id="award-dropzone">
+              <div class="media-dropzone-preview" id="award-image-preview">
+                <span class="image-preview-placeholder">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  <span class="drop-title">Click to upload award photo or drag and drop</span>
+                  <span class="drop-sub">PNG, JPG, WebP up to 8MB</span>
+                </span>
+              </div>
+              <div class="media-dropzone-overlay">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                <span>Click or Drop New Image to Replace</span>
+              </div>
+            </div>
+
+            <!-- Hidden input holding actual URL/data -->
+            <input type="hidden" id="award-image" name="image" value="assets/award-solarquarter-2025-stage.jpg">
+
+            <div style="margin-top: 10px; font-size: 11.5px; font-weight: 600; color: #64748b;">
+              Or select from verified library:
+            </div>
+            <div class="asset-options-grid" style="margin-top: 6px;">
+              <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-solarquarter-2025-stage.jpg"><img src="assets/award-solarquarter-2025-stage.jpg"> SQ Stage</button>
               <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-bharat-renewable-2026.jpg"><img src="assets/award-bharat-renewable-2026.jpg"> Bharat Renewable</button>
               <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-reliance.jpg"><img src="assets/award-reliance.jpg"> Reliance</button>
               <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-hitachi.jpg"><img src="assets/award-hitachi.jpg"> Hitachi</button>
               <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-solarquarter-2024-trophy.jpg"><img src="assets/award-solarquarter-2024-trophy.jpg"> SQ Trophy</button>
               <button type="button" class="asset-option-btn award-preset-btn" data-src="assets/award-eps-agra-trophy.jpg"><img src="assets/award-eps-agra-trophy.jpg"> EPS Agra</button>
-            </div>
-
-            <div class="image-preview-box" id="award-image-preview">
-              <span class="image-preview-placeholder">Award image preview</span>
             </div>
           </div>
 
