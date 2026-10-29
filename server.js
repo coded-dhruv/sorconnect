@@ -539,21 +539,29 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && urlPath === '/api/careers/status') {
     const payload = await parseBody(req);
     const applications = readJsonFile(CAREERS_FILE, []);
-    const app = applications.find(a => String(a.id) === String(payload.id));
+    const app = applications.find(a => 
+      String(a.id) === String(payload.id) || 
+      (payload.phone && a.phone === payload.phone) ||
+      (payload.email && a.email === payload.email)
+    );
+
     if (app) {
       app.status = payload.status || app.status;
       writeJsonFile(CAREERS_FILE, applications);
-
-      // Also sync update to Supabase
-      try {
-        supabaseRestRequest(`/rest/v1/careers?phone=eq.${encodeURIComponent(app.phone)}`, 'PATCH', { status: app.status })
-          .catch(() => {});
-      } catch (e) {}
-
-      sendJson(res, 200, { success: true, message: 'Application status updated', application: app });
-    } else {
-      sendJson(res, 404, { success: false, message: 'Application not found' });
     }
+
+    // Always sync status to Supabase (by UUID and/or phone)
+    try {
+      if (payload.id) {
+        supabaseRestRequest(`/rest/v1/careers?id=eq.${encodeURIComponent(payload.id)}`, 'PATCH', { status: payload.status }).catch(() => {});
+      }
+      const phoneToUpdate = (app && app.phone) || payload.phone;
+      if (phoneToUpdate) {
+        supabaseRestRequest(`/rest/v1/careers?phone=eq.${encodeURIComponent(phoneToUpdate)}`, 'PATCH', { status: payload.status }).catch(() => {});
+      }
+    } catch (e) {}
+
+    sendJson(res, 200, { success: true, message: 'Application status updated', application: app || payload });
     return;
   }
 
@@ -561,23 +569,34 @@ const server = http.createServer(async (req, res) => {
     const payload = await parseBody(req);
     let applications = readJsonFile(CAREERS_FILE, []);
     const initialLen = applications.length;
-    const target = applications.find(a => String(a.id) === String(payload.id));
-    applications = applications.filter(a => String(a.id) !== String(payload.id));
+    const target = applications.find(a => 
+      String(a.id) === String(payload.id) ||
+      (payload.phone && a.phone === payload.phone) ||
+      (payload.email && a.email === payload.email)
+    );
+
+    applications = applications.filter(a => 
+      String(a.id) !== String(payload.id) &&
+      (!payload.phone || a.phone !== payload.phone) &&
+      (!payload.email || a.email !== payload.email)
+    );
+
     if (applications.length < initialLen) {
       writeJsonFile(CAREERS_FILE, applications);
-
-      // Also sync delete to Supabase if target has phone
-      if (target && target.phone) {
-        try {
-          supabaseRestRequest(`/rest/v1/careers?phone=eq.${encodeURIComponent(target.phone)}`, 'DELETE')
-            .catch(() => {});
-        } catch (e) {}
-      }
-
-      sendJson(res, 200, { success: true, message: 'Application deleted successfully' });
-    } else {
-      sendJson(res, 404, { success: false, message: 'Application not found' });
     }
+
+    // Always sync delete to Supabase by UUID and/or phone
+    try {
+      if (payload.id) {
+        supabaseRestRequest(`/rest/v1/careers?id=eq.${encodeURIComponent(payload.id)}`, 'DELETE').catch(() => {});
+      }
+      const phoneToDelete = (target && target.phone) || payload.phone;
+      if (phoneToDelete) {
+        supabaseRestRequest(`/rest/v1/careers?phone=eq.${encodeURIComponent(phoneToDelete)}`, 'DELETE').catch(() => {});
+      }
+    } catch (e) {}
+
+    sendJson(res, 200, { success: true, message: 'Application deleted successfully' });
     return;
   }
 

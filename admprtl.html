@@ -3968,11 +3968,26 @@ table.admin-table tbody tr:last-child td {
       renderCareers();
 
       try {
+        // 1. Sync update directly to Supabase careers table
+        await supabaseQuery(`/rest/v1/careers?id=eq.${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          body: { status }
+        }).catch(async (e) => {
+          if (app.phone) {
+            await supabaseQuery(`/rest/v1/careers?phone=eq.${encodeURIComponent(app.phone)}`, {
+              method: 'PATCH',
+              body: { status }
+            }).catch(() => {});
+          }
+        });
+
+        // 2. Sync update to local server API (careers.json)
         await fetch('/api/careers/status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, status })
-        });
+          body: JSON.stringify({ id, status, phone: app.phone, email: app.email })
+        }).catch(() => {});
+
         showToast('Application marked as ' + status, 'success');
       } catch (err) {
         app.status = oldStatus;
@@ -3993,11 +4008,25 @@ table.admin-table tbody tr:last-child td {
       renderCareers();
 
       try {
+        // 1. Permanently delete from Supabase careers table
+        await supabaseQuery(`/rest/v1/careers?id=eq.${encodeURIComponent(id)}`, {
+          method: 'DELETE'
+        }).catch(async (supErr) => {
+          console.warn('Supabase delete by id failed, trying phone fallback...', supErr);
+          if (app && app.phone) {
+            await supabaseQuery(`/rest/v1/careers?phone=eq.${encodeURIComponent(app.phone)}`, {
+              method: 'DELETE'
+            }).catch(() => {});
+          }
+        });
+
+        // 2. Delete from local server API (careers.json)
         await fetch('/api/careers/delete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id })
-        });
+          body: JSON.stringify({ id, phone: app ? app.phone : '', email: app ? app.email : '' })
+        }).catch(() => {});
+
         showToast('Application deleted successfully', 'info');
       } catch (err) {
         state.careers = prev;
