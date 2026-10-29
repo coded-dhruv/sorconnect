@@ -2572,7 +2572,7 @@ module.exports = {
       document.getElementById('carousel-error').style.display = 'none';
 
       try {
-        const rawSlides = await supabaseQuery('/rest/v1/carousel_slides?select=*&order=display_order.asc');
+        const rawSlides = await supabaseQuery('/rest/v1/about_gallery?select=*&order=display_order.asc');
         if (Array.isArray(rawSlides)) {
           state.carousel = rawSlides.map(s => ({
             id: s.id,
@@ -2590,10 +2590,19 @@ module.exports = {
       } catch (supabaseErr) {
         console.warn('Supabase carousel fetch failed, trying local API...', supabaseErr);
         try {
-          const res = await fetch('/api/carousel');
+          const res = await fetch('/api/about-gallery');
           if (res.ok) {
             const data = await res.json();
-            state.carousel = data.slides || [];
+            state.carousel = (data.items || data.slides || []).map(s => ({
+              id: s.id,
+              title: s.title || '',
+              subtitle: s.subtitle || '',
+              badge: s.badge || '',
+              location: s.location || '',
+              description: s.description || '',
+              image: s.image || '',
+              order: s.display_order || s.order || 1
+            }));
             renderCarousel();
             return;
           }
@@ -2721,8 +2730,8 @@ module.exports = {
         const order = parseInt(document.getElementById('slide-order').value, 10) || 1;
 
         let savedSlide = null;
-        if (id) {
-          const patchResult = await supabaseQuery(\`/rest/v1/carousel_slides?id=eq.\${id}\`, {
+        if (id && !String(id).startsWith('slide_')) {
+          const patchResult = await supabaseQuery(\`/rest/v1/about_gallery?id=eq.\${id}\`, {
             method: 'PATCH',
             headers: { 'Prefer': 'return=representation' },
             body: { title, subtitle, badge, location, description, image, display_order: order }
@@ -2732,7 +2741,7 @@ module.exports = {
             savedSlide = { id: patchResult[0].id, title, subtitle, badge, location, description, image, order: patchResult[0].display_order };
           }
         } else {
-          const insertResult = await supabaseQuery('/rest/v1/carousel_slides', {
+          const insertResult = await supabaseQuery('/rest/v1/about_gallery', {
             method: 'POST',
             headers: { 'Prefer': 'return=representation' },
             body: [{ title, subtitle, badge, location, description, image, display_order: order }]
@@ -2743,7 +2752,7 @@ module.exports = {
           }
         }
 
-        const apiEndpoint = id ? '/api/carousel/update' : '/api/carousel/create';
+        const apiEndpoint = id ? '/api/about-gallery/update' : '/api/about-gallery/create';
         const serverRes = await fetch(apiEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -2783,14 +2792,13 @@ module.exports = {
       const title = slide ? slide.title : 'this slide';
       if (!confirm(\`Are you sure you want to delete "\${title}"?\`)) return;
 
-      const numericId = parseInt(String(id).replace(/\\D/g, ''), 10);
-      if (numericId) {
-        await supabaseQuery(\`/rest/v1/carousel_slides?id=eq.\${numericId}\`, {
+      if (id && !String(id).startsWith('slide_')) {
+        await supabaseQuery(\`/rest/v1/about_gallery?id=eq.\${id}\`, {
           method: 'DELETE'
         }).catch(() => {});
       }
 
-      fetch('/api/carousel/delete', {
+      fetch('/api/about-gallery/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id })

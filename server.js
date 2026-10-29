@@ -792,16 +792,16 @@ const server = http.createServer(async (req, res) => {
   }
 
   // 7. About Us Gallery Carousel APIs
-  if (urlPath === '/api/about-gallery' || urlPath === '/api/gallery') {
+  if (urlPath === '/api/about-gallery' || urlPath === '/api/gallery' || urlPath === '/api/carousel') {
     if (req.method === 'GET') {
       const items = readJsonFile(GALLERY_FILE, []);
       items.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
-      sendJson(res, 200, { success: true, items });
+      sendJson(res, 200, { success: true, items, slides: items });
       return;
     }
   }
 
-  if (req.method === 'POST' && urlPath === '/api/about-gallery/create') {
+  if (req.method === 'POST' && (urlPath === '/api/about-gallery/create' || urlPath === '/api/carousel/create')) {
     const payload = await parseBody(req);
     const items = readJsonFile(GALLERY_FILE, []);
 
@@ -829,7 +829,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === 'POST' && urlPath === '/api/about-gallery/update') {
+  if (req.method === 'POST' && (urlPath === '/api/about-gallery/update' || urlPath === '/api/carousel/update')) {
     const payload = await parseBody(req);
     const items = readJsonFile(GALLERY_FILE, []);
     const slideIndex = items.findIndex(s => String(s.id) === String(payload.id));
@@ -854,7 +854,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === 'POST' && urlPath === '/api/about-gallery/delete') {
+  if (req.method === 'POST' && (urlPath === '/api/about-gallery/delete' || urlPath === '/api/carousel/delete')) {
     const payload = await parseBody(req);
     let items = readJsonFile(GALLERY_FILE, []);
     const initialLen = items.length;
