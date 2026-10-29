@@ -633,8 +633,415 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // ===================== CAREERS GLOBAL MODAL SYSTEM =====================
+  let selectedResumeFile = null;
+
+  function ensureCareersModalExists() {
+    let overlay = document.getElementById('careers-modal-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'careers-modal-overlay';
+      overlay.className = 'quote-modal-overlay careers-modal-overlay';
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.innerHTML = `
+        <div class="quote-modal-container careers-modal-container">
+          <button type="button" class="quote-modal-close careers-modal-close" aria-label="Close modal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+          <div class="quote-modal-header">
+            <div class="quote-modal-badge" style="background: rgba(34, 197, 94, 0.12); color: #15803d;">✦ Join Our Team ✦</div>
+            <h3 class="quote-modal-title" style="font-size: 22px;">Apply for a Career at Sor Connect</h3>
+            <p class="quote-modal-desc">Join India's rapid solar engineering revolution. Complete your profile below and our technical hiring team will review your application.</p>
+          </div>
+          <form class="contact-form modal-form" id="careers-modal-form" style="padding:0; border:none;">
+            <div class="form-two">
+              <div class="form-row">
+                <label for="career-name">Full Name <span class="req">*</span></label>
+                <input type="text" id="career-name" name="name" required placeholder="e.g. Rahul Sharma">
+              </div>
+              <div class="form-row">
+                <label for="career-phone">WhatsApp / Phone Number <span class="req">*</span></label>
+                <input type="tel" id="career-phone" name="phone" required placeholder="10-digit mobile number" pattern="[0-9]{10}" maxlength="10">
+              </div>
+            </div>
+            <div class="form-two">
+              <div class="form-row">
+                <label for="career-email">Email Address <span class="req">*</span></label>
+                <input type="email" id="career-email" name="email" required placeholder="e.g. rahul@example.com">
+              </div>
+              <div class="form-row">
+                <label for="career-location">Current City &amp; State <span class="req">*</span></label>
+                <input type="text" id="career-location" name="location" required placeholder="e.g. Jaipur, Rajasthan">
+              </div>
+            </div>
+            <div class="form-two">
+              <div class="form-row">
+                <label for="career-position">Position Applied For <span class="req">*</span></label>
+                <select id="career-position" name="position" required>
+                  <option value="" disabled selected>Select Target Position</option>
+                  <option value="Solar Design & PVsyst Engineer">Solar Design &amp; PVsyst Engineer</option>
+                  <option value="Turnkey EPC Site Project Engineer">Turnkey EPC Site Project Engineer</option>
+                  <option value="Electrical Supervisor & Commissioning Specialist">Electrical Supervisor &amp; Commissioning Specialist</option>
+                  <option value="Solar Sales & Business Development Manager">Solar Sales &amp; Business Development Manager</option>
+                  <option value="O&M Field Maintenance Engineer">O&amp;M Field Maintenance Engineer</option>
+                  <option value="PM Surya Ghar & PM-KUSUM Liaison Executive">PM Surya Ghar &amp; PM-KUSUM Liaison Executive</option>
+                  <option value="Supply Chain & Procurement Specialist">Supply Chain &amp; Procurement Specialist</option>
+                  <option value="Quality Assurance / CEIG Regulatory Consultant">Quality Assurance / CEIG Regulatory Consultant</option>
+                  <option value="Open Application / Other">Open Application / Other</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label for="career-experience">Total Relevant Experience <span class="req">*</span></label>
+                <select id="career-experience" name="experience" required>
+                  <option value="" disabled selected>Select Experience</option>
+                  <option value="Fresher / Entry Level">Fresher / Entry Level (&lt; 1 Year)</option>
+                  <option value="1 - 3 Years">1 - 3 Years</option>
+                  <option value="3 - 5 Years">3 - 5 Years</option>
+                  <option value="5 - 8 Years">5 - 8 Years</option>
+                  <option value="8+ Years / Senior">8+ Years / Senior Specialist</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-two">
+              <div class="form-row">
+                <label for="career-availability">Notice Period / Availability</label>
+                <select id="career-availability" name="availability">
+                  <option value="Immediate / < 15 Days">Immediate / Within 15 Days</option>
+                  <option value="15 - 30 Days" selected>15 - 30 Days</option>
+                  <option value="30 - 60 Days">30 - 60 Days</option>
+                  <option value="60+ Days">60+ Days</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label for="career-portfolio">LinkedIn or Portfolio Link <span class="opt">(Optional)</span></label>
+                <input type="url" id="career-portfolio" name="portfolio" placeholder="https://linkedin.com/in/yourprofile">
+              </div>
+            </div>
+            <div class="form-row">
+              <label>Attach Resume / CV <span class="opt">(PDF, DOC, DOCX up to 10MB)</span></label>
+              <input type="file" id="career-file-input" accept=".pdf,.doc,.docx" style="display:none;">
+              <div class="careers-dropzone" id="career-dropzone">
+                <svg class="careers-dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <p class="careers-dropzone-text">Click to upload or drag &amp; drop your resume</p>
+                <p class="careers-dropzone-sub">Supported formats: PDF, DOC, DOCX (Max 10MB)</p>
+              </div>
+              <div class="careers-file-preview" id="career-file-preview">
+                <div class="careers-file-info">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  <span id="career-file-name">filename.pdf</span>
+                </div>
+                <button type="button" class="careers-file-remove" id="career-file-remove" title="Remove attached resume">&times;</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="career-note">Cover Note / Key Highlights <span class="opt">(Optional)</span></label>
+              <textarea id="career-note" name="cover_note" rows="2" placeholder="Tell us briefly about your solar projects, technical skills, or why you'd like to work with Sor Connect..."></textarea>
+            </div>
+            <div class="form-terms-row">
+              <label class="terms-label">
+                <input type="checkbox" name="agree_terms" checked required onclick="return false;" onkeydown="return false;">
+                <span class="terms-text">I confirm that all details provided are accurate and authorize Sor Connect to contact me regarding career opportunities.</span>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="career-submit-btn">Submit Application</button>
+            <p class="careers-form-note" id="careers-form-note" style="display:none; margin-top: 14px; font-size: 13.5px; font-weight: 600;"></p>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      // Bind close button
+      const closeBtn = overlay.querySelector('.careers-modal-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          closeCareersModal();
+        });
+      }
+
+      // Close on background click
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+          closeCareersModal();
+        }
+      });
+
+      // Bind Dropzone events
+      const dropzone = overlay.querySelector('#career-dropzone');
+      const fileInput = overlay.querySelector('#career-file-input');
+      const preview = overlay.querySelector('#career-file-preview');
+      const fileNameEl = overlay.querySelector('#career-file-name');
+      const removeBtn = overlay.querySelector('#career-file-remove');
+
+      if (dropzone && fileInput) {
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('dragover');
+          }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+          dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+          }, false);
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+          const files = e.dataTransfer.files;
+          if (files && files[0]) {
+            handleSelectedResume(files[0]);
+          }
+        });
+
+        fileInput.addEventListener('change', () => {
+          if (fileInput.files && fileInput.files[0]) {
+            handleSelectedResume(fileInput.files[0]);
+          }
+        });
+      }
+
+      function handleSelectedResume(file) {
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSize) {
+          alert('File size exceeds the 10MB limit. Please upload a smaller resume.');
+          return;
+        }
+        selectedResumeFile = file;
+        if (fileNameEl) fileNameEl.textContent = file.name;
+        if (preview) preview.classList.add('active');
+        if (dropzone) dropzone.style.display = 'none';
+      }
+
+      if (removeBtn) {
+        removeBtn.addEventListener('click', () => {
+          selectedResumeFile = null;
+          if (fileInput) fileInput.value = '';
+          if (preview) preview.classList.remove('active');
+          if (dropzone) dropzone.style.display = 'block';
+        });
+      }
+
+      // Bind Form Submission
+      const form = overlay.querySelector('#careers-modal-form');
+      const submitBtn = overlay.querySelector('#career-submit-btn');
+      const noteEl = overlay.querySelector('#careers-form-note');
+
+      if (form) {
+        form.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          if (noteEl) {
+            noteEl.style.display = 'none';
+            noteEl.textContent = '';
+          }
+
+          const nameVal = form.name.value.trim();
+          const phoneVal = form.phone.value.trim();
+          const emailVal = form.email.value.trim();
+          const locVal = form.location.value.trim();
+          const posVal = form.position.value;
+          const expVal = form.experience.value;
+          const availVal = form.availability ? form.availability.value : '15 - 30 Days';
+          const portVal = form.portfolio ? form.portfolio.value.trim() : '';
+          const noteVal = form.cover_note ? form.cover_note.value.trim() : '';
+
+          if (!nameVal || !phoneVal || !emailVal || !locVal || !posVal || !expVal) {
+            if (noteEl) {
+              noteEl.textContent = 'Please fill out all required fields marked with *';
+              noteEl.style.color = '#ef4444';
+              noteEl.style.display = 'block';
+            }
+            return;
+          }
+
+          const phoneDigits = phoneVal.replace(/\D/g, '');
+          if (phoneDigits.length < 10) {
+            if (noteEl) {
+              noteEl.textContent = 'Please enter a valid 10-digit mobile number.';
+              noteEl.style.color = '#ef4444';
+              noteEl.style.display = 'block';
+            }
+            return;
+          }
+
+          const originalText = submitBtn ? submitBtn.textContent : 'Submit Application';
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting Application...';
+          }
+
+          let resumeUrl = '';
+          let resumeName = '';
+
+          // Upload resume file if attached
+          if (selectedResumeFile) {
+            resumeName = selectedResumeFile.name;
+            try {
+              const base64Data = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(selectedResumeFile);
+              });
+
+              const uploadRes = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: resumeName, data: base64Data })
+              });
+              const uploadJson = await uploadRes.json();
+              if (uploadJson && uploadJson.url) {
+                resumeUrl = uploadJson.url;
+                resumeName = uploadJson.filename || resumeName;
+              }
+            } catch (upErr) {
+              console.warn('[CAREERS UPLOAD WARNING]', upErr);
+            }
+          }
+
+          const applicationPayload = {
+            name: nameVal,
+            phone: phoneVal,
+            email: emailVal,
+            location: locVal,
+            position: posVal,
+            experience: expVal,
+            availability: availVal,
+            portfolio: portVal,
+            resume_url: resumeUrl,
+            resume_name: resumeName,
+            cover_note: noteVal,
+            status: 'New'
+          };
+
+          // 1. Submit to internal server API
+          try {
+            await fetch('/api/careers/apply', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(applicationPayload)
+            });
+          } catch (apiErr) {
+            console.warn('[CAREERS API FALLBACK]', apiErr);
+          }
+
+          // 2. Direct sync to Supabase careers table
+          try {
+            const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+            fetch(`${SUPABASE_URL}/rest/v1/careers`, {
+              method: 'POST',
+              headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+              },
+              body: JSON.stringify([applicationPayload])
+            }).catch(() => {});
+          } catch (supErr) {}
+
+          // Reset and cleanup
+          form.reset();
+          selectedResumeFile = null;
+          if (fileInput) fileInput.value = '';
+          if (preview) preview.classList.remove('active');
+          if (dropzone) dropzone.style.display = 'block';
+
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }
+
+          closeCareersModal();
+
+          // Show confirmation popup
+          showEnquirySuccessPopup(
+            "Application Received!",
+            "Thank you for your interest in joining Sor Connect. Our recruitment team will review your qualifications and reach out to you within 48 to 72 hours."
+          );
+        });
+      }
+    }
+    return overlay;
+  }
+
+  function openCareersModal(preselectedRole) {
+    const overlay = ensureCareersModalExists();
+    if (!overlay) return;
+
+    if (preselectedRole) {
+      const positionSelect = overlay.querySelector('#career-position');
+      if (positionSelect) {
+        let matched = false;
+        for (let i = 0; i < positionSelect.options.length; i++) {
+          if (positionSelect.options[i].value.toLowerCase().includes(preselectedRole.toLowerCase()) ||
+              preselectedRole.toLowerCase().includes(positionSelect.options[i].value.toLowerCase())) {
+            positionSelect.selectedIndex = i;
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) {
+          positionSelect.value = 'Open Application / Other';
+        }
+      }
+    }
+
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+
+    // Auto-focus first input
+    setTimeout(() => {
+      const firstInput = overlay.querySelector('input[name="name"]');
+      if (firstInput) firstInput.focus();
+    }, 150);
+  }
+
+  function closeCareersModal() {
+    const overlay = document.getElementById('careers-modal-overlay');
+    if (!overlay) return;
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      const careersOverlay = document.getElementById('careers-modal-overlay');
+      if (careersOverlay && careersOverlay.classList.contains('active')) {
+        closeCareersModal();
+      }
+    }
+  });
+
   // Attach modal trigger to all "Get a Free Quote" & "Request a Site Assessment" CTAs
   function attachModalTriggers() {
+    // Careers modal triggers across the entire site
+    const careersTriggers = document.querySelectorAll('[data-open-modal="careers"], [data-open-modal="career"], .btn-open-careers, a[href="careers.html"], a[href="/careers"], a[href="careers"]');
+    careersTriggers.forEach(el => {
+      el.addEventListener('click', function(e) {
+        e.preventDefault();
+        const role = this.getAttribute('data-position') || this.getAttribute('data-role') || '';
+        openCareersModal(role);
+      });
+    });
+
     const triggers = document.querySelectorAll('.nav-cta, [data-open-modal="quote"], .btn-open-quote');
     triggers.forEach(el => {
       el.addEventListener('click', function (e) {
