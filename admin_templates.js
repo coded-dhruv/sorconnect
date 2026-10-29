@@ -23,7 +23,7 @@ module.exports = {
       <form id="admin-login-form" class="login-form">
         <div class="form-group">
           <label for="admin-user-input">Admin Username</label>
-          <input type="text" id="admin-user-input" required autocomplete="username" placeholder="sorconnect" value="sorconnect">
+          <input type="text" id="admin-user-input" required autocomplete="username" placeholder="Enter Admin Username" value="">
         </div>
 
         <div class="form-group">
