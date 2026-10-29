@@ -1447,38 +1447,90 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 11. Media Upload API (Accepts Base64 image and saves to assets/uploads/)
+// Helper: Upload file buffer to Supabase Storage bucket
+function uploadToSupabaseStorage(bucketName, filename, buffer, contentType) {
+  return new Promise((resolve) => {
+    try {
+      const url = new URL(`${SUPABASE_URL}/storage/v1/object/${encodeURIComponent(bucketName)}/${encodeURIComponent(filename)}`);
+      const options = {
+        hostname: url.hostname,
+        port: 443,
+        path: url.pathname,
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': contentType || 'application/octet-stream',
+          'Content-Length': buffer.length,
+          'x-upsert': 'true'
+        }
+      };
+
+      const req = https.request(options, (res) => {
+        let respData = '';
+        res.on('data', chunk => respData += chunk);
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucketName}/${encodeURIComponent(filename)}`;
+            console.log(`[SUPABASE STORAGE] File uploaded to bucket "${bucketName}": ${publicUrl}`);
+            resolve({ success: true, url: publicUrl });
+          } else {
+            console.warn(`[SUPABASE STORAGE] Bucket upload returned ${res.statusCode}: ${respData}`);
+            resolve({ success: false, error: respData });
+          }
+        });
+      });
+
+      req.on('error', (err) => {
+        console.warn(`[SUPABASE STORAGE] Upload request error: ${err.message}`);
+        resolve({ success: false, error: err.message });
+      });
+
+      req.write(buffer);
+      req.end();
+    } catch (e) {
+      console.warn(`[SUPABASE STORAGE] Exception: ${e.message}`);
+      resolve({ success: false, error: e.message });
+    }
+  });
+}
+
+  // 11. Media Upload API (Saves to local assets/uploads/ AND uploads to Supabase Storage bucket 'uploads')
   if (req.method === 'POST' && urlPath === '/api/upload') {
     try {
       const payload = await parseBody(req);
       const { filename, data } = payload;
       if (!data) {
-        sendJson(res, 400, { success: false, message: 'Missing image data' });
+        sendJson(res, 400, { success: false, message: 'Missing image or file data' });
         return;
       }
 
       let buffer;
       let ext = '.jpg';
+      let mimeType = 'image/jpeg';
       const matches = data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
       if (matches && matches.length === 3) {
-        const mime = matches[1].toLowerCase();
+        mimeType = matches[1].toLowerCase();
         buffer = Buffer.from(matches[2], 'base64');
-        if (mime.includes('pdf') || (filename && filename.toLowerCase().endsWith('.pdf'))) ext = '.pdf';
-        else if (mime.includes('wordprocessingml') || (filename && filename.toLowerCase().endsWith('.docx'))) ext = '.docx';
-        else if (mime.includes('msword') || (filename && filename.toLowerCase().endsWith('.doc'))) ext = '.doc';
-        else if (mime.includes('png')) ext = '.png';
-        else if (mime.includes('webp')) ext = '.webp';
-        else if (mime.includes('svg')) ext = '.svg';
-        else if (mime.includes('gif')) ext = '.gif';
-        else if (mime.includes('jpeg') || mime.includes('jpg')) ext = '.jpg';
+        if (mimeType.includes('pdf') || (filename && filename.toLowerCase().endsWith('.pdf'))) { ext = '.pdf'; mimeType = 'application/pdf'; }
+        else if (mimeType.includes('wordprocessingml') || (filename && filename.toLowerCase().endsWith('.docx'))) { ext = '.docx'; mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'; }
+        else if (mimeType.includes('msword') || (filename && filename.toLowerCase().endsWith('.doc'))) { ext = '.doc'; mimeType = 'application/msword'; }
+        else if (mimeType.includes('png')) { ext = '.png'; mimeType = 'image/png'; }
+        else if (mimeType.includes('webp')) { ext = '.webp'; mimeType = 'image/webp'; }
+        else if (mimeType.includes('svg')) { ext = '.svg'; mimeType = 'image/svg+xml'; }
+        else if (mimeType.includes('gif')) { ext = '.gif'; mimeType = 'image/gif'; }
+        else if (mimeType.includes('jpeg') || mimeType.includes('jpg')) { ext = '.jpg'; mimeType = 'image/jpeg'; }
       } else {
         buffer = Buffer.from(data, 'base64');
-        if (filename && filename.toLowerCase().endsWith('.pdf')) ext = '.pdf';
-        else if (filename && filename.toLowerCase().endsWith('.docx')) ext = '.docx';
-        else if (filename && filename.toLowerCase().endsWith('.doc')) ext = '.doc';
-        else if (filename && filename.toLowerCase().endsWith('.png')) ext = '.png';
+        if (filename && filename.toLowerCase().endsWith('.pdf')) { ext = '.pdf'; mimeType = 'application/pdf'; }
+        else if (filename && filename.toLowerCase().endsWith('.docx')) { ext = '.docx'; mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'; }
+        else if (filename && filename.toLowerCase().endsWith('.doc')) { ext = '.doc'; mimeType = 'application/msword'; }
+        else if (filename && filename.toLowerCase().endsWith('.png')) { ext = '.png'; mimeType = 'image/png'; }
+        else if (filename && filename.toLowerCase().endsWith('.webp')) { ext = '.webp'; mimeType = 'image/webp'; }
+        else if (filename && filename.toLowerCase().endsWith('.svg')) { ext = '.svg'; mimeType = 'image/svg+xml'; }
       }
 
+      // 1. Save locally in assets/uploads/ for local directory access & fallback
       const uploadsDir = path.join(__dirname, 'assets', 'uploads');
       if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
@@ -1491,10 +1543,23 @@ const server = http.createServer(async (req, res) => {
       const uniqueFilename = `${Date.now()}_${cleanBase}${ext}`;
       const filePath = path.join(uploadsDir, uniqueFilename);
       fs.writeFileSync(filePath, buffer);
+      const localRelativeUrl = `assets/uploads/${uniqueFilename}`;
 
-      const relativeUrl = `assets/uploads/${uniqueFilename}`;
-      console.log(`[MEDIA UPLOAD] Successfully stored ${relativeUrl}`);
-      sendJson(res, 200, { success: true, url: relativeUrl, filename: uniqueFilename });
+      // 2. Upload to Supabase Storage bucket ('uploads')
+      const supUpload = await uploadToSupabaseStorage('uploads', uniqueFilename, buffer, mimeType);
+
+      // Prefer Supabase Storage public URL if successful; otherwise fallback to local assets/uploads URL
+      const finalUrl = (supUpload && supUpload.success && supUpload.url) ? supUpload.url : localRelativeUrl;
+
+      console.log(`[MEDIA UPLOAD] Stored: ${finalUrl} (local: ${localRelativeUrl})`);
+      sendJson(res, 200, {
+        success: true,
+        url: finalUrl,
+        supabase_url: (supUpload && supUpload.url) ? supUpload.url : null,
+        local_url: localRelativeUrl,
+        filename: uniqueFilename,
+        storage: (supUpload && supUpload.success) ? 'supabase_bucket' : 'local'
+      });
     } catch (err) {
       console.error('[MEDIA UPLOAD ERROR]', err);
       sendJson(res, 500, { success: false, message: 'Upload failed: ' + err.message });

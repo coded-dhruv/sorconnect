@@ -1310,11 +1310,15 @@ module.exports = {
     function updateSvcImgPreview(boxId, url, statusId) {
       const box = document.getElementById(boxId);
       if (!box) return;
-      if (url && (url.startsWith('http') || url.startsWith('assets/') || url.startsWith('data:image/'))) {
+      if (url && (url.startsWith('http') || url.startsWith('assets/') || url.startsWith('uploads/') || url.startsWith('/assets/') || url.startsWith('data:image/'))) {
         box.innerHTML = \`<img src="\${escapeHtml(url)}" alt="Preview" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\\'image-preview-placeholder\\\'><span class=\\\'drop-title\\\'>Image not found</span></span>';">\`;
         if (statusId) {
           const st = document.getElementById(statusId);
-          if (st) { st.textContent = 'Active Media'; st.className = 'badge badge-emerald'; }
+          if (st) {
+            const isSupabase = url.includes('.supabase.co/storage/');
+            st.textContent = isSupabase ? 'Supabase Bucket Media' : 'Active Media';
+            st.className = 'badge badge-emerald';
+          }
         }
       } else {
         box.innerHTML = \`
@@ -1331,7 +1335,7 @@ module.exports = {
       }
     }
 
-    // Media Upload Handler (Base64 + Server sync)
+    // Media Upload Handler (Uploads to Supabase Storage bucket 'uploads' + local fallback)
     async function handleMediaUpload(file, targetHiddenInputId, targetPreviewBoxId, targetStatusId) {
       if (!file) return;
       if (!file.type.startsWith('image/')) {
@@ -1345,7 +1349,7 @@ module.exports = {
 
       if (targetStatusId) {
         const st = document.getElementById(targetStatusId);
-        if (st) { st.textContent = 'Uploading...'; st.className = 'badge badge-amber'; }
+        if (st) { st.textContent = 'Uploading to Bucket...'; st.className = 'badge badge-amber'; }
       }
 
       const reader = new FileReader();
@@ -1354,6 +1358,9 @@ module.exports = {
         updateSvcImgPreview(targetPreviewBoxId, base64Data, targetStatusId);
 
         let finalUrl = base64Data;
+        let uploadedToSupabase = false;
+
+        // 1. Send to /api/upload which uploads to Supabase Storage bucket 'uploads' and saves to assets/uploads/
         try {
           const res = await fetch('/api/upload', {
             method: 'POST',
@@ -1362,20 +1369,53 @@ module.exports = {
           });
           if (res.ok) {
             const data = await res.json();
-            if (data.url) finalUrl = data.url;
+            if (data.url) {
+              finalUrl = data.url;
+              if (data.storage === 'supabase_bucket' || String(data.url).includes('.supabase.co/storage/')) {
+                uploadedToSupabase = true;
+              }
+            }
           }
         } catch (uploadErr) {
-          console.warn('Local /api/upload endpoint unavailable, using Base64 data URL directly:', uploadErr);
+          console.warn('Local /api/upload endpoint unavailable, attempting direct Supabase Storage upload...', uploadErr);
+        }
+
+        // 2. Direct browser upload to Supabase Storage bucket 'uploads' as fallback
+        if (!uploadedToSupabase) {
+          try {
+            const cleanBase = (file.name || 'media').replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
+            const ext = file.name.substring(file.name.lastIndexOf('.')) || '.jpg';
+            const uniqueFilename = Date.now() + '_' + cleanBase + ext;
+
+            const supRes = await fetch(SUPABASE_URL + '/storage/v1/object/uploads/' + encodeURIComponent(uniqueFilename), {
+              method: 'POST',
+              headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_KEY,
+                'Content-Type': file.type || 'image/jpeg',
+                'x-upsert': 'true'
+              },
+              body: file
+            });
+
+            if (supRes.ok) {
+              finalUrl = SUPABASE_URL + '/storage/v1/object/public/uploads/' + encodeURIComponent(uniqueFilename);
+              uploadedToSupabase = true;
+            }
+          } catch (supErr) {
+            console.warn('Direct Supabase Storage upload error:', supErr);
+          }
         }
 
         const hiddenInput = document.getElementById(targetHiddenInputId);
         if (hiddenInput) hiddenInput.value = finalUrl;
 
-        if (targetStatusId) {
-          const st = document.getElementById(targetStatusId);
-          if (st) { st.textContent = 'Uploaded & Ready'; st.className = 'badge badge-emerald'; }
+        updateSvcImgPreview(targetPreviewBoxId, finalUrl, targetStatusId);
+        if (uploadedToSupabase) {
+          showToast('Image uploaded directly to Supabase Storage bucket!', 'success');
+        } else {
+          showToast('Media uploaded and saved locally.', 'success');
         }
-        showToast('Media uploaded and ready to update!', 'success');
       };
       reader.readAsDataURL(file);
     }

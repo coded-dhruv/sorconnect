@@ -563,3 +563,43 @@ CREATE POLICY "Allow public delete on careers"
 INSERT INTO public.careers (name, email, phone, position, experience, location, availability, portfolio, resume_name, cover_note, status)
 SELECT 'Arun Kumar Verma', 'arun.verma.solar@gmail.com', '+91 98291 23456', 'Solar Design & PVsyst Engineer', '3 - 5 Years', 'Jaipur, Rajasthan', '15 Days', 'https://linkedin.com/in/arun-verma-solar', 'Arun_Verma_Solar_CV.pdf', 'Electrical engineer with 4 years of experience preparing 3D CAD layouts, string sizing, and PVsyst energy yield reports for 50+ MW of industrial rooftop and ground-mount plants in Rajasthan.', 'New'
 WHERE NOT EXISTS (SELECT 1 FROM public.careers LIMIT 1);
+
+-- ==============================================================================
+-- 7. SUPABASE STORAGE BUCKET & POLICIES ('uploads')
+-- ==============================================================================
+
+-- 1. Create the 'uploads' storage bucket if it does not already exist
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+    'uploads',
+    'uploads',
+    true,
+    10485760, -- 10MB limit
+    ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'image/gif', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- 2. Allow public access to read/download files from the 'uploads' bucket
+DROP POLICY IF EXISTS "Public Access to uploads" ON storage.objects;
+CREATE POLICY "Public Access to uploads"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'uploads');
+
+-- 3. Allow anonymous & authenticated users to upload files to 'uploads' bucket
+DROP POLICY IF EXISTS "Allow uploads into uploads bucket" ON storage.objects;
+CREATE POLICY "Allow uploads into uploads bucket"
+ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'uploads');
+
+-- 4. Allow updating/overwriting existing files in 'uploads' bucket
+DROP POLICY IF EXISTS "Allow updates to uploads bucket" ON storage.objects;
+CREATE POLICY "Allow updates to uploads bucket"
+ON storage.objects FOR UPDATE
+USING (bucket_id = 'uploads')
+WITH CHECK (bucket_id = 'uploads');
+
+-- 5. Allow deleting files in 'uploads' bucket
+DROP POLICY IF EXISTS "Allow deletes in uploads bucket" ON storage.objects;
+CREATE POLICY "Allow deletes in uploads bucket"
+ON storage.objects FOR DELETE
+USING (bucket_id = 'uploads');
