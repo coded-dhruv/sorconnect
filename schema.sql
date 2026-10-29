@@ -512,3 +512,54 @@ SELECT * FROM (
 ) AS p(id, name, tier_badge, role, logo, preview_image, description, features, display_order, is_active)
 WHERE NOT EXISTS (SELECT 1 FROM public.partners LIMIT 1);
 
+
+
+-- ==============================================================================
+-- CAREERS / JOB APPLICATIONS TABLE & POLICIES
+-- ==============================================================================
+
+CREATE TABLE IF NOT EXISTS public.careers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    position TEXT NOT NULL,
+    experience TEXT NOT NULL,
+    location TEXT NOT NULL,
+    availability TEXT,
+    portfolio TEXT,
+    resume_url TEXT,
+    resume_name TEXT,
+    cover_note TEXT,
+    status TEXT NOT NULL DEFAULT 'New',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.careers ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public insert on careers" ON public.careers;
+CREATE POLICY "Allow public insert on careers"
+    ON public.careers FOR INSERT
+    WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public read on careers" ON public.careers;
+CREATE POLICY "Allow public read on careers"
+    ON public.careers FOR SELECT
+    USING (true);
+
+DROP POLICY IF EXISTS "Allow public update on careers" ON public.careers;
+CREATE POLICY "Allow public update on careers"
+    ON public.careers FOR UPDATE
+    USING (true)
+    WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public delete on careers" ON public.careers;
+CREATE POLICY "Allow public delete on careers"
+    ON public.careers FOR DELETE
+    USING (true);
+
+-- Seed Sample Career Applications (if empty)
+INSERT INTO public.careers (name, email, phone, position, experience, location, availability, portfolio, resume_name, cover_note, status)
+SELECT 'Arun Kumar Verma', 'arun.verma.solar@gmail.com', '+91 98291 23456', 'Solar Design & PVsyst Engineer', '3 - 5 Years', 'Jaipur, Rajasthan', '15 Days', 'https://linkedin.com/in/arun-verma-solar', 'Arun_Verma_Solar_CV.pdf', 'Electrical engineer with 4 years of experience preparing 3D CAD layouts, string sizing, and PVsyst energy yield reports for 50+ MW of industrial rooftop and ground-mount plants in Rajasthan.', 'New'
+WHERE NOT EXISTS (SELECT 1 FROM public.careers LIMIT 1);

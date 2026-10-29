@@ -18,10 +18,14 @@ const mimeTypes = {
   '.ico': 'image/x-icon',
   '.webmanifest': 'application/manifest+json',
   '.xml': 'application/xml; charset=utf-8',
-  '.txt': 'text/plain; charset=utf-8'
+  '.txt': 'text/plain; charset=utf-8',
+  '.pdf': 'application/pdf',
+  '.doc': 'application/msword',
+  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 };
 
 const SUBMISSIONS_FILE = path.join(__dirname, 'submissions.json');
+const CAREERS_FILE = path.join(__dirname, 'careers.json');
 const PROJECTS_FILE = path.join(__dirname, 'projects.json');
 const CATEGORIES_FILE = path.join(__dirname, 'categories.json');
 const GALLERY_FILE = path.join(__dirname, 'about_gallery.json');
@@ -231,6 +235,16 @@ async function syncFromSupabase() {
       console.warn('[SUPABASE SYNC] Partners table not found in Supabase, maintaining local partners.json fallback.');
     }
 
+    try {
+      const rawCareers = await fetchFromSupabase('/rest/v1/careers?select=*&order=created_at.desc');
+      if (Array.isArray(rawCareers) && rawCareers.length > 0) {
+        writeJsonFile(CAREERS_FILE, rawCareers);
+        console.log(`[SUPABASE SYNC] Successfully synced ${rawCareers.length} career applications.`);
+      }
+    } catch (e) {
+      console.warn('[SUPABASE SYNC] Careers table not found in Supabase, maintaining local careers.json fallback.');
+    }
+
     return {
       success: true,
       synced_categories: rawCategories.length,
@@ -431,6 +445,138 @@ const server = http.createServer(async (req, res) => {
       sendJson(res, 200, { success: true, message: 'Submission deleted successfully' });
     } else {
       sendJson(res, 404, { success: false, message: 'Submission not found' });
+    }
+    return;
+  }
+
+  // 4b. Careers / Job Applications APIs
+  if (urlPath === '/api/careers') {
+    if (req.method === 'GET') {
+      const applications = readJsonFile(CAREERS_FILE, []);
+      sendJson(res, 200, { success: true, applications });
+      return;
+    }
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/careers/apply') {
+    try {
+      const payload = await parseBody(req);
+      const applications = readJsonFile(CAREERS_FILE, []);
+
+      const newApplication = {
+        id: Date.now(),
+        created_at: new Date().toISOString(),
+        name: (payload.name || '').trim(),
+        email: (payload.email || '').trim(),
+        phone: (payload.phone || '').trim(),
+        position: (payload.position || 'Open Application').trim(),
+        experience: (payload.experience || 'Fresher').trim(),
+        location: (payload.location || '').trim(),
+        availability: (payload.availability || 'Immediate').trim(),
+        portfolio: (payload.portfolio || '').trim(),
+        resume_url: (payload.resume_url || '').trim(),
+        resume_name: (payload.resume_name || 'Resume.pdf').trim(),
+        cover_note: (payload.cover_note || '').trim(),
+        status: 'New'
+      };
+
+      if (!newApplication.name || !newApplication.phone || !newApplication.email) {
+        sendJson(res, 400, { success: false, message: 'Name, phone, and email are required.' });
+        return;
+      }
+
+      applications.unshift(newApplication);
+      writeJsonFile(CAREERS_FILE, applications);
+
+      // Async sync to Supabase careers table
+      try {
+        const postData = JSON.stringify([{
+          name: newApplication.name,
+          email: newApplication.email,
+          phone: newApplication.phone,
+          position: newApplication.position,
+          experience: newApplication.experience,
+          location: newApplication.location,
+          availability: newApplication.availability,
+          portfolio: newApplication.portfolio,
+          resume_url: newApplication.resume_url,
+          resume_name: newApplication.resume_name,
+          cover_note: newApplication.cover_note,
+          status: newApplication.status
+        }]);
+
+        const supReq = https.request(`${SUPABASE_URL}/rest/v1/careers`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          }
+        }, (supRes) => {
+          console.log(`[SUPABASE] Career application stored to Supabase with status: ${supRes.statusCode}`);
+        });
+        supReq.on('error', (err) => console.warn('[SUPABASE CAREER INSERT WARNING]', err.message));
+        supReq.write(postData);
+        supReq.end();
+      } catch (e) {
+        console.warn('[SUPABASE CAREER ERROR]', e.message);
+      }
+
+      console.log(`[CAREERS API] New application received: ${newApplication.name} for ${newApplication.position} (${newApplication.phone})`);
+      sendJson(res, 200, {
+        success: true,
+        message: 'Your application has been submitted successfully.',
+        application: newApplication
+      });
+    } catch (err) {
+      console.error('[CAREERS API ERROR]', err);
+      sendJson(res, 500, { success: false, message: 'Server error: ' + err.message });
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/careers/status') {
+    const payload = await parseBody(req);
+    const applications = readJsonFile(CAREERS_FILE, []);
+    const app = applications.find(a => String(a.id) === String(payload.id));
+    if (app) {
+      app.status = payload.status || app.status;
+      writeJsonFile(CAREERS_FILE, applications);
+
+      // Also sync update to Supabase
+      try {
+        supabaseRestRequest(`/rest/v1/careers?phone=eq.${encodeURIComponent(app.phone)}`, 'PATCH', { status: app.status })
+          .catch(() => {});
+      } catch (e) {}
+
+      sendJson(res, 200, { success: true, message: 'Application status updated', application: app });
+    } else {
+      sendJson(res, 404, { success: false, message: 'Application not found' });
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/careers/delete') {
+    const payload = await parseBody(req);
+    let applications = readJsonFile(CAREERS_FILE, []);
+    const initialLen = applications.length;
+    const target = applications.find(a => String(a.id) === String(payload.id));
+    applications = applications.filter(a => String(a.id) !== String(payload.id));
+    if (applications.length < initialLen) {
+      writeJsonFile(CAREERS_FILE, applications);
+
+      // Also sync delete to Supabase if target has phone
+      if (target && target.phone) {
+        try {
+          supabaseRestRequest(`/rest/v1/careers?phone=eq.${encodeURIComponent(target.phone)}`, 'DELETE')
+            .catch(() => {});
+        } catch (e) {}
+      }
+
+      sendJson(res, 200, { success: true, message: 'Application deleted successfully' });
+    } else {
+      sendJson(res, 404, { success: false, message: 'Application not found' });
     }
     return;
   }
@@ -1317,13 +1463,20 @@ const server = http.createServer(async (req, res) => {
       if (matches && matches.length === 3) {
         const mime = matches[1].toLowerCase();
         buffer = Buffer.from(matches[2], 'base64');
-        if (mime.includes('png')) ext = '.png';
+        if (mime.includes('pdf') || (filename && filename.toLowerCase().endsWith('.pdf'))) ext = '.pdf';
+        else if (mime.includes('wordprocessingml') || (filename && filename.toLowerCase().endsWith('.docx'))) ext = '.docx';
+        else if (mime.includes('msword') || (filename && filename.toLowerCase().endsWith('.doc'))) ext = '.doc';
+        else if (mime.includes('png')) ext = '.png';
         else if (mime.includes('webp')) ext = '.webp';
         else if (mime.includes('svg')) ext = '.svg';
         else if (mime.includes('gif')) ext = '.gif';
         else if (mime.includes('jpeg') || mime.includes('jpg')) ext = '.jpg';
       } else {
         buffer = Buffer.from(data, 'base64');
+        if (filename && filename.toLowerCase().endsWith('.pdf')) ext = '.pdf';
+        else if (filename && filename.toLowerCase().endsWith('.docx')) ext = '.docx';
+        else if (filename && filename.toLowerCase().endsWith('.doc')) ext = '.doc';
+        else if (filename && filename.toLowerCase().endsWith('.png')) ext = '.png';
       }
 
       const uploadsDir = path.join(__dirname, 'assets', 'uploads');

@@ -14,6 +14,7 @@ module.exports = {
 
     let state = {
       submissions: [],
+      careers: [],
       services: [],
       partners: [],
       projects: [],
@@ -21,8 +22,10 @@ module.exports = {
       carousel: [],
       awards: [],
       activeSubmissionId: null,
+      activeCareerId: null,
       loading: {
         submissions: false,
+        careers: false,
         services: false,
         partners: false,
         projects: false,
@@ -265,6 +268,7 @@ module.exports = {
     // ==========================================
     const tabMeta = {
       'submissions-panel': { title: 'Form Submissions', subtitle: 'Inbound customer inquiries and turnkey consultation leads' },
+      'careers-panel': { title: 'Job Applications & Careers', subtitle: 'Candidate resumes, applied positions, experience and contact information' },
       'services-panel': { title: 'Services Page CMS', subtitle: 'Manage all service sections, headings, body copy, images, pointers & FAQs' },
       'partners-panel': { title: 'Partners & Alliances', subtitle: 'Manage authorized distributors, tier-1 alliances, logos & highlight points' },
       'projects-panel': { title: 'Projects Portfolio', subtitle: 'Completed solar installations, client entities, capacities & locations' },
@@ -318,11 +322,12 @@ module.exports = {
       }
     }
 
-    // Load all 7 collections
+    // Load all collections
     async function loadAllData() {
       setDbStatus('syncing', 'Syncing Data...');
       await Promise.all([
         fetchSubmissions(),
+        fetchCareers(),
         fetchServices(),
         fetchPartners(),
         fetchProjects(),
@@ -345,6 +350,7 @@ module.exports = {
       try {
         await Promise.all([
           fetchSubmissions(),
+          fetchCareers(),
           fetchServices(),
           fetchPartners(),
           fetchProjects(),
@@ -352,7 +358,7 @@ module.exports = {
           fetchCarouselSlides(),
           fetchAwards()
         ]);
-        showToast('✓ All 7 database modules synchronized successfully!', 'success');
+        showToast('✓ All database modules synchronized successfully!', 'success');
         setDbStatus('live', 'Supabase Live');
       } catch (err) {
         showToast('Database sync warning: ' + err.message, 'error');
@@ -650,6 +656,395 @@ module.exports = {
       link.click();
       link.remove();
       showToast('Exported ' + state.submissions.length + ' leads to CSV.', 'success');
+    });
+
+    // ==========================================
+    // 1B. JOB APPLICATIONS & CAREERS LOGIC
+    // ==========================================
+    window.fetchCareers = async function() {
+      state.loading.careers = true;
+      setTableSkeleton('careers-tbody', 8);
+      const errEl = document.getElementById('careers-error');
+      if (errEl) errEl.style.display = 'none';
+
+      try {
+        const rawCareers = await supabaseQuery('/rest/v1/careers?select=*&order=created_at.desc');
+        if (Array.isArray(rawCareers)) {
+          state.careers = rawCareers.map(c => ({
+            id: c.id,
+            created_at: c.created_at,
+            name: c.name || '',
+            email: c.email || '',
+            phone: c.phone || '',
+            position: c.position || 'Open Application',
+            experience: c.experience || 'Fresher',
+            location: c.location || '',
+            availability: c.availability || 'Immediate',
+            portfolio: c.portfolio || '',
+            resume_url: c.resume_url || '',
+            resume_name: c.resume_name || 'Resume.pdf',
+            cover_note: c.cover_note || '',
+            status: c.status || 'New'
+          }));
+          renderCareers();
+          return;
+        }
+      } catch (supabaseErr) {
+        console.warn('Supabase careers fetch failed, trying local API...', supabaseErr);
+        try {
+          const res = await fetch('/api/careers');
+          if (res.ok) {
+            const data = await res.json();
+            state.careers = data.applications || [];
+            renderCareers();
+            return;
+          }
+        } catch (serverErr) {
+          console.error('Server careers fetch failed:', serverErr);
+        }
+
+        const tbody = document.getElementById('careers-tbody');
+        if (tbody) tbody.innerHTML = '';
+        const msgEl = document.getElementById('careers-error-msg');
+        if (msgEl) msgEl.textContent = supabaseErr.message || 'Could not connect to database';
+        if (errEl) errEl.style.display = 'block';
+      } finally {
+        state.loading.careers = false;
+      }
+    };
+
+    function renderCareers() {
+      const tbody = document.getElementById('careers-tbody');
+      const emptyState = document.getElementById('careers-empty');
+      const countBadge = document.getElementById('careers-count-badge');
+      const searchIn = document.getElementById('careers-search');
+      const posSelect = document.getElementById('careers-filter-position');
+      const statusSelect = document.getElementById('careers-filter-status');
+
+      if (!tbody) return;
+
+      const searchVal = (searchIn?.value || '').toLowerCase().trim();
+      const posVal = posSelect?.value || '';
+      const statusVal = statusSelect?.value || '';
+
+      if (countBadge) countBadge.textContent = state.careers.length;
+      const totalEl = document.getElementById('careers-stat-total');
+      if (totalEl) totalEl.textContent = state.careers.length;
+
+      let newCount = 0;
+      let shortCount = 0;
+      let contactCount = 0;
+
+      const filtered = state.careers.filter(app => {
+        if (app.status === 'New') newCount++;
+        if (app.status === 'Shortlisted') shortCount++;
+        if (app.status === 'Contacted') contactCount++;
+
+        if (statusVal && app.status !== statusVal) return false;
+        if (posVal && app.position !== posVal) return false;
+
+        if (searchVal) {
+          const match = (app.name || '').toLowerCase().includes(searchVal) ||
+                        (app.email || '').toLowerCase().includes(searchVal) ||
+                        (app.phone || '').toLowerCase().includes(searchVal) ||
+                        (app.position || '').toLowerCase().includes(searchVal) ||
+                        (app.location || '').toLowerCase().includes(searchVal) ||
+                        (app.cover_note || '').toLowerCase().includes(searchVal);
+          if (!match) return false;
+        }
+
+        return true;
+      });
+
+      const newStatEl = document.getElementById('careers-stat-new');
+      if (newStatEl) newStatEl.textContent = newCount;
+      const shortStatEl = document.getElementById('careers-stat-shortlisted');
+      if (shortStatEl) shortStatEl.textContent = shortCount;
+      const contactStatEl = document.getElementById('careers-stat-contacted');
+      if (contactStatEl) contactStatEl.textContent = contactCount;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+      if (emptyState) emptyState.style.display = 'none';
+
+      tbody.innerHTML = filtered.map(app => {
+        const dateStr = app.created_at ? new Date(app.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Recent';
+        
+        let badgeBg = '#eff6ff';
+        let badgeColor = '#2563eb';
+        if (app.status === 'Shortlisted') { badgeBg = '#f0fdf4'; badgeColor = '#15803d'; }
+        else if (app.status === 'Contacted') { badgeBg = '#fffbeb'; badgeColor = '#d97706'; }
+        else if (app.status === 'Reviewed') { badgeBg = '#f1f5f9'; badgeColor = '#475569'; }
+        else if (app.status === 'Rejected') { badgeBg = '#fef2f2'; badgeColor = '#b91c1c'; }
+
+        const cleanPhone = (app.phone || '').replace(/[^0-9]/g, '');
+        const waLink = cleanPhone ? ('https://wa.me/' + (cleanPhone.startsWith('91') ? cleanPhone : '91' + cleanPhone)) : '#';
+
+        const resumeBtn = app.resume_url
+          ? ('<a href="' + escapeHtml(app.resume_url) + '" target="_blank" download="' + escapeHtml(app.resume_name || 'Resume.pdf') + '" class="btn-shadcn-outline" style="padding: 4px 8px; font-size: 11.5px; display: inline-flex; align-items: center; gap: 4px; text-decoration: none;" title="Download Resume"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>CV</span></a>')
+          : '<span style="font-size: 11px; color: #94a3b8; font-style: italic;">No file</span>';
+
+        const portfolioBtn = app.portfolio
+          ? ('<a href="' + escapeHtml(app.portfolio) + '" target="_blank" rel="noopener noreferrer" style="color: #2563eb; font-size: 11.5px; display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; text-decoration: underline;" title="View Portfolio / LinkedIn"><span>Profile</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>')
+          : '';
+
+        return '<tr data-career-id="' + escapeHtml(app.id) + '">' +
+          '<td style="font-size: 12px; color: #64748b; white-space: nowrap;">' + dateStr + '</td>' +
+          '<td>' +
+            '<div style="font-weight: 700; color: #0f172a; font-size: 13.5px;">' + escapeHtml(app.name) + '</div>' +
+            '<div style="font-size: 11.5px; color: #64748b;">' + escapeHtml(app.location || 'Location Not Specified') + '</div>' +
+          '</td>' +
+          '<td>' +
+            '<div style="font-weight: 600; color: #15803d; font-size: 13px;">' + escapeHtml(app.position) + '</div>' +
+            '<span class="admin-badge" style="background:#f1f5f9; color:#475569; font-size: 11px; padding: 2px 6px;">Exp: ' + escapeHtml(app.experience) + '</span>' +
+          '</td>' +
+          '<td>' +
+            '<div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">' +
+              '<a href="' + waLink + '" target="_blank" class="btn-shadcn-outline" style="padding: 2px 6px; font-size: 11px; color: #15803d; border-color: #86efac; text-decoration: none;" title="Chat on WhatsApp"><span>WA</span></a>' +
+              '<a href="tel:' + escapeHtml(app.phone) + '" style="font-size: 12.5px; font-weight: 600; color: #0f172a; text-decoration: none;">' + escapeHtml(app.phone) + '</a>' +
+            '</div>' +
+            '<a href="mailto:' + escapeHtml(app.email) + '" style="font-size: 11.5px; color: #64748b; text-decoration: underline;">' + escapeHtml(app.email) + '</a>' +
+          '</td>' +
+          '<td>' +
+            '<div style="font-size: 12px; color: #0f172a;">' + escapeHtml(app.location) + '</div>' +
+            '<div style="font-size: 11px; color: #64748b;">Notice: ' + escapeHtml(app.availability || 'Immediate') + '</div>' +
+          '</td>' +
+          '<td><div style="display: flex; align-items: center;">' + resumeBtn + portfolioBtn + '</div></td>' +
+          '<td>' +
+            '<select class="admin-status-select career-status-selector" data-id="' + escapeHtml(app.id) + '" style="background:' + badgeBg + '; color:' + badgeColor + '; font-weight: 600; font-size: 11.5px; padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.08); cursor: pointer;">' +
+              '<option value="New"' + (app.status === 'New' ? ' selected' : '') + '>New</option>' +
+              '<option value="Reviewed"' + (app.status === 'Reviewed' ? ' selected' : '') + '>Reviewed</option>' +
+              '<option value="Shortlisted"' + (app.status === 'Shortlisted' ? ' selected' : '') + '>Shortlisted</option>' +
+              '<option value="Contacted"' + (app.status === 'Contacted' ? ' selected' : '') + '>Contacted</option>' +
+              '<option value="Rejected"' + (app.status === 'Rejected' ? ' selected' : '') + '>Rejected</option>' +
+            '</select>' +
+          '</td>' +
+          '<td style="text-align: right;">' +
+            '<div style="display: inline-flex; gap: 6px;">' +
+              '<button type="button" class="btn-shadcn-outline btn-view-career" data-id="' + escapeHtml(app.id) + '" style="padding: 5px 8px;" title="View Complete Application"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>' +
+              '<button type="button" class="btn-shadcn-danger btn-delete-career" data-id="' + escapeHtml(app.id) + '" style="padding: 5px 8px;" title="Delete Application"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+
+      // Status Change Listeners
+      tbody.querySelectorAll('.career-status-selector').forEach(sel => {
+        sel.addEventListener('change', async function() {
+          const id = this.getAttribute('data-id');
+          const newStatus = this.value;
+          await updateCareerStatus(id, newStatus);
+        });
+      });
+
+      // View Detail Listeners
+      tbody.querySelectorAll('.btn-view-career').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const id = this.getAttribute('data-id');
+          openCareerDetailModal(id);
+        });
+      });
+
+      // Delete Application Listeners
+      tbody.querySelectorAll('.btn-delete-career').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const id = this.getAttribute('data-id');
+          deleteCareerApplication(id);
+        });
+      });
+    }
+
+    async function updateCareerStatus(id, status) {
+      const app = state.careers.find(a => String(a.id) === String(id));
+      if (!app) return;
+      const oldStatus = app.status;
+      app.status = status;
+      renderCareers();
+
+      try {
+        await fetch('/api/careers/status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, status })
+        });
+        showToast('Application marked as ' + status, 'success');
+      } catch (err) {
+        app.status = oldStatus;
+        renderCareers();
+        showToast('Failed to update application status: ' + err.message, 'error');
+      }
+    }
+
+    async function deleteCareerApplication(id) {
+      const app = state.careers.find(a => String(a.id) === String(id));
+      const candidateName = app ? app.name : 'this candidate';
+      if (!confirm('Are you sure you want to permanently delete the job application from ' + candidateName + '?')) {
+        return;
+      }
+
+      const prev = [...state.careers];
+      state.careers = state.careers.filter(a => String(a.id) !== String(id));
+      renderCareers();
+
+      try {
+        await fetch('/api/careers/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        showToast('Application deleted successfully', 'info');
+      } catch (err) {
+        state.careers = prev;
+        renderCareers();
+        showToast('Failed to delete application: ' + err.message, 'error');
+      }
+    }
+
+    function openCareerDetailModal(id) {
+      const app = state.careers.find(a => String(a.id) === String(id));
+      if (!app) return;
+      state.activeCareerId = id;
+
+      const modalTitle = document.getElementById('career-modal-title');
+      const modalBody = document.getElementById('career-modal-content');
+      const resumeBtn = document.getElementById('career-modal-resume-btn');
+      const deleteBtn = document.getElementById('career-modal-delete-btn');
+
+      if (modalTitle) modalTitle.textContent = app.name + ' — ' + app.position;
+
+      if (resumeBtn) {
+        if (app.resume_url) {
+          resumeBtn.style.display = 'inline-flex';
+          resumeBtn.href = app.resume_url;
+          resumeBtn.download = app.resume_name || 'Resume.pdf';
+        } else {
+          resumeBtn.style.display = 'none';
+        }
+      }
+
+      if (deleteBtn) {
+        deleteBtn.onclick = function() {
+          closeAdminModal('career-detail-modal');
+          deleteCareerApplication(id);
+        };
+      }
+
+      const cleanPhone = (app.phone || '').replace(/[^0-9]/g, '');
+      const waLink = cleanPhone ? ('https://wa.me/' + (cleanPhone.startsWith('91') ? cleanPhone : '91' + cleanPhone)) : '#';
+
+      if (modalBody) {
+        modalBody.innerHTML =
+          '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; background: #f8fafc; padding: 18px; border-radius: 10px; border: 1px solid #e2e8f0;">' +
+            '<div>' +
+              '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700;">Candidate Name</div>' +
+              '<div style="font-size: 15px; font-weight: 700; color: #0f172a; margin-top: 2px;">' + escapeHtml(app.name) + '</div>' +
+            '</div>' +
+            '<div>' +
+              '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700;">Role Applied For</div>' +
+              '<div style="font-size: 15px; font-weight: 700; color: #15803d; margin-top: 2px;">' + escapeHtml(app.position) + '</div>' +
+            '</div>' +
+            '<div>' +
+              '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700;">Phone / WhatsApp</div>' +
+              '<div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">' +
+                '<a href="tel:' + escapeHtml(app.phone) + '" style="font-weight: 600; color: #0f172a; text-decoration: none;">' + escapeHtml(app.phone) + '</a>' +
+                '<a href="' + waLink + '" target="_blank" class="btn-shadcn-outline" style="padding: 2px 6px; font-size: 11px; color: #15803d; border-color: #86efac; text-decoration: none;">Chat WA</a>' +
+              '</div>' +
+            '</div>' +
+            '<div>' +
+              '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700;">Email Address</div>' +
+              '<div style="margin-top: 2px;"><a href="mailto:' + escapeHtml(app.email) + '" style="font-weight: 600; color: #2563eb; text-decoration: underline;">' + escapeHtml(app.email) + '</a></div>' +
+            '</div>' +
+            '<div>' +
+              '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700;">Total Experience &amp; Location</div>' +
+              '<div style="font-size: 13.5px; color: #0f172a; margin-top: 2px;">' + escapeHtml(app.experience) + ' &bull; ' + escapeHtml(app.location || 'N/A') + '</div>' +
+            '</div>' +
+            '<div>' +
+              '<div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700;">Notice Period &amp; Availability</div>' +
+              '<div style="font-size: 13.5px; color: #0f172a; margin-top: 2px;">' + escapeHtml(app.availability || 'Immediate') + '</div>' +
+            '</div>' +
+          '</div>' +
+
+          (app.portfolio ? (
+            '<div style="margin-bottom: 16px;">' +
+              '<div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">LinkedIn / Portfolio URL</div>' +
+              '<a href="' + escapeHtml(app.portfolio) + '" target="_blank" rel="noopener noreferrer" style="color: #2563eb; font-size: 13px; word-break: break-all; text-decoration: underline;">' + escapeHtml(app.portfolio) + '</a>' +
+            '</div>'
+          ) : '') +
+
+          '<div style="margin-bottom: 20px;">' +
+            '<div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Cover Letter / Candidate Introduction</div>' +
+            '<div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; font-size: 13.5px; color: #334155; line-height: 1.6; max-height: 180px; overflow-y: auto;">' +
+              escapeHtml(app.cover_note || 'No additional note submitted.') +
+            '</div>' +
+          '</div>' +
+
+          '<div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #e2e8f0;">' +
+            '<div style="display: flex; align-items: center; gap: 8px;">' +
+              '<span style="font-size: 12.5px; font-weight: 700; color: #0f172a;">Application Status:</span>' +
+              '<select id="modal-career-status-select" class="filter-select" style="padding: 4px 8px; font-size: 12px;">' +
+                '<option value="New"' + (app.status === 'New' ? ' selected' : '') + '>New</option>' +
+                '<option value="Reviewed"' + (app.status === 'Reviewed' ? ' selected' : '') + '>Reviewed</option>' +
+                '<option value="Shortlisted"' + (app.status === 'Shortlisted' ? ' selected' : '') + '>Shortlisted</option>' +
+                '<option value="Contacted"' + (app.status === 'Contacted' ? ' selected' : '') + '>Contacted</option>' +
+                '<option value="Rejected"' + (app.status === 'Rejected' ? ' selected' : '') + '>Rejected</option>' +
+              '</select>' +
+            '</div>' +
+            '<div style="font-size: 11.5px; color: #64748b;">' +
+              'Submitted on ' + new Date(app.created_at || Date.now()).toLocaleString('en-IN') +
+            '</div>' +
+          '</div>';
+
+        document.getElementById('modal-career-status-select')?.addEventListener('change', async function() {
+          await updateCareerStatus(id, this.value);
+        });
+      }
+
+      openAdminModal('career-detail-modal');
+    }
+
+    // Careers Search & Filter Listeners
+    ['careers-search', 'careers-filter-position', 'careers-filter-status'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', renderCareers);
+    });
+
+    document.getElementById('careers-refresh-btn')?.addEventListener('click', fetchCareers);
+
+    // Careers CSV Export
+    document.getElementById('careers-export-btn')?.addEventListener('click', function() {
+      if (state.careers.length === 0) {
+        showToast('No job applications available to export.', 'info');
+        return;
+      }
+
+      const headers = ['ID', 'Date', 'Name', 'Position', 'Experience', 'Phone', 'Email', 'Location', 'Availability', 'Portfolio', 'Status', 'Notes'];
+      const rows = state.careers.map(a => [
+        a.id,
+        a.created_at || '',
+        '"' + (a.name || '').replace(/"/g, '""') + '"',
+        '"' + (a.position || '').replace(/"/g, '""') + '"',
+        '"' + (a.experience || '').replace(/"/g, '""') + '"',
+        a.phone || '',
+        a.email || '',
+        '"' + (a.location || '').replace(/"/g, '""') + '"',
+        a.availability || '',
+        '"' + (a.portfolio || '').replace(/"/g, '""') + '"',
+        a.status || 'New',
+        '"' + (a.cover_note || '').replace(/"/g, '""') + '"'
+      ]);
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', 'sorconnect_careers_' + new Date().toISOString().split('T')[0] + '.csv');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      showToast('Exported ' + state.careers.length + ' applications to CSV.', 'success');
     });
 
     // ==========================================
