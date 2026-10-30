@@ -4,7 +4,7 @@
     "section": "home_hero",
     "section_name": "Homepage Hero",
     "label": "Hero Eyebrow Badge",
-    "stat_value": "Turnkey EPC & Solar Operations",
+    "stat_value": "Trusted Solar Solutions Since 2020",
     "stat_suffix": "",
     "description": "Small pill badge above main hero heading",
     "display_order": 1
@@ -14,7 +14,7 @@
     "section": "home_hero",
     "section_name": "Homepage Hero",
     "label": "Hero Main Headline",
-    "stat_value": "Commercial & Industrial Solar Power Systems Engineered for Peak Yield.",
+    "stat_value": "Engineering India's <em>shift to solar</em>, plant by plant.",
     "stat_suffix": "",
     "description": "Main H1 title on homepage",
     "display_order": 2
@@ -24,7 +24,7 @@
     "section": "home_hero",
     "section_name": "Homepage Hero",
     "label": "Hero Subheadline / Tagline",
-    "stat_value": "We design, install and maintain high-efficiency solar plants across 13 Indian states with 130+ in-house field engineers.",
+    "stat_value": "Sor Connect designs, builds and operates solar power plants for industries, farms and communities — from first feasibility study to twenty-five years of after-care.",
     "stat_suffix": "",
     "description": "Lead paragraph beneath hero heading",
     "display_order": 3
@@ -34,9 +34,9 @@
     "section": "home_hero",
     "section_name": "Homepage Hero",
     "label": "Hero Primary Button Text",
-    "stat_value": "Explore Our Solutions",
-    "stat_suffix": "services.html",
-    "description": "Text and link for primary hero CTA button",
+    "stat_value": "Request a Site Assessment",
+    "stat_suffix": "",
+    "description": "Text for primary hero CTA button (opens assessment modal)",
     "display_order": 4
   },
   {
@@ -44,8 +44,8 @@
     "section": "home_hero",
     "section_name": "Homepage Hero",
     "label": "Hero Secondary Button Text",
-    "stat_value": "Request Turnkey Quote",
-    "stat_suffix": "#contact",
+    "stat_value": "Explore Our Services →",
+    "stat_suffix": "services.html",
     "description": "Text and link for secondary hero button",
     "display_order": 5
   },
