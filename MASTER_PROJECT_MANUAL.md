@@ -154,7 +154,7 @@ The public frontend is built with custom CSS variables without third-party frame
 
 ## 6. CMS & Administrator Operations Manual
 
-The administrative console is accessed at **`https://www.sorconnect.in/admprtl`** and contains 8 management modules:
+The administrative console is accessed at **`https://www.sorconnect.in/admprtl`** and contains 9 management modules:
 1. **Form Submissions (Leads):** Review customer inquiries, one-click WhatsApp contact, update lead status (`New`, `Contacted`, `In Progress`, `Closed`, `Junk`).
 2. **Job Applications (Careers):** Review applicant profiles, filter by position, and download uploaded candidate CVs.
 3. **Projects Portfolio:** Add, edit, or delete installations; upload project photos directly to Supabase cloud storage.
@@ -163,6 +163,7 @@ The administrative console is accessed at **`https://www.sorconnect.in/admprtl`*
 6. **Partners & Alliances:** Manage tier-1 partner brand logos (Sungrow, Reliance, Waree).
 7. **About Us Carousel:** Manage photographic slides on the About Us plant slider (`about_gallery` table).
 8. **Awards & Recognitions:** Manage certifications and green energy accolades.
+9. **Key Stats & Metrics:** Edit the live counters and descriptions displayed on the Homepage Readout Bar and Why Sor Connect section.
 
 > 📖 **Deep Dive Document:** [docs/06-cms-admin-guide.md](docs/06-cms-admin-guide.md)
 
@@ -171,7 +172,7 @@ The administrative console is accessed at **`https://www.sorconnect.in/admprtl`*
 ## 7. Database Architecture & Supabase Schema
 
 - **Cloud Platform:** Supabase PostgreSQL (`https://znjpzipedsowuyrpotgb.supabase.co`)
-- **8 Core Relational Tables:** `categories`, `projects`, `submissions`, `about_gallery`, `awards`, `services`, `partners`, `careers`.
+- **9 Core Relational Tables:** `categories`, `projects`, `submissions`, `about_gallery`, `awards`, `services`, `partners`, `careers`, `website_stats`.
 - **Row-Level Security (RLS):** Enabled on all tables. Public visitors have `SELECT` on public content and `INSERT` on lead forms.
 - **Storage Buckets:** Dedicated public bucket **`uploads`** with 10MB file limit and MIME-type enforcement for images and resume documents.
 
@@ -185,6 +186,7 @@ The administrative console is accessed at **`https://www.sorconnect.in/admprtl`*
 | `public.awards` | `id` (BigInt) | `title`, `badge`, `image`, `description`, `display_order` | Company achievements & green accolades. |
 | `public.services` | `id` (BigInt) | `title`, `short_desc`, `features`, `image`, `display_order` | Services breakdown cards on `/services`. |
 | `public.partners` | `id` (BigInt) | `name`, `logo`, `category`, `display_order` | Technology partners (Sungrow, Reliance, Waree). |
+| `public.website_stats` | `id` (Text) | `stat_value`, `stat_suffix`, `label`, `description`, `display_order` | Live counters for Readout Bar & Why Us highlights. |
 
 > 📖 **Deep Dive Document:** [docs/07-database-schema.md](docs/07-database-schema.md)
 

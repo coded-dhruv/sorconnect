@@ -134,6 +134,24 @@ The Sor Connect database layer is provisioned on **Supabase**, an enterprise-gra
 
 ---
 
+### 3.7 Table: `public.website_stats`
+*Stores live editable metrics for the Hero Readout Bar and Why Sor Connect highlight cards.*
+
+| Column | Data Type | Constraints / Defaults | Description |
+|---|---|---|---|
+| `id` | `TEXT` | `PRIMARY KEY` | Unique semantic stat ID (e.g. `hero_capacity`, `why_portfolio`) |
+| `section` | `TEXT` | `NOT NULL` | Placement identifier (`hero_readout` or `why_us`) |
+| `section_name` | `TEXT` | `NOT NULL` | Human-friendly placement label (e.g. `Hero Readout Bar`) |
+| `stat_value` | `TEXT` | `NOT NULL` | Primary counter value (e.g. `150`, `13`, `10k`) |
+| `stat_suffix` | `TEXT` | `NULL` | Suffix badge text (e.g. `+ MW`, ` states`, `%`, `+`) |
+| `label` | `TEXT` | `NOT NULL` | Headline caption (e.g. `Solar capacity managed`, `MW Portfolio`) |
+| `description` | `TEXT` | `NULL` | Supporting subtitle / narrative (used in Why Us section) |
+| `display_order` | `INT` | `DEFAULT 1` | Sequence order within its placement section |
+| `created_at` | `TIMESTAMPTZ` | `DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL` | Record creation timestamp |
+| `updated_at` | `TIMESTAMPTZ` | `DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL` | Last updated timestamp |
+
+---
+
 ## 4. Row-Level Security (RLS) Policies
 
 All tables have Row-Level Security explicitly enabled (`ALTER TABLE ... ENABLE ROW LEVEL SECURITY;`).

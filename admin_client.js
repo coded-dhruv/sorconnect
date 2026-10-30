@@ -21,6 +21,7 @@ module.exports = {
       categories: [],
       carousel: [],
       awards: [],
+      stats: [],
       activeSubmissionId: null,
       activeCareerId: null,
       loading: {
@@ -31,7 +32,8 @@ module.exports = {
         projects: false,
         categories: false,
         carousel: false,
-        awards: false
+        awards: false,
+        stats: false
       }
     };
 
@@ -274,7 +276,8 @@ module.exports = {
       'projects-panel': { title: 'Projects Portfolio', subtitle: 'Completed solar installations, client entities, capacities & locations' },
       'categories-panel': { title: 'Project Categories', subtitle: 'Classifications for portfolio filtering and display groups' },
       'carousel-panel': { title: 'About Us Carousel', subtitle: 'Featured solar installations on the public About Us plant slider' },
-      'awards-panel': { title: 'Awards & Recognitions', subtitle: 'Verified certifications, state leadership honors, and awards showcase' }
+      'awards-panel': { title: 'Awards & Recognitions', subtitle: 'Verified certifications, state leadership honors, and awards showcase' },
+      'stats-panel': { title: 'Key Stats & Metrics', subtitle: 'Live counters displayed on homepage readout bar and Why Sor Connect section' }
     };
 
     const tabBtns = document.querySelectorAll('.admin-tab-btn');
@@ -333,7 +336,8 @@ module.exports = {
         fetchProjects(),
         fetchCategories(),
         fetchCarouselSlides(),
-        fetchAwards()
+        fetchAwards(),
+        fetchStats()
       ]);
       setDbStatus('live', 'Supabase Live');
     }
@@ -356,7 +360,8 @@ module.exports = {
           fetchProjects(),
           fetchCategories(),
           fetchCarouselSlides(),
-          fetchAwards()
+          fetchAwards(),
+          fetchStats()
         ]);
         showToast('✓ All database modules synchronized successfully!', 'success');
         setDbStatus('live', 'Supabase Live');
@@ -3156,6 +3161,203 @@ module.exports = {
     };
 
     document.getElementById('awards-search').addEventListener('input', renderAwards);
+
+    // ==========================================
+    // 9. WEBSITE STATISTICS & METRICS LOGIC
+    // ==========================================
+    window.fetchStats = async function() {
+      state.loading.stats = true;
+      setTableSkeleton('stats-tbody', 6);
+      const errEl = document.getElementById('stats-error');
+      if (errEl) errEl.style.display = 'none';
+
+      try {
+        const rawStats = await supabaseQuery('/rest/v1/website_stats?select=*&order=display_order.asc');
+        if (Array.isArray(rawStats) && rawStats.length > 0) {
+          state.stats = rawStats.map(s => ({
+            id: s.id,
+            section: s.section || 'hero_readout',
+            section_name: s.section_name || (s.section === 'hero_readout' ? 'Hero Readout Bar' : 'Why Sor Connect Section'),
+            stat_value: s.stat_value || '',
+            stat_suffix: s.stat_suffix || '',
+            label: s.label || '',
+            description: s.description || '',
+            display_order: Number(s.display_order) || 1
+          }));
+          renderStats();
+          return;
+        }
+      } catch (supabaseErr) {
+        console.warn('Supabase stats fetch failed, trying local API...', supabaseErr);
+      }
+
+      // Fallback to local server API
+      try {
+        const res = await fetch('/api/stats');
+        if (res.ok) {
+          const data = await res.json();
+          state.stats = (data.stats || []).map(s => ({
+            id: s.id,
+            section: s.section || 'hero_readout',
+            section_name: s.section_name || (s.section === 'hero_readout' ? 'Hero Readout Bar' : 'Why Sor Connect Section'),
+            stat_value: s.stat_value || '',
+            stat_suffix: s.stat_suffix || '',
+            label: s.label || '',
+            description: s.description || '',
+            display_order: Number(s.display_order) || 1
+          }));
+          renderStats();
+          return;
+        }
+      } catch (serverErr) {
+        console.error('Server stats fetch failed:', serverErr);
+      }
+
+      const tbody = document.getElementById('stats-tbody');
+      if (tbody) tbody.innerHTML = '';
+      const errMsg = document.getElementById('stats-error-msg');
+      if (errMsg) errMsg.textContent = 'Could not load statistics from database or local storage.';
+      if (errEl) errEl.style.display = 'block';
+      state.loading.stats = false;
+    };
+
+    function renderStats() {
+      const tbody = document.getElementById('stats-tbody');
+      const emptyState = document.getElementById('stats-empty');
+      const countBadge = document.getElementById('stats-count-badge');
+      const searchInput = document.getElementById('stats-search');
+      const searchVal = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+      if (countBadge) countBadge.textContent = state.stats.length;
+
+      const filtered = state.stats.filter(s => {
+        return (s.label || '').toLowerCase().includes(searchVal) ||
+               (s.stat_value || '').toLowerCase().includes(searchVal) ||
+               (s.section_name || '').toLowerCase().includes(searchVal) ||
+               (s.description || '').toLowerCase().includes(searchVal);
+      });
+
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+      tbody.innerHTML = filtered.map(s => {
+        const isHero = s.section === 'hero_readout';
+        const sectionBadge = isHero 
+          ? \`<span class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:600; padding:3px 8px; border-radius:4px;">Hero Readout Bar</span>\`
+          : \`<span class="badge" style="background:#dcfce7; color:#15803d; font-weight:600; padding:3px 8px; border-radius:4px;">Why Sor Connect</span>\`;
+
+        return \`
+          <tr>
+            <td>\${sectionBadge}</td>
+            <td>
+              <div style="font-weight: 800; font-size: 17px; color: #0f172a; display: flex; align-items: baseline; gap: 3px;">
+                <span>\${escapeHtml(s.stat_value)}</span>
+                <span style="font-size: 13px; color: #15803d; font-weight: 700;">\${escapeHtml(s.stat_suffix)}</span>
+              </div>
+            </td>
+            <td><strong>\${escapeHtml(s.label)}</strong></td>
+            <td><span style="color: #64748b; font-size: 13px;">\${escapeHtml(s.description || '—')}</span></td>
+            <td><span class="badge" style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:4px;">\${s.display_order}</span></td>
+            <td style="text-align: right;">
+              <button type="button" class="btn-shadcn-outline" style="height: 30px; font-size: 12px; padding: 0 10px;" onclick="editStat('\${s.id}')">Edit</button>
+            </td>
+          </tr>
+        \`;
+      }).join('');
+    }
+
+    window.editStat = function(id) {
+      const stat = state.stats.find(s => String(s.id) === String(id));
+      if (!stat) return;
+
+      clearModalError('stat-modal-error');
+      document.getElementById('stat-modal-title').textContent = 'Edit Metric: ' + stat.label;
+      document.getElementById('stat-form-id').value = stat.id;
+      document.getElementById('stat-section-name').value = stat.section_name || stat.section;
+      document.getElementById('stat-value').value = stat.stat_value;
+      document.getElementById('stat-suffix').value = stat.stat_suffix;
+      document.getElementById('stat-label').value = stat.label;
+      document.getElementById('stat-description').value = stat.description || '';
+      document.getElementById('stat-order').value = stat.display_order;
+
+      const descGroup = document.getElementById('stat-desc-group');
+      if (descGroup) {
+        descGroup.style.display = stat.section === 'why_us' ? 'block' : 'none';
+      }
+
+      openAdminModal('stat-edit-modal');
+    };
+
+    const statForm = document.getElementById('stat-form');
+    if (statForm) {
+      statForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        clearModalError('stat-modal-error');
+        const saveBtn = document.getElementById('btn-save-stat');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Saving...</span>';
+
+        try {
+          const id = document.getElementById('stat-form-id').value;
+          const stat_value = document.getElementById('stat-value').value.trim();
+          const stat_suffix = document.getElementById('stat-suffix').value.trim();
+          const label = document.getElementById('stat-label').value.trim();
+          const description = document.getElementById('stat-description').value.trim();
+          const order = parseInt(document.getElementById('stat-order').value, 10) || 1;
+
+          // 1. Update Supabase
+          await supabaseQuery('/rest/v1/website_stats?id=eq.' + encodeURIComponent(id), {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: {
+              stat_value,
+              stat_suffix,
+              label,
+              description,
+              display_order: order,
+              updated_at: new Date().toISOString()
+            }
+          }).catch(err => console.warn('Supabase stats update skipped:', err));
+
+          // 2. Update Local Server API
+          fetch('/api/stats/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, stat_value, stat_suffix, label, description, display_order: order })
+          }).catch(() => null);
+
+          // Update local state
+          const idx = state.stats.findIndex(s => String(s.id) === String(id));
+          if (idx !== -1) {
+            state.stats[idx].stat_value = stat_value;
+            state.stats[idx].stat_suffix = stat_suffix;
+            state.stats[idx].label = label;
+            state.stats[idx].description = description;
+            state.stats[idx].display_order = order;
+          }
+
+          renderStats();
+          closeAdminModal('stat-edit-modal');
+          showToast('Website metric updated successfully!', 'success');
+        } catch (err) {
+          showModalError('stat-modal-error', 'Failed to update metric: ' + err.message);
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<span>Save Metric</span>';
+        }
+      });
+    }
+
+    const statsSearchInput = document.getElementById('stats-search');
+    if (statsSearchInput) {
+      statsSearchInput.addEventListener('input', renderStats);
+    }
 
     // ==========================================
     // UTILITIES

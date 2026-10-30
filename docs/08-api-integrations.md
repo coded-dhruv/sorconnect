@@ -116,7 +116,37 @@ All internal API endpoints support CORS (`Access-Control-Allow-Origin: *`) and a
 
 #### `GET /api/sync/supabase`
 *Initiates a complete sync cycle, downloading current Supabase cloud tables and updating local JSON files.*
-- **Success Response (HTTP 200):** `{ "success": true, "syncedTables": 8, "timestamp": "..." }`
+- **Success Response (HTTP 200):** `{ "success": true, "syncedTables": 9, "timestamp": "..." }`
+
+---
+
+### 2.5 Website Statistics Endpoints
+
+#### `GET /api/stats`
+*Retrieves all live website metrics from local failover storage (`stats.json`).*
+- **Success Response (HTTP 200):** Array of 7 statistic objects.
+
+#### `POST /api/stats/update`
+*Updates a specific metric in both `stats.json` and Supabase `website_stats` table.*
+- **Request Body Payload:**
+  ```json
+  {
+    "id": "hero_capacity",
+    "stat_value": "180",
+    "stat_suffix": "+ MW",
+    "label": "Solar capacity managed",
+    "description": "",
+    "display_order": 1
+  }
+  ```
+- **Success Response (HTTP 200):**
+  ```json
+  {
+    "success": true,
+    "stat": { ... },
+    "message": "Statistic updated successfully"
+  }
+  ```
 
 ---
 

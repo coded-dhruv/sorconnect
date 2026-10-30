@@ -32,6 +32,7 @@ const GALLERY_FILE = path.join(__dirname, 'about_gallery.json');
 const AWARDS_FILE = path.join(__dirname, 'awards.json');
 const SERVICES_FILE = path.join(__dirname, 'services.json');
 const PARTNERS_FILE = path.join(__dirname, 'partners.json');
+const STATS_FILE = path.join(__dirname, 'stats.json');
 
 const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
@@ -243,6 +244,16 @@ async function syncFromSupabase() {
       }
     } catch (e) {
       console.warn('[SUPABASE SYNC] Careers table not found in Supabase, maintaining local careers.json fallback.');
+    }
+
+    try {
+      const rawStats = await fetchFromSupabase('/rest/v1/website_stats?select=*&order=display_order.asc');
+      if (Array.isArray(rawStats) && rawStats.length > 0) {
+        writeJsonFile(STATS_FILE, rawStats);
+        console.log(`[SUPABASE SYNC] Successfully synced ${rawStats.length} website statistics.`);
+      }
+    } catch (e) {
+      console.warn('[SUPABASE SYNC] Website stats table not found in Supabase, maintaining local stats.json fallback.');
     }
 
     return {
@@ -1583,6 +1594,66 @@ function uploadToSupabaseStorage(bucketName, filename, buffer, contentType) {
       console.error('[MEDIA UPLOAD ERROR]', err);
       sendJson(res, 500, { success: false, message: 'Upload failed: ' + err.message });
     }
+    return;
+  }
+
+  // 12. Website Statistics & Metrics APIs
+  if (urlPath === '/api/stats') {
+    if (req.method === 'GET') {
+      const stats = readJsonFile(STATS_FILE, []);
+      sendJson(res, 200, { success: true, stats });
+      return;
+    }
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/stats/update') {
+    const payload = await parseBody(req);
+    const { id, stat_value, stat_suffix, label, description, display_order } = payload;
+    if (!id) {
+      sendJson(res, 400, { success: false, message: 'Missing statistic ID' });
+      return;
+    }
+
+    const stats = readJsonFile(STATS_FILE, []);
+    const idx = stats.findIndex(s => s.id === id);
+    let updatedStat = null;
+
+    if (idx !== -1) {
+      stats[idx].stat_value = stat_value !== undefined ? String(stat_value) : stats[idx].stat_value;
+      stats[idx].stat_suffix = stat_suffix !== undefined ? String(stat_suffix) : stats[idx].stat_suffix;
+      stats[idx].label = label !== undefined ? String(label) : stats[idx].label;
+      if (description !== undefined) stats[idx].description = String(description);
+      if (display_order !== undefined) stats[idx].display_order = Number(display_order);
+      updatedStat = stats[idx];
+    } else {
+      updatedStat = {
+        id,
+        section: payload.section || 'hero_readout',
+        section_name: payload.section_name || 'Hero Readout Bar',
+        stat_value: String(stat_value || ''),
+        stat_suffix: String(stat_suffix || ''),
+        label: String(label || ''),
+        description: String(description || ''),
+        display_order: Number(display_order) || 1
+      };
+      stats.push(updatedStat);
+    }
+
+    writeJsonFile(STATS_FILE, stats);
+
+    // Also update Supabase
+    supabaseRestRequest(`/rest/v1/website_stats?id=eq.${encodeURIComponent(id)}`, 'PATCH', {
+      stat_value: updatedStat.stat_value,
+      stat_suffix: updatedStat.stat_suffix,
+      label: updatedStat.label,
+      description: updatedStat.description,
+      display_order: updatedStat.display_order,
+      updated_at: new Date().toISOString()
+    }).catch(err => {
+      console.warn('[SUPABASE STATS UPDATE WARNING]', err.message);
+    });
+
+    sendJson(res, 200, { success: true, stat: updatedStat, message: 'Statistic updated successfully' });
     return;
   }
 

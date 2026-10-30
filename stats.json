@@ -1,0 +1,72 @@
+[
+  {
+    "id": "hero_capacity",
+    "section": "hero_readout",
+    "section_name": "Hero Readout Bar",
+    "stat_value": "150",
+    "stat_suffix": "+ MW",
+    "label": "Solar capacity managed",
+    "description": "",
+    "display_order": 1
+  },
+  {
+    "id": "hero_states",
+    "section": "hero_readout",
+    "section_name": "Hero Readout Bar",
+    "stat_value": "13",
+    "stat_suffix": " states",
+    "label": "Pan-India operations",
+    "description": "",
+    "display_order": 2
+  },
+  {
+    "id": "hero_professionals",
+    "section": "hero_readout",
+    "section_name": "Hero Readout Bar",
+    "stat_value": "130",
+    "stat_suffix": "+",
+    "label": "Skilled professionals",
+    "description": "",
+    "display_order": 3
+  },
+  {
+    "id": "hero_satisfaction",
+    "section": "hero_readout",
+    "section_name": "Hero Readout Bar",
+    "stat_value": "100",
+    "stat_suffix": "%",
+    "label": "Client satisfaction",
+    "description": "",
+    "display_order": 4
+  },
+  {
+    "id": "why_portfolio",
+    "section": "why_us",
+    "section_name": "Why Sor Connect Section",
+    "stat_value": "150",
+    "stat_suffix": "+",
+    "label": "MW Portfolio",
+    "description": "From 2 MW in 2020 to 150+ MW today — our journey defines growth.",
+    "display_order": 1
+  },
+  {
+    "id": "why_satisfaction",
+    "section": "why_us",
+    "section_name": "Why Sor Connect Section",
+    "stat_value": "100",
+    "stat_suffix": "%",
+    "label": "Client Satisfaction",
+    "description": "We've earned full client satisfaction through consistent delivery.",
+    "display_order": 2
+  },
+  {
+    "id": "why_installations",
+    "section": "why_us",
+    "section_name": "Why Sor Connect Section",
+    "stat_value": "10k",
+    "stat_suffix": "+",
+    "label": "Installations",
+    "description": "Delivering consistent, reliable solar solutions since 2020.",
+    "display_order": 3
+  }
+]

@@ -105,6 +105,13 @@ module.exports = {
             <span class="tab-badge" id="categories-count-badge">0</span>
           </button>
 
+          <!-- Website Statistics CMS (NEW) -->
+          <button type="button" class="admin-tab-btn" data-tab="stats-panel">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            <span>Key Stats &amp; Metrics</span>
+            <span class="tab-badge" id="stats-count-badge">0</span>
+          </button>
+
           <div class="admin-nav-group-label" style="margin-top: 14px;">Media &amp; Proof</div>
 
           <!-- About Us Carousel -->
@@ -841,6 +848,60 @@ module.exports = {
         <h4>Failed to load awards</h4>
         <p id="awards-error-msg">Could not connect to database.</p>
         <button type="button" class="btn-shadcn-outline" onclick="fetchAwards()">Retry Fetch</button>
+      </div>
+    </div>
+  </section>
+  `,
+
+  getStatsPanel: () => `
+  <!-- ==================== TAB 9: WEBSITE STATISTICS ==================== -->
+  <section id="stats-panel" class="admin-tab-panel">
+    <!-- Control Bar -->
+    <div class="admin-control-bar">
+      <div class="control-bar-left">
+        <div class="search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="stats-search" placeholder="Search stats by label, value, or section...">
+        </div>
+      </div>
+
+      <div class="control-bar-right">
+        <button type="button" class="btn-shadcn-outline" onclick="fetchStats()" title="Refresh stats from database">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          <span>Refresh Stats</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Table Card -->
+    <div class="admin-card-table">
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width: 170px;">Placement Section</th>
+              <th style="width: 140px;">Live Metric</th>
+              <th>Headline Label</th>
+              <th>Subtitle / Narrative Details</th>
+              <th style="width: 70px;">Order</th>
+              <th style="text-align: right; width: 100px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="stats-tbody">
+            <!-- Populated dynamically by JS -->
+          </tbody>
+        </table>
+      </div>
+      <div id="stats-empty" class="admin-empty-state" style="display: none;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        <h4>No statistics records found</h4>
+        <p>Click "Refresh Stats" to load records from database.</p>
+      </div>
+      <div id="stats-error" class="admin-error-state" style="display: none;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <h4>Failed to load statistics</h4>
+        <p id="stats-error-msg">Could not connect to database.</p>
+        <button type="button" class="btn-shadcn-outline" onclick="fetchStats()">Retry Fetch</button>
       </div>
     </div>
   </section>
@@ -1647,6 +1708,59 @@ module.exports = {
           </a>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Website Metric / Stat Edit Modal -->
+  <div id="stat-edit-modal" class="admin-modal-overlay">
+    <div class="admin-modal-box" style="max-width: 540px;">
+      <div class="admin-modal-header">
+        <h3 id="stat-modal-title">Edit Metric</h3>
+        <button type="button" class="admin-modal-close" onclick="closeAdminModal('stat-edit-modal')">&times;</button>
+      </div>
+      <form id="stat-form">
+        <div class="admin-modal-body">
+          <div id="stat-modal-error" class="modal-error-box" style="display: none;"></div>
+          <input type="hidden" id="stat-form-id" name="id">
+          
+          <div class="modal-form-group">
+            <label>Website Placement Section</label>
+            <input type="text" id="stat-section-name" readonly style="background: #f1f5f9; cursor: not-allowed; font-weight: 500;">
+          </div>
+
+          <div class="modal-form-row">
+            <div class="modal-form-group" style="flex: 1;">
+              <label for="stat-value">Metric Value / Number <span class="req">*</span></label>
+              <input type="text" id="stat-value" name="stat_value" required placeholder="e.g. 150 or 10k" style="font-weight: 700; font-size: 16px;">
+            </div>
+            <div class="modal-form-group" style="flex: 1;">
+              <label for="stat-suffix">Suffix Badge</label>
+              <input type="text" id="stat-suffix" name="stat_suffix" placeholder="e.g. + MW or % or +" style="font-weight: 700; font-size: 16px;">
+            </div>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="stat-label">Headline Label / Title <span class="req">*</span></label>
+            <input type="text" id="stat-label" name="label" required placeholder="e.g. Solar capacity managed">
+          </div>
+
+          <div class="modal-form-group" id="stat-desc-group">
+            <label for="stat-description">Supporting Subtitle / Narrative Description</label>
+            <textarea id="stat-description" name="description" rows="3" placeholder="Short description displayed beneath the metric..."></textarea>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="stat-order">Sequence Order</label>
+            <input type="number" id="stat-order" name="order" min="1" max="99" value="1" style="width: 120px;">
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn-shadcn-outline" onclick="closeAdminModal('stat-edit-modal')">Cancel</button>
+          <button type="submit" class="btn-shadcn-primary" id="btn-save-stat">
+            <span>Save Metric</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

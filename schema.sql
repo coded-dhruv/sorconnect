@@ -603,3 +603,51 @@ DROP POLICY IF EXISTS "Allow deletes in uploads bucket" ON storage.objects;
 CREATE POLICY "Allow deletes in uploads bucket"
 ON storage.objects FOR DELETE
 USING (bucket_id = 'uploads');
+
+-- ==============================================================================
+-- 8. WEBSITE STATISTICS & METRICS ('website_stats')
+-- ==============================================================================
+
+CREATE TABLE IF NOT EXISTS public.website_stats (
+    id TEXT PRIMARY KEY,
+    section TEXT NOT NULL, -- 'hero_readout' or 'why_us'
+    section_name TEXT NOT NULL,
+    stat_value TEXT NOT NULL,
+    stat_suffix TEXT,
+    label TEXT NOT NULL,
+    description TEXT,
+    display_order INT DEFAULT 1,
+    created_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.website_stats ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public read on website_stats" ON public.website_stats;
+CREATE POLICY "Allow public read on website_stats"
+    ON public.website_stats FOR SELECT
+    USING (true);
+
+DROP POLICY IF EXISTS "Allow full access on website_stats" ON public.website_stats;
+CREATE POLICY "Allow full access on website_stats"
+    ON public.website_stats FOR ALL
+    USING (true)
+    WITH CHECK (true);
+
+-- Seed Initial Statistics
+INSERT INTO public.website_stats (id, section, section_name, stat_value, stat_suffix, label, description, display_order)
+VALUES
+    ('hero_capacity', 'hero_readout', 'Hero Readout Bar', '150', '+ MW', 'Solar capacity managed', '', 1),
+    ('hero_states', 'hero_readout', 'Hero Readout Bar', '13', ' states', 'Pan-India operations', '', 2),
+    ('hero_professionals', 'hero_readout', 'Hero Readout Bar', '130', '+', 'Skilled professionals', '', 3),
+    ('hero_satisfaction', 'hero_readout', 'Hero Readout Bar', '100', '%', 'Client satisfaction', '', 4),
+    ('why_portfolio', 'why_us', 'Why Sor Connect Section', '150', '+', 'MW Portfolio', 'From 2 MW in 2020 to 150+ MW today — our journey defines growth.', 1),
+    ('why_satisfaction', 'why_us', 'Why Sor Connect Section', '100', '%', 'Client Satisfaction', 'We''ve earned full client satisfaction through consistent delivery.', 2),
+    ('why_installations', 'why_us', 'Why Sor Connect Section', '10k', '+', 'Installations', 'Delivering consistent, reliable solar solutions since 2020.', 3)
+ON CONFLICT (id) DO UPDATE SET
+    stat_value = EXCLUDED.stat_value,
+    stat_suffix = EXCLUDED.stat_suffix,
+    label = EXCLUDED.label,
+    description = EXCLUDED.description,
+    display_order = EXCLUDED.display_order;
+

@@ -145,6 +145,30 @@ The administrative console is divided into three functional zones:
 
 ---
 
+### Module 9: Key Stats & Metrics (Website Counters)
+*Edit the live numerical metrics displayed on the Homepage Readout Bar and Why Sor Connect section.*
+
+1. **Viewing Statistics:** Click **Key Stats & Metrics** under **Website CMS** in the left sidebar.
+2. **Stats Managed:**
+   - **Hero Readout Bar (4 stats):**
+     - `150+ MW` | Solar capacity managed
+     - `13 states` | Pan-India operations
+     - `130+` | Skilled professionals
+     - `100%` | Client satisfaction
+   - **Why Sor Connect Highlights (3 stats):**
+     - `150+` | MW Portfolio | "From 2 MW in 2020 to 150+ MW today — our journey defines growth."
+     - `100%` | Client Satisfaction | "We've earned full client satisfaction through consistent delivery."
+     - `10k+` | Installations | "Delivering consistent, reliable solar solutions since 2020."
+3. **Editing a Metric:**
+   - Locate the stat row and click **Edit**.
+   - Modify the **Metric Value** (e.g. change `150` to `180` or `13` to `15`).
+   - Modify the **Suffix Badge** (e.g. `+ MW`, ` states`, `%`, `+`).
+   - Modify the **Headline Label** or **Supporting Narrative Description**.
+   - Click **Save Metric**.
+   - The updated numbers immediately sync to Supabase and animate live on the public website!
+
+---
+
 ## 5. Media & Image Upload Best Practices
 
 - **Recommended Image Formats:** WebP or JPG for photographs; transparent PNG or SVG for logos.

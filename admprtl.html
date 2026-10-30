@@ -1564,6 +1564,13 @@ table.admin-table tbody tr:last-child td {
             <span class="tab-badge" id="categories-count-badge">0</span>
           </button>
 
+          <!-- Website Statistics CMS (NEW) -->
+          <button type="button" class="admin-tab-btn" data-tab="stats-panel">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            <span>Key Stats &amp; Metrics</span>
+            <span class="tab-badge" id="stats-count-badge">0</span>
+          </button>
+
           <div class="admin-nav-group-label" style="margin-top: 14px;">Media &amp; Proof</div>
 
           <!-- About Us Carousel -->
@@ -2285,6 +2292,59 @@ table.admin-table tbody tr:last-child td {
         <h4>Failed to load awards</h4>
         <p id="awards-error-msg">Could not connect to database.</p>
         <button type="button" class="btn-shadcn-outline" onclick="fetchAwards()">Retry Fetch</button>
+      </div>
+    </div>
+  </section>
+  
+
+  <!-- ==================== TAB 9: WEBSITE STATISTICS ==================== -->
+  <section id="stats-panel" class="admin-tab-panel">
+    <!-- Control Bar -->
+    <div class="admin-control-bar">
+      <div class="control-bar-left">
+        <div class="search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="stats-search" placeholder="Search stats by label, value, or section...">
+        </div>
+      </div>
+
+      <div class="control-bar-right">
+        <button type="button" class="btn-shadcn-outline" onclick="fetchStats()" title="Refresh stats from database">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          <span>Refresh Stats</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Table Card -->
+    <div class="admin-card-table">
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width: 170px;">Placement Section</th>
+              <th style="width: 140px;">Live Metric</th>
+              <th>Headline Label</th>
+              <th>Subtitle / Narrative Details</th>
+              <th style="width: 70px;">Order</th>
+              <th style="text-align: right; width: 100px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="stats-tbody">
+            <!-- Populated dynamically by JS -->
+          </tbody>
+        </table>
+      </div>
+      <div id="stats-empty" class="admin-empty-state" style="display: none;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        <h4>No statistics records found</h4>
+        <p>Click "Refresh Stats" to load records from database.</p>
+      </div>
+      <div id="stats-error" class="admin-error-state" style="display: none;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <h4>Failed to load statistics</h4>
+        <p id="stats-error-msg">Could not connect to database.</p>
+        <button type="button" class="btn-shadcn-outline" onclick="fetchStats()">Retry Fetch</button>
       </div>
     </div>
   </section>
@@ -3100,6 +3160,59 @@ table.admin-table tbody tr:last-child td {
     </div>
   </div>
 
+  <!-- Website Metric / Stat Edit Modal -->
+  <div id="stat-edit-modal" class="admin-modal-overlay">
+    <div class="admin-modal-box" style="max-width: 540px;">
+      <div class="admin-modal-header">
+        <h3 id="stat-modal-title">Edit Metric</h3>
+        <button type="button" class="admin-modal-close" onclick="closeAdminModal('stat-edit-modal')">&times;</button>
+      </div>
+      <form id="stat-form">
+        <div class="admin-modal-body">
+          <div id="stat-modal-error" class="modal-error-box" style="display: none;"></div>
+          <input type="hidden" id="stat-form-id" name="id">
+          
+          <div class="modal-form-group">
+            <label>Website Placement Section</label>
+            <input type="text" id="stat-section-name" readonly style="background: #f1f5f9; cursor: not-allowed; font-weight: 500;">
+          </div>
+
+          <div class="modal-form-row">
+            <div class="modal-form-group" style="flex: 1;">
+              <label for="stat-value">Metric Value / Number <span class="req">*</span></label>
+              <input type="text" id="stat-value" name="stat_value" required placeholder="e.g. 150 or 10k" style="font-weight: 700; font-size: 16px;">
+            </div>
+            <div class="modal-form-group" style="flex: 1;">
+              <label for="stat-suffix">Suffix Badge</label>
+              <input type="text" id="stat-suffix" name="stat_suffix" placeholder="e.g. + MW or % or +" style="font-weight: 700; font-size: 16px;">
+            </div>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="stat-label">Headline Label / Title <span class="req">*</span></label>
+            <input type="text" id="stat-label" name="label" required placeholder="e.g. Solar capacity managed">
+          </div>
+
+          <div class="modal-form-group" id="stat-desc-group">
+            <label for="stat-description">Supporting Subtitle / Narrative Description</label>
+            <textarea id="stat-description" name="description" rows="3" placeholder="Short description displayed beneath the metric..."></textarea>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="stat-order">Sequence Order</label>
+            <input type="number" id="stat-order" name="order" min="1" max="99" value="1" style="width: 120px;">
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn-shadcn-outline" onclick="closeAdminModal('stat-edit-modal')">Cancel</button>
+          <button type="submit" class="btn-shadcn-primary" id="btn-save-stat">
+            <span>Save Metric</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Toast Container -->
   <div id="admin-toast-container" class="admin-toast-container"></div>
   
@@ -3124,6 +3237,7 @@ table.admin-table tbody tr:last-child td {
       categories: [],
       carousel: [],
       awards: [],
+      stats: [],
       activeSubmissionId: null,
       activeCareerId: null,
       loading: {
@@ -3134,7 +3248,8 @@ table.admin-table tbody tr:last-child td {
         projects: false,
         categories: false,
         carousel: false,
-        awards: false
+        awards: false,
+        stats: false
       }
     };
 
@@ -3377,7 +3492,8 @@ table.admin-table tbody tr:last-child td {
       'projects-panel': { title: 'Projects Portfolio', subtitle: 'Completed solar installations, client entities, capacities & locations' },
       'categories-panel': { title: 'Project Categories', subtitle: 'Classifications for portfolio filtering and display groups' },
       'carousel-panel': { title: 'About Us Carousel', subtitle: 'Featured solar installations on the public About Us plant slider' },
-      'awards-panel': { title: 'Awards & Recognitions', subtitle: 'Verified certifications, state leadership honors, and awards showcase' }
+      'awards-panel': { title: 'Awards & Recognitions', subtitle: 'Verified certifications, state leadership honors, and awards showcase' },
+      'stats-panel': { title: 'Key Stats & Metrics', subtitle: 'Live counters displayed on homepage readout bar and Why Sor Connect section' }
     };
 
     const tabBtns = document.querySelectorAll('.admin-tab-btn');
@@ -3436,7 +3552,8 @@ table.admin-table tbody tr:last-child td {
         fetchProjects(),
         fetchCategories(),
         fetchCarouselSlides(),
-        fetchAwards()
+        fetchAwards(),
+        fetchStats()
       ]);
       setDbStatus('live', 'Supabase Live');
     }
@@ -3459,7 +3576,8 @@ table.admin-table tbody tr:last-child td {
           fetchProjects(),
           fetchCategories(),
           fetchCarouselSlides(),
-          fetchAwards()
+          fetchAwards(),
+          fetchStats()
         ]);
         showToast('✓ All database modules synchronized successfully!', 'success');
         setDbStatus('live', 'Supabase Live');
@@ -6259,6 +6377,203 @@ table.admin-table tbody tr:last-child td {
     };
 
     document.getElementById('awards-search').addEventListener('input', renderAwards);
+
+    // ==========================================
+    // 9. WEBSITE STATISTICS & METRICS LOGIC
+    // ==========================================
+    window.fetchStats = async function() {
+      state.loading.stats = true;
+      setTableSkeleton('stats-tbody', 6);
+      const errEl = document.getElementById('stats-error');
+      if (errEl) errEl.style.display = 'none';
+
+      try {
+        const rawStats = await supabaseQuery('/rest/v1/website_stats?select=*&order=display_order.asc');
+        if (Array.isArray(rawStats) && rawStats.length > 0) {
+          state.stats = rawStats.map(s => ({
+            id: s.id,
+            section: s.section || 'hero_readout',
+            section_name: s.section_name || (s.section === 'hero_readout' ? 'Hero Readout Bar' : 'Why Sor Connect Section'),
+            stat_value: s.stat_value || '',
+            stat_suffix: s.stat_suffix || '',
+            label: s.label || '',
+            description: s.description || '',
+            display_order: Number(s.display_order) || 1
+          }));
+          renderStats();
+          return;
+        }
+      } catch (supabaseErr) {
+        console.warn('Supabase stats fetch failed, trying local API...', supabaseErr);
+      }
+
+      // Fallback to local server API
+      try {
+        const res = await fetch('/api/stats');
+        if (res.ok) {
+          const data = await res.json();
+          state.stats = (data.stats || []).map(s => ({
+            id: s.id,
+            section: s.section || 'hero_readout',
+            section_name: s.section_name || (s.section === 'hero_readout' ? 'Hero Readout Bar' : 'Why Sor Connect Section'),
+            stat_value: s.stat_value || '',
+            stat_suffix: s.stat_suffix || '',
+            label: s.label || '',
+            description: s.description || '',
+            display_order: Number(s.display_order) || 1
+          }));
+          renderStats();
+          return;
+        }
+      } catch (serverErr) {
+        console.error('Server stats fetch failed:', serverErr);
+      }
+
+      const tbody = document.getElementById('stats-tbody');
+      if (tbody) tbody.innerHTML = '';
+      const errMsg = document.getElementById('stats-error-msg');
+      if (errMsg) errMsg.textContent = 'Could not load statistics from database or local storage.';
+      if (errEl) errEl.style.display = 'block';
+      state.loading.stats = false;
+    };
+
+    function renderStats() {
+      const tbody = document.getElementById('stats-tbody');
+      const emptyState = document.getElementById('stats-empty');
+      const countBadge = document.getElementById('stats-count-badge');
+      const searchInput = document.getElementById('stats-search');
+      const searchVal = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+      if (countBadge) countBadge.textContent = state.stats.length;
+
+      const filtered = state.stats.filter(s => {
+        return (s.label || '').toLowerCase().includes(searchVal) ||
+               (s.stat_value || '').toLowerCase().includes(searchVal) ||
+               (s.section_name || '').toLowerCase().includes(searchVal) ||
+               (s.description || '').toLowerCase().includes(searchVal);
+      });
+
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+      tbody.innerHTML = filtered.map(s => {
+        const isHero = s.section === 'hero_readout';
+        const sectionBadge = isHero 
+          ? `<span class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:600; padding:3px 8px; border-radius:4px;">Hero Readout Bar</span>`
+          : `<span class="badge" style="background:#dcfce7; color:#15803d; font-weight:600; padding:3px 8px; border-radius:4px;">Why Sor Connect</span>`;
+
+        return `
+          <tr>
+            <td>${sectionBadge}</td>
+            <td>
+              <div style="font-weight: 800; font-size: 17px; color: #0f172a; display: flex; align-items: baseline; gap: 3px;">
+                <span>${escapeHtml(s.stat_value)}</span>
+                <span style="font-size: 13px; color: #15803d; font-weight: 700;">${escapeHtml(s.stat_suffix)}</span>
+              </div>
+            </td>
+            <td><strong>${escapeHtml(s.label)}</strong></td>
+            <td><span style="color: #64748b; font-size: 13px;">${escapeHtml(s.description || '—')}</span></td>
+            <td><span class="badge" style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:4px;">${s.display_order}</span></td>
+            <td style="text-align: right;">
+              <button type="button" class="btn-shadcn-outline" style="height: 30px; font-size: 12px; padding: 0 10px;" onclick="editStat('${s.id}')">Edit</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.editStat = function(id) {
+      const stat = state.stats.find(s => String(s.id) === String(id));
+      if (!stat) return;
+
+      clearModalError('stat-modal-error');
+      document.getElementById('stat-modal-title').textContent = 'Edit Metric: ' + stat.label;
+      document.getElementById('stat-form-id').value = stat.id;
+      document.getElementById('stat-section-name').value = stat.section_name || stat.section;
+      document.getElementById('stat-value').value = stat.stat_value;
+      document.getElementById('stat-suffix').value = stat.stat_suffix;
+      document.getElementById('stat-label').value = stat.label;
+      document.getElementById('stat-description').value = stat.description || '';
+      document.getElementById('stat-order').value = stat.display_order;
+
+      const descGroup = document.getElementById('stat-desc-group');
+      if (descGroup) {
+        descGroup.style.display = stat.section === 'why_us' ? 'block' : 'none';
+      }
+
+      openAdminModal('stat-edit-modal');
+    };
+
+    const statForm = document.getElementById('stat-form');
+    if (statForm) {
+      statForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        clearModalError('stat-modal-error');
+        const saveBtn = document.getElementById('btn-save-stat');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Saving...</span>';
+
+        try {
+          const id = document.getElementById('stat-form-id').value;
+          const stat_value = document.getElementById('stat-value').value.trim();
+          const stat_suffix = document.getElementById('stat-suffix').value.trim();
+          const label = document.getElementById('stat-label').value.trim();
+          const description = document.getElementById('stat-description').value.trim();
+          const order = parseInt(document.getElementById('stat-order').value, 10) || 1;
+
+          // 1. Update Supabase
+          await supabaseQuery('/rest/v1/website_stats?id=eq.' + encodeURIComponent(id), {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: {
+              stat_value,
+              stat_suffix,
+              label,
+              description,
+              display_order: order,
+              updated_at: new Date().toISOString()
+            }
+          }).catch(err => console.warn('Supabase stats update skipped:', err));
+
+          // 2. Update Local Server API
+          fetch('/api/stats/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, stat_value, stat_suffix, label, description, display_order: order })
+          }).catch(() => null);
+
+          // Update local state
+          const idx = state.stats.findIndex(s => String(s.id) === String(id));
+          if (idx !== -1) {
+            state.stats[idx].stat_value = stat_value;
+            state.stats[idx].stat_suffix = stat_suffix;
+            state.stats[idx].label = label;
+            state.stats[idx].description = description;
+            state.stats[idx].display_order = order;
+          }
+
+          renderStats();
+          closeAdminModal('stat-edit-modal');
+          showToast('Website metric updated successfully!', 'success');
+        } catch (err) {
+          showModalError('stat-modal-error', 'Failed to update metric: ' + err.message);
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<span>Save Metric</span>';
+        }
+      });
+    }
+
+    const statsSearchInput = document.getElementById('stats-search');
+    if (statsSearchInput) {
+      statsSearchInput.addEventListener('input', renderStats);
+    }
 
     // ==========================================
     // UTILITIES

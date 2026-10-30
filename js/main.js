@@ -127,8 +127,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 2. Count-up statistics ticker & Why Sor Connect numbers rolling animation
-    const statNumElements = document.querySelectorAll('.stat-block .num, .readout-item .val, .stat-num');
-    if (statNumElements.length > 0) {
+    window.initRollingStatCounters = function() {
+      const statNumElements = document.querySelectorAll('.stat-block .num, .readout-item .val, .stat-num');
+      if (statNumElements.length === 0) return;
+
       statNumElements.forEach(numEl => {
         const spanEl = numEl.querySelector('span');
         const spanHTML = spanEl ? spanEl.outerHTML : '';
@@ -177,7 +179,9 @@ document.addEventListener('DOMContentLoaded', function () {
           });
         }
       });
-    }
+    };
+
+    window.initRollingStatCounters();
 
     // 3. Staggered reveals for cards and grids
     gsap.utils.toArray('.card-grid, .partner-strip, .offices-grid, .process-nav').forEach(container => {
@@ -364,6 +368,64 @@ document.addEventListener('DOMContentLoaded', function () {
     .catch(() => {
       // Keep static verified Supabase HTML fallback
     });
+  }
+
+  // ===================== DYNAMIC WEBSITE STATS HYDRATION =====================
+  const hasStatsElements = document.querySelector('[data-stat-id]');
+  if (hasStatsElements) {
+    const SUPABASE_STATS_URL = 'https://znjpzipedsowuyrpotgb.supabase.co/rest/v1/website_stats?select=*&order=display_order.asc';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+    const supHeaders = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` };
+
+    fetch(SUPABASE_STATS_URL, { headers: supHeaders })
+      .then(r => {
+        if (r.ok) return r.json();
+        return fetch('/api/stats').then(res => res.ok ? res.json().then(d => d.stats || []) : []);
+      })
+      .then(stats => {
+        if (Array.isArray(stats) && stats.length > 0) {
+          stats.forEach(s => {
+            const el = document.querySelector(`[data-stat-id="${s.id}"]`);
+            if (!el) return;
+
+            if (s.section === 'hero_readout') {
+              const valEl = el.querySelector('.val');
+              const lblEl = el.querySelector('.lbl');
+              if (valEl) {
+                const suffix = s.stat_suffix || '';
+                valEl.innerHTML = `${s.stat_value}<span style="font-size:15px;">${suffix}</span>`;
+              }
+              if (lblEl && s.label) {
+                lblEl.textContent = s.label;
+              }
+            }
+
+            if (s.section === 'why_us') {
+              const numEl = el.querySelector('.num');
+              const capEl = el.querySelector('.cap');
+              const subEl = el.querySelector('.sub');
+              if (numEl) {
+                const suffix = s.stat_suffix || '';
+                numEl.innerHTML = `${s.stat_value}<span>${suffix}</span>`;
+              }
+              if (capEl && s.label) {
+                capEl.textContent = s.label;
+              }
+              if (subEl && s.description) {
+                subEl.textContent = s.description;
+              }
+            }
+          });
+
+          // Re-trigger counter setup with refreshed live numbers
+          if (typeof window.initRollingStatCounters === 'function') {
+            window.initRollingStatCounters();
+          }
+        }
+      })
+      .catch(err => {
+        console.warn('[STATS FETCH WARNING] Could not load dynamic stats from Supabase, maintaining static HTML fallback.', err);
+      });
   }
 
   // ===================== PROCESS TABS / EXECUTION ROADMAP AUTO-SCROLL SLIDESHOW =====================
