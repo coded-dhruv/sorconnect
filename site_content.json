@@ -1,0 +1,412 @@
+[
+  {
+    "id": "home_hero_badge",
+    "section": "home_hero",
+    "section_name": "Homepage Hero",
+    "label": "Hero Eyebrow Badge",
+    "stat_value": "Turnkey EPC & Solar Operations",
+    "stat_suffix": "",
+    "description": "Small pill badge above main hero heading",
+    "display_order": 1
+  },
+  {
+    "id": "home_hero_title",
+    "section": "home_hero",
+    "section_name": "Homepage Hero",
+    "label": "Hero Main Headline",
+    "stat_value": "Commercial & Industrial Solar Power Systems Engineered for Peak Yield.",
+    "stat_suffix": "",
+    "description": "Main H1 title on homepage",
+    "display_order": 2
+  },
+  {
+    "id": "home_hero_sub",
+    "section": "home_hero",
+    "section_name": "Homepage Hero",
+    "label": "Hero Subheadline / Tagline",
+    "stat_value": "We design, install and maintain high-efficiency solar plants across 13 Indian states with 130+ in-house field engineers.",
+    "stat_suffix": "",
+    "description": "Lead paragraph beneath hero heading",
+    "display_order": 3
+  },
+  {
+    "id": "home_hero_btn1_text",
+    "section": "home_hero",
+    "section_name": "Homepage Hero",
+    "label": "Hero Primary Button Text",
+    "stat_value": "Explore Our Solutions",
+    "stat_suffix": "services.html",
+    "description": "Text and link for primary hero CTA button",
+    "display_order": 4
+  },
+  {
+    "id": "home_hero_btn2_text",
+    "section": "home_hero",
+    "section_name": "Homepage Hero",
+    "label": "Hero Secondary Button Text",
+    "stat_value": "Request Turnkey Quote",
+    "stat_suffix": "#contact",
+    "description": "Text and link for secondary hero button",
+    "display_order": 5
+  },
+  {
+    "id": "home_hero_bg",
+    "section": "home_hero",
+    "section_name": "Homepage Hero",
+    "label": "Hero Background Photo",
+    "stat_value": "assets/hero-bg.jpg",
+    "stat_suffix": "Sor Connect Industrial Solar Rooftop Plant",
+    "description": "Main background image of hero section",
+    "display_order": 6
+  },
+  {
+    "id": "home_about_badge",
+    "section": "home_about",
+    "section_name": "Homepage About Section",
+    "label": "About Section Eyebrow",
+    "stat_value": "About Sor Connect",
+    "stat_suffix": "",
+    "description": "Eyebrow tag above about section title",
+    "display_order": 7
+  },
+  {
+    "id": "home_about_title",
+    "section": "home_about",
+    "section_name": "Homepage About Section",
+    "label": "About Section Headline",
+    "stat_value": "One partner, every stage of the plant's life.",
+    "stat_suffix": "",
+    "description": "Primary heading for homepage about section",
+    "display_order": 8
+  },
+  {
+    "id": "home_about_desc1",
+    "section": "home_about",
+    "section_name": "Homepage About Section",
+    "label": "About Story Paragraph 1",
+    "stat_value": "From the first feasibility study to twenty-five years of operation, Sor Connect's in-house teams handle design, procurement, construction and after-care.",
+    "stat_suffix": "",
+    "description": "First paragraph in about section",
+    "display_order": 9
+  },
+  {
+    "id": "home_about_desc2",
+    "section": "home_about",
+    "section_name": "Homepage About Section",
+    "label": "About Story Paragraph 2",
+    "stat_value": "We build solar assets that deliver documented returns — verified on the meter, month after month.",
+    "stat_suffix": "",
+    "description": "Second paragraph in about section",
+    "display_order": 10
+  },
+  {
+    "id": "home_about_img",
+    "section": "home_about",
+    "section_name": "Homepage About Section",
+    "label": "About Section Showcase Photo",
+    "stat_value": "assets/sorconnect-team-solarquarter-2025.jpg",
+    "stat_suffix": "Sor Connect Leadership & Engineering Team",
+    "description": "Primary featured image in homepage about block",
+    "display_order": 11
+  },
+  {
+    "id": "home_about_p1_title",
+    "section": "home_about",
+    "section_name": "Homepage About Section",
+    "label": "Value Pillar 1",
+    "stat_value": "130+ In-House Workforce",
+    "stat_suffix": "Engineers, technicians and liaison teams on company payroll.",
+    "description": "Title and description of first company pillar",
+    "display_order": 12
+  },
+  {
+    "id": "home_about_p2_title",
+    "section": "home_about",
+    "section_name": "Homepage About Section",
+    "label": "Value Pillar 2",
+    "stat_value": "Direct Tier-1 Sourcing",
+    "stat_suffix": "Direct procurement partnerships with Reliance, Sungrow and Hitachi.",
+    "description": "Title and description of second company pillar",
+    "display_order": 13
+  },
+  {
+    "id": "home_about_p3_title",
+    "section": "home_about",
+    "section_name": "Homepage About Section",
+    "label": "Value Pillar 3",
+    "stat_value": "25-Year Accountability",
+    "stat_suffix": "Engineering, commissioning and operations under a single roof.",
+    "description": "Title and description of third company pillar",
+    "display_order": 14
+  },
+  {
+    "id": "home_why_badge",
+    "section": "home_why",
+    "section_name": "Why Sor Connect Section",
+    "label": "Why Us Section Eyebrow",
+    "stat_value": "Why Sor Connect",
+    "stat_suffix": "",
+    "description": "Badge tag above Why Choose Us heading",
+    "display_order": 15
+  },
+  {
+    "id": "home_why_title",
+    "section": "home_why",
+    "section_name": "Why Sor Connect Section",
+    "label": "Why Us Headline",
+    "stat_value": "Trust, scale and a single point of accountability.",
+    "stat_suffix": "",
+    "description": "Primary headline for Why Sor Connect",
+    "display_order": 16
+  },
+  {
+    "id": "home_why_sub",
+    "section": "home_why",
+    "section_name": "Why Sor Connect Section",
+    "label": "Why Us Subtitle",
+    "stat_value": "Unlike aggregators, we maintain full direct control over engineering, certified civil foundations, and electrical integration.",
+    "stat_suffix": "",
+    "description": "Lead description for Why Sor Connect section",
+    "display_order": 17
+  },
+  {
+    "id": "proc_step1_title",
+    "section": "process_steps",
+    "section_name": "Solar Execution Process (5 Steps)",
+    "label": "Step 1: Feasibility & Survey",
+    "stat_value": "01. Feasibility & Site Survey",
+    "stat_suffix": "assets/process-1.jpg",
+    "description": "Comprehensive structural roof audit, shadow analysis via drone imaging, and DISCOM power evacuation assessment.",
+    "display_order": 18
+  },
+  {
+    "id": "proc_step2_title",
+    "section": "process_steps",
+    "section_name": "Solar Execution Process (5 Steps)",
+    "label": "Step 2: Custom Engineering & 3D CAD",
+    "stat_value": "02. Custom Engineering & 3D CAD",
+    "stat_suffix": "assets/process-2.jpg",
+    "description": "PVsyst yield simulation, Staad Pro structural calculation, and electrical single-line diagram generation.",
+    "display_order": 19
+  },
+  {
+    "id": "proc_step3_title",
+    "section": "process_steps",
+    "section_name": "Solar Execution Process (5 Steps)",
+    "label": "Step 3: Tier-1 Procurement",
+    "stat_value": "03. Tier-1 Procurement",
+    "stat_suffix": "assets/process-3.jpg",
+    "description": "Direct supply chain sourcing of mono PERC / TOPCon modules, central inverters, and hot-dip structures.",
+    "display_order": 20
+  },
+  {
+    "id": "proc_step4_title",
+    "section": "process_steps",
+    "section_name": "Solar Execution Process (5 Steps)",
+    "label": "Step 4: Installation & Commissioning",
+    "stat_value": "04. Precision Installation & Grid Sync",
+    "stat_suffix": "assets/process-4.jpg",
+    "description": "In-house mechanical piling, AC/DC cabling, transformer integration, and DISCOM net-metering synchronization.",
+    "display_order": 21
+  },
+  {
+    "id": "proc_step5_title",
+    "section": "process_steps",
+    "section_name": "Solar Execution Process (5 Steps)",
+    "label": "Step 5: 25-Year Monitoring & O&M",
+    "stat_value": "05. 25-Year Monitoring & O&M",
+    "stat_suffix": "assets/process-5.jpg",
+    "description": "SCADA remote telemetry, IV curve tracing, robotic module cleaning, and guaranteed performance ratio.",
+    "display_order": 22
+  },
+  {
+    "id": "cta_title",
+    "section": "cta_strip",
+    "section_name": "Call-To-Action Banner",
+    "label": "CTA Headline",
+    "stat_value": "Ready to Transition Your Facility to Solar Energy?",
+    "stat_suffix": "",
+    "description": "Prominent headline on bottom call-to-action banner",
+    "display_order": 23
+  },
+  {
+    "id": "cta_sub",
+    "section": "cta_strip",
+    "section_name": "Call-To-Action Banner",
+    "label": "CTA Subheadline",
+    "stat_value": "Submit your site details or talk directly with our engineering department for an immediate feasibility and payback calculation.",
+    "stat_suffix": "",
+    "description": "Subtext on bottom CTA banner",
+    "display_order": 24
+  },
+  {
+    "id": "cta_btn_text",
+    "section": "cta_strip",
+    "section_name": "Call-To-Action Banner",
+    "label": "CTA Button Text & Link",
+    "stat_value": "Get Turnkey Quote",
+    "stat_suffix": "contact.html",
+    "description": "Button label and target destination",
+    "display_order": 25
+  },
+  {
+    "id": "about_hero_title",
+    "section": "about_page",
+    "section_name": "About Us Page Content",
+    "label": "About Page Hero Title",
+    "stat_value": "Engineering India's Clean Energy Horizon",
+    "stat_suffix": "",
+    "description": "Main H1 heading on about.html",
+    "display_order": 26
+  },
+  {
+    "id": "about_hero_sub",
+    "section": "about_page",
+    "section_name": "About Us Page Content",
+    "label": "About Page Hero Subtitle",
+    "stat_value": "Built on direct in-house execution, authorized Tier-1 component channels, and twenty-five years of plant stewardship.",
+    "stat_suffix": "",
+    "description": "Hero subtext on about.html",
+    "display_order": 27
+  },
+  {
+    "id": "about_story_title",
+    "section": "about_page",
+    "section_name": "About Us Page Content",
+    "label": "Corporate Story Headline",
+    "stat_value": "Over a Decade of Solar Engineering Excellence",
+    "stat_suffix": "",
+    "description": "Title of the story section on about.html",
+    "display_order": 28
+  },
+  {
+    "id": "about_story_desc1",
+    "section": "about_page",
+    "section_name": "About Us Page Content",
+    "label": "Corporate Story Paragraph 1",
+    "stat_value": "Founded with an uncompromising commitment to engineering discipline, Sor Connect has grown into a premier solar infrastructure provider operating across 13 Indian states.",
+    "stat_suffix": "",
+    "description": "First paragraph of company story on about.html",
+    "display_order": 29
+  },
+  {
+    "id": "about_story_desc2",
+    "section": "about_page",
+    "section_name": "About Us Page Content",
+    "label": "Corporate Story Paragraph 2",
+    "stat_value": "By strictly utilizing our own 130+ in-house engineering and technician workforce, we eliminate quality lapses and deliver documented plant performance year after year.",
+    "stat_suffix": "",
+    "description": "Second paragraph of company story on about.html",
+    "display_order": 30
+  },
+  {
+    "id": "about_story_img",
+    "section": "about_page",
+    "section_name": "About Us Page Content",
+    "label": "Corporate Story Photo",
+    "stat_value": "assets/sorconnect-team-solarquarter-2025.jpg",
+    "stat_suffix": "Sor Connect Leadership Team",
+    "description": "Showcase photo in about.html story block",
+    "display_order": 31
+  },
+  {
+    "id": "about_mission_title",
+    "section": "about_page",
+    "section_name": "About Us Page Content",
+    "label": "Company Mission Title & Text",
+    "stat_value": "Our Mission",
+    "stat_suffix": "To accelerate India's industrial transition to clean energy through uncompromising engineering precision, Tier-1 hardware authenticity, and lifelong plant accountability.",
+    "description": "Mission statement heading and description",
+    "display_order": 32
+  },
+  {
+    "id": "about_vision_title",
+    "section": "about_page",
+    "section_name": "About Us Page Content",
+    "label": "Company Vision Title & Text",
+    "stat_value": "Our Vision",
+    "stat_suffix": "To be recognized as India's most trusted solar EPC and asset management partner, setting benchmark standards for generation yield and execution integrity.",
+    "description": "Vision statement heading and description",
+    "display_order": 33
+  },
+  {
+    "id": "contact_phone",
+    "section": "contact_global",
+    "section_name": "Company Contact Details & Global Info",
+    "label": "Primary Contact Phone",
+    "stat_value": "+91 80066 69001",
+    "stat_suffix": "tel:+918006669001",
+    "description": "Main business telephone number displayed in header & contact page",
+    "display_order": 34
+  },
+  {
+    "id": "contact_phone_alt",
+    "section": "contact_global",
+    "section_name": "Company Contact Details & Global Info",
+    "label": "Secondary Phone / WhatsApp",
+    "stat_value": "+91 80066 69002",
+    "stat_suffix": "https://wa.me/918006669002",
+    "description": "Direct WhatsApp & support telephone number",
+    "display_order": 35
+  },
+  {
+    "id": "contact_email",
+    "section": "contact_global",
+    "section_name": "Company Contact Details & Global Info",
+    "label": "General Inquiries Email",
+    "stat_value": "info@sorconnect.com",
+    "stat_suffix": "mailto:info@sorconnect.com",
+    "description": "Primary email for customer inquiries & quotes",
+    "display_order": 36
+  },
+  {
+    "id": "contact_careers_email",
+    "section": "contact_global",
+    "section_name": "Company Contact Details & Global Info",
+    "label": "Careers & HR Email",
+    "stat_value": "careers@sorconnect.com",
+    "stat_suffix": "mailto:careers@sorconnect.com",
+    "description": "HR & job application inquiries email",
+    "display_order": 37
+  },
+  {
+    "id": "contact_address",
+    "section": "contact_global",
+    "section_name": "Company Contact Details & Global Info",
+    "label": "Headquarters Address",
+    "stat_value": "Plot No. 42, Sector 125, Expressway, Noida, Uttar Pradesh, India - 201303",
+    "stat_suffix": "",
+    "description": "Full corporate registered office address",
+    "display_order": 38
+  },
+  {
+    "id": "contact_hours",
+    "section": "contact_global",
+    "section_name": "Company Contact Details & Global Info",
+    "label": "Working Hours & Schedule",
+    "stat_value": "Monday – Saturday: 9:00 AM – 6:30 PM IST",
+    "stat_suffix": "",
+    "description": "Operating hours displayed on contact page & footer",
+    "display_order": 39
+  },
+  {
+    "id": "social_linkedin",
+    "section": "contact_global",
+    "section_name": "Company Contact Details & Global Info",
+    "label": "LinkedIn Profile URL",
+    "stat_value": "https://linkedin.com/company/sorconnect",
+    "stat_suffix": "LinkedIn",
+    "description": "Official LinkedIn company page link",
+    "display_order": 40
+  },
+  {
+    "id": "social_instagram",
+    "section": "contact_global",
+    "section_name": "Company Contact Details & Global Info",
+    "label": "Instagram Profile URL",
+    "stat_value": "https://instagram.com/sorconnect",
+    "stat_suffix": "Instagram",
+    "description": "Official Instagram profile link",
+    "display_order": 41
+  }
+]

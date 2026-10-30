@@ -9,6 +9,7 @@ const { cssStyles } = require('./admin_styles');
 const panelsHtml = [
   templates.getSubmissionsPanel(),
   templates.getCareersPanel(),
+  templates.getContentPanel(),
   templates.getServicesPanel(),
   templates.getPartnersPanel(),
   templates.getProjectsPanel(),

@@ -33,6 +33,7 @@ const AWARDS_FILE = path.join(__dirname, 'awards.json');
 const SERVICES_FILE = path.join(__dirname, 'services.json');
 const PARTNERS_FILE = path.join(__dirname, 'partners.json');
 const STATS_FILE = path.join(__dirname, 'stats.json');
+const SITE_CONTENT_FILE = path.join(__dirname, 'site_content.json');
 
 const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
@@ -1433,6 +1434,105 @@ const server = http.createServer(async (req, res) => {
     });
 
     sendJson(res, 200, { success: true, stat: updatedStat, message: 'Statistic updated successfully' });
+    return;
+  }
+
+  // 13. Site Content & Visuals CMS APIs
+  if (urlPath === '/api/site-content') {
+    if (req.method === 'GET') {
+      const items = readJsonFile(SITE_CONTENT_FILE, []);
+      sendJson(res, 200, { success: true, items });
+      return;
+    }
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/site-content/update') {
+    const payload = await parseBody(req);
+    const { id, stat_value, stat_suffix, label, description, section, section_name, display_order } = payload;
+    if (!id) {
+      sendJson(res, 400, { success: false, message: 'Missing content ID or key' });
+      return;
+    }
+
+    const items = readJsonFile(SITE_CONTENT_FILE, []);
+    const idx = items.findIndex(s => s.id === id);
+    let updatedItem = null;
+
+    if (idx !== -1) {
+      items[idx].stat_value = stat_value !== undefined ? String(stat_value) : items[idx].stat_value;
+      if (stat_suffix !== undefined) items[idx].stat_suffix = String(stat_suffix);
+      if (label !== undefined) items[idx].label = String(label);
+      if (description !== undefined) items[idx].description = String(description);
+      if (section !== undefined) items[idx].section = String(section);
+      if (section_name !== undefined) items[idx].section_name = String(section_name);
+      if (display_order !== undefined) items[idx].display_order = Number(display_order);
+      updatedItem = items[idx];
+    } else {
+      updatedItem = {
+        id,
+        section: section || 'general',
+        section_name: section_name || 'General Content',
+        stat_value: String(stat_value || ''),
+        stat_suffix: String(stat_suffix || ''),
+        label: String(label || id),
+        description: String(description || ''),
+        display_order: Number(display_order) || (items.length + 1)
+      };
+      items.push(updatedItem);
+    }
+
+    writeJsonFile(SITE_CONTENT_FILE, items);
+
+    // Sync to Supabase website_stats table
+    supabaseRestRequest(`/rest/v1/website_stats?id=eq.${encodeURIComponent(id)}`, 'PATCH', {
+      stat_value: updatedItem.stat_value,
+      stat_suffix: updatedItem.stat_suffix,
+      label: updatedItem.label,
+      description: updatedItem.description,
+      display_order: updatedItem.display_order,
+      updated_at: new Date().toISOString()
+    }).catch(() => { });
+
+    sendJson(res, 200, { success: true, item: updatedItem, message: 'Content updated successfully' });
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/site-content/bulk-update') {
+    const payload = await parseBody(req);
+    const { updates } = payload;
+    if (Array.isArray(updates)) {
+      const items = readJsonFile(SITE_CONTENT_FILE, []);
+      for (const u of updates) {
+        if (!u.id) continue;
+        const idx = items.findIndex(s => s.id === u.id);
+        if (idx !== -1) {
+          if (u.stat_value !== undefined) items[idx].stat_value = String(u.stat_value);
+          if (u.stat_suffix !== undefined) items[idx].stat_suffix = String(u.stat_suffix);
+        } else {
+          items.push({
+            id: u.id,
+            section: u.section || 'general',
+            section_name: u.section_name || 'General',
+            stat_value: String(u.stat_value || ''),
+            stat_suffix: String(u.stat_suffix || ''),
+            label: String(u.label || u.id),
+            description: String(u.description || ''),
+            display_order: Number(u.display_order) || (items.length + 1)
+          });
+        }
+
+        // Sync each to Supabase
+        supabaseRestRequest(`/rest/v1/website_stats?id=eq.${encodeURIComponent(u.id)}`, 'PATCH', {
+          stat_value: String(u.stat_value || ''),
+          stat_suffix: String(u.stat_suffix !== undefined ? u.stat_suffix : ''),
+          updated_at: new Date().toISOString()
+        }).catch(() => { });
+      }
+      writeJsonFile(SITE_CONTENT_FILE, items);
+      sendJson(res, 200, { success: true, message: 'Bulk content updated successfully' });
+      return;
+    }
+    sendJson(res, 400, { success: false, message: 'Invalid updates payload' });
     return;
   }
 

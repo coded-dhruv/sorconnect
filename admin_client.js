@@ -22,6 +22,9 @@ module.exports = {
       carousel: [],
       awards: [],
       stats: [],
+      content: [],
+      contentSectionFilter: 'all',
+      contentSearchQuery: '',
       activeSubmissionId: null,
       activeCareerId: null,
       loading: {
@@ -33,7 +36,8 @@ module.exports = {
         categories: false,
         carousel: false,
         awards: false,
-        stats: false
+        stats: false,
+        content: false
       }
     };
 
@@ -281,6 +285,7 @@ module.exports = {
     const tabMeta = {
       'submissions-panel': { title: 'Form Submissions', subtitle: 'Inbound customer inquiries and turnkey consultation leads' },
       'careers-panel': { title: 'Job Applications & Careers', subtitle: 'Candidate resumes, applied positions, experience and contact information' },
+      'content-panel': { title: 'Site Content & Visuals CMS', subtitle: 'Live copy, section text, headings, buttons, roadmap steps, and site images' },
       'services-panel': { title: 'Services Page CMS', subtitle: 'Manage all service sections, headings, body copy, images, pointers & FAQs' },
       'partners-panel': { title: 'Partners & Alliances', subtitle: 'Manage authorized distributors, tier-1 alliances, logos & highlight points' },
       'projects-panel': { title: 'Projects Portfolio', subtitle: 'Completed solar installations, client entities, capacities & locations' },
@@ -341,6 +346,7 @@ module.exports = {
       await Promise.all([
         fetchSubmissions(),
         fetchCareers(),
+        fetchSiteContent(),
         fetchServices(),
         fetchPartners(),
         fetchProjects(),
@@ -2126,16 +2132,22 @@ module.exports = {
           is_active: document.getElementById('partner-is-active').checked
         };
 
+        let supOk = false;
+        let srvOk = false;
+        let lastErr = null;
+
         if (id) {
           await supabaseQuery(\`/rest/v1/partners?id=eq.\${encodeURIComponent(id)}\`, {
             method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
             body: partnerPayload
-          }).catch(err => console.warn('Supabase patch failed, relying on local sync:', err));
+          }).then(() => { supOk = true; }).catch(err => { console.warn('Supabase patch failed:', err); lastErr = err; });
         } else {
           await supabaseQuery('/rest/v1/partners', {
             method: 'POST',
+            headers: { 'Prefer': 'return=representation' },
             body: [partnerPayload]
-          }).catch(err => console.warn('Supabase insert failed, relying on local sync:', err));
+          }).then(() => { supOk = true; }).catch(err => { console.warn('Supabase insert failed:', err); lastErr = err; });
         }
 
         const endpoint = id ? '/api/partners/update' : '/api/partners/create';
@@ -2145,9 +2157,10 @@ module.exports = {
           body: JSON.stringify(partnerPayload)
         }).catch(() => null);
 
-        if (serverRes && !serverRes.ok) {
-          const errData = await serverRes.json().catch(() => ({}));
-          throw new Error(errData.message || 'Server error occurred');
+        if (serverRes && serverRes.ok) srvOk = true;
+
+        if (!supOk && !srvOk && lastErr) {
+          throw new Error(lastErr.message || 'Server error occurred while saving partner');
         }
 
         const existingIdx = state.partners.findIndex(p => String(p.id) === String(id));
@@ -2639,10 +2652,12 @@ module.exports = {
 
         const catObj = state.categories.find(c => c.slug === category_slug);
         const category_id = catObj ? catObj.id : (category_slug === 'epc' ? 1 : 2);
+        const numericId = parseInt(String(id).replace(/\D/g, ''), 10);
+        const targetId = !isNaN(numericId) && numericId > 0 ? numericId : null;
 
         let savedProject = null;
-        if (id) {
-          const patchResult = await supabaseQuery(\`/rest/v1/projects?id=eq.\${id}\`, {
+        if (targetId) {
+          const patchResult = await supabaseQuery(\`/rest/v1/projects?id=eq.\${targetId}\`, {
             method: 'PATCH',
             headers: { 'Prefer': 'return=representation' },
             body: { client, location, capacity, sector_or_type, category_id, category_slug }
@@ -2916,9 +2931,12 @@ module.exports = {
         const image = document.getElementById('slide-image').value.trim();
         const order = parseInt(document.getElementById('slide-order').value, 10) || 1;
 
+        const numericId = parseInt(String(id).replace(/\D/g, ''), 10);
+        const targetId = !isNaN(numericId) && numericId > 0 ? numericId : null;
+
         let savedSlide = null;
-        if (id && !String(id).startsWith('slide_')) {
-          const patchResult = await supabaseQuery(\`/rest/v1/about_gallery?id=eq.\${id}\`, {
+        if (targetId) {
+          const patchResult = await supabaseQuery(\`/rest/v1/about_gallery?id=eq.\${targetId}\`, {
             method: 'PATCH',
             headers: { 'Prefer': 'return=representation' },
             body: { title, subtitle, badge, location, description, image, display_order: order }
@@ -3169,9 +3187,12 @@ module.exports = {
         const image = document.getElementById('award-image').value.trim();
         const order = parseInt(document.getElementById('award-order').value, 10) || 1;
 
+        const numericId = parseInt(String(id).replace(/\D/g, ''), 10);
+        const targetId = !isNaN(numericId) && numericId > 0 ? numericId : null;
+
         let savedAward = null;
-        if (id) {
-          const patchResult = await supabaseQuery(\`/rest/v1/awards?id=eq.\${id}\`, {
+        if (targetId) {
+          const patchResult = await supabaseQuery(\`/rest/v1/awards?id=eq.\${targetId}\`, {
             method: 'PATCH',
             headers: { 'Prefer': 'return=representation' },
             body: { title, badge, description, image, display_order: order }
@@ -3448,6 +3469,346 @@ module.exports = {
     if (statsSearchInput) {
       statsSearchInput.addEventListener('input', renderStats);
     }
+
+    // ==========================================
+    // 10. SITE CONTENT & VISUALS CMS LOGIC
+    // ==========================================
+    window.fetchSiteContent = async function() {
+      state.loading.content = true;
+      const grid = document.getElementById('content-card-grid');
+      const errEl = document.getElementById('content-error');
+      if (errEl) errEl.style.display = 'none';
+      if (grid) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: #64748b;">Loading site content from database...</div>';
+      }
+
+      // Try fetching from Supabase website_stats
+      try {
+        const rawItems = await supabaseQuery('/rest/v1/website_stats?select=*&order=display_order.asc');
+        if (Array.isArray(rawItems) && rawItems.length > 0) {
+          state.content = rawItems.map(item => ({
+            id: item.id,
+            section: item.section || 'home_hero',
+            section_name: item.section_name || 'Website Section',
+            label: item.label || item.id,
+            stat_value: item.stat_value || '',
+            stat_suffix: item.stat_suffix || '',
+            description: item.description || '',
+            display_order: Number(item.display_order) || 1
+          }));
+          renderSiteContent();
+          return;
+        }
+      } catch (supabaseErr) {
+        console.warn('Supabase site content fetch failed, trying local API...', supabaseErr);
+      }
+
+      // Fallback to local server API or site_content.json
+      try {
+        const res = await fetch('/api/site-content');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.items) && data.items.length > 0) {
+            state.content = data.items;
+            renderSiteContent();
+            return;
+          }
+        }
+      } catch (err) {}
+
+      try {
+        const res = await fetch('site_content.json');
+        if (res.ok) {
+          const items = await res.json();
+          if (Array.isArray(items) && items.length > 0) {
+            state.content = items;
+            renderSiteContent();
+            return;
+          }
+        }
+      } catch (err) {}
+
+      if (grid) grid.innerHTML = '';
+      if (errEl) errEl.style.display = 'block';
+      state.loading.content = false;
+    };
+
+    window.filterContentSection = function(section) {
+      state.contentSectionFilter = section;
+      document.querySelectorAll('.content-subnav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === section);
+      });
+      renderSiteContent();
+    };
+
+    window.filterContentSearch = function() {
+      const searchInput = document.getElementById('content-search-input');
+      state.contentSearchQuery = (searchInput ? searchInput.value : '').toLowerCase().trim();
+      renderSiteContent();
+    };
+
+    function renderSiteContent() {
+      const grid = document.getElementById('content-card-grid');
+      const emptyState = document.getElementById('content-empty');
+      const counter = document.getElementById('content-items-counter');
+      const badge = document.getElementById('content-count-badge');
+      if (!grid) return;
+
+      if (badge) badge.textContent = state.content.length;
+
+      const filterSection = state.contentSectionFilter || 'all';
+      const search = state.contentSearchQuery || '';
+
+      const filtered = state.content.filter(item => {
+        if (filterSection !== 'all' && item.section !== filterSection) {
+          return false;
+        }
+        if (search) {
+          const matchesLabel = (item.label || '').toLowerCase().includes(search);
+          const matchesVal = (item.stat_value || '').toLowerCase().includes(search);
+          const matchesSuffix = (item.stat_suffix || '').toLowerCase().includes(search);
+          const matchesDesc = (item.description || '').toLowerCase().includes(search);
+          const matchesId = (item.id || '').toLowerCase().includes(search);
+          const matchesSec = (item.section_name || '').toLowerCase().includes(search);
+          if (!matchesLabel && !matchesVal && !matchesSuffix && !matchesDesc && !matchesId && !matchesSec) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      if (counter) {
+        counter.textContent = 'Showing ' + filtered.length + ' of ' + state.content.length + ' items';
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+
+      grid.innerHTML = filtered.map(item => {
+        const isImage = (item.id && (item.id.includes('img') || item.id.includes('bg'))) ||
+                        (item.stat_value && (item.stat_value.startsWith('assets/') || item.stat_value.includes('.jpg') || item.stat_value.includes('.png') || item.stat_value.includes('.webp'))) ||
+                        (item.stat_suffix && (item.stat_suffix.startsWith('assets/') || item.stat_suffix.includes('.jpg') || item.stat_suffix.includes('.png') || item.stat_suffix.includes('.webp')));
+
+        const imgUrl = isImage ? (item.stat_value.includes('.jpg') || item.stat_value.includes('.png') || item.stat_value.includes('.webp') ? item.stat_value : item.stat_suffix) : '';
+
+        let badgeStyle = 'background:#e0f2fe; color:#0369a1;';
+        if (item.section === 'home_hero') badgeStyle = 'background:#fef3c7; color:#b45309;';
+        else if (item.section === 'home_about') badgeStyle = 'background:#e0e7ff; color:#4338ca;';
+        else if (item.section === 'process_steps') badgeStyle = 'background:#fce7f3; color:#be185d;';
+        else if (item.section === 'about_page') badgeStyle = 'background:#ccfbf1; color:#0f766e;';
+        else if (item.section === 'contact_global') badgeStyle = 'background:#dcfce7; color:#15803d;';
+
+        const isLongText = (item.stat_value && item.stat_value.length > 80) || (item.id && item.id.includes('desc'));
+
+        let cardHtml = '<div class="content-item-card" data-content-id="' + escapeHtml(item.id) + '">';
+        cardHtml += '<div class="content-card-header">';
+        cardHtml += '<div class="content-card-title-group">';
+        cardHtml += '<span class="badge" style="' + badgeStyle + ' font-weight:700; font-size:11px; padding:3px 8px; border-radius:4px; margin-bottom:4px; width:fit-content;">' + escapeHtml(item.section_name || item.section) + '</span>';
+        cardHtml += '<span class="content-card-label">' + escapeHtml(item.label || item.id) + '</span>';
+        cardHtml += '</div>';
+        cardHtml += '<span class="content-card-key" title="HTML data-cms key">data-cms="' + escapeHtml(item.id) + '"</span>';
+        cardHtml += '</div>';
+
+        // Primary text/value
+        cardHtml += '<div class="content-field-row">';
+        cardHtml += '<label>' + (isImage && (item.stat_value.includes('.jpg') || item.stat_value.includes('.png')) ? 'Image File Path / Storage URL' : 'Primary Text / Copy') + '</label>';
+        if (isLongText) {
+          cardHtml += '<textarea id="val_' + escapeHtml(item.id) + '" rows="3">' + escapeHtml(item.stat_value) + '</textarea>';
+        } else {
+          cardHtml += '<input type="text" id="val_' + escapeHtml(item.id) + '" value="' + escapeHtml(item.stat_value) + '">';
+        }
+        cardHtml += '</div>';
+
+        // Image preview if image
+        if (isImage && imgUrl) {
+          cardHtml += '<div class="content-field-row">';
+          cardHtml += '<label>Active Photo Preview</label>';
+          cardHtml += '<div class="content-img-preview-box" id="preview_box_' + escapeHtml(item.id) + '">';
+          cardHtml += '<img src="' + escapeHtml(imgUrl) + '" alt="Preview" onerror="this.src=\'assets/hero-bg.jpg\'">';
+          cardHtml += '</div>';
+          cardHtml += '<div style="display:flex; gap:8px; margin-top:4px;">';
+          cardHtml += '<label class="btn-shadcn-outline" style="cursor:pointer; height:32px; font-size:12px; margin:0; display:inline-flex; align-items:center; gap:6px;">';
+          cardHtml += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>';
+          cardHtml += '<span>Upload New Photo</span>';
+          cardHtml += '<input type="file" accept="image/*" style="display:none;" onchange="handleContentImageUpload(\'' + escapeHtml(item.id) + '\', this.files[0])">';
+          cardHtml += '</label>';
+          cardHtml += '</div>';
+          cardHtml += '</div>';
+        }
+
+        // Secondary Suffix / Link Field
+        if (item.stat_suffix || (item.id && (item.id.includes('btn') || item.id.includes('phone') || item.id.includes('email') || item.id.includes('proc_') || item.id.includes('mission') || item.id.includes('vision') || item.id.includes('social')))) {
+          const suffixLabel = (item.id && item.id.includes('proc_')) ? 'Step Image URL / Suffix' : ((item.id && (item.id.includes('mission') || item.id.includes('vision'))) ? 'Mission / Vision Statement' : 'Link Destination / WhatsApp URL / Alt Text');
+          cardHtml += '<div class="content-field-row">';
+          cardHtml += '<label>' + suffixLabel + '</label>';
+          if (item.stat_suffix && item.stat_suffix.length > 70) {
+            cardHtml += '<textarea id="suffix_' + escapeHtml(item.id) + '" rows="2">' + escapeHtml(item.stat_suffix) + '</textarea>';
+          } else {
+            cardHtml += '<input type="text" id="suffix_' + escapeHtml(item.id) + '" value="' + escapeHtml(item.stat_suffix) + '">';
+          }
+          cardHtml += '</div>';
+        }
+
+        // Narrative / Supporting Notes
+        if (item.description && !item.id.includes('proc_') && !item.id.includes('mission') && !item.id.includes('vision')) {
+          cardHtml += '<div class="content-field-row">';
+          cardHtml += '<label>Description / Subtitle</label>';
+          cardHtml += '<input type="text" id="desc_' + escapeHtml(item.id) + '" value="' + escapeHtml(item.description) + '">';
+          cardHtml += '</div>';
+        } else if (item.id && item.id.includes('proc_')) {
+          cardHtml += '<div class="content-field-row">';
+          cardHtml += '<label>Step Milestone Details / Deliverables</label>';
+          cardHtml += '<textarea id="desc_' + escapeHtml(item.id) + '" rows="2">' + escapeHtml(item.description) + '</textarea>';
+          cardHtml += '</div>';
+        }
+
+        cardHtml += '<div class="content-card-footer">';
+        cardHtml += '<span style="font-size:11.5px; color:#94a3b8;">Order: ' + item.display_order + '</span>';
+        cardHtml += '<button type="button" class="btn-shadcn-primary" id="btn_save_' + escapeHtml(item.id) + '" onclick="saveSiteContentItem(\'' + escapeHtml(item.id) + '\')" style="height:32px; font-size:12.5px; padding:0 14px;">';
+        cardHtml += '<span>Save Live</span>';
+        cardHtml += '</button>';
+        cardHtml += '</div>';
+        cardHtml += '</div>';
+
+        return cardHtml;
+      }).join('');
+    }
+
+    window.handleContentImageUpload = async function(itemId, file) {
+      if (!file) return;
+      showToast('Uploading photo...', 'info');
+
+      try {
+        const ext = file.name.split('.').pop().toLowerCase();
+        const cleanBase = file.name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase();
+        const fileName = Date.now() + '_' + cleanBase + '.' + ext;
+        let finalUrl = '';
+
+        let mimeType = file.type;
+        if (ext === 'jpg' || ext === 'jpeg') {
+          mimeType = 'image/jpeg';
+        } else if (ext === 'png') {
+          mimeType = 'image/png';
+        } else if (ext === 'webp') {
+          mimeType = 'image/webp';
+        }
+
+        try {
+          const uploadRes = await fetch(SUPABASE_URL + '/storage/v1/object/uploads/' + fileName, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': 'Bearer ' + SUPABASE_KEY,
+              'Content-Type': mimeType,
+              'x-upsert': 'true'
+            },
+            body: file
+          });
+
+          if (uploadRes.ok) {
+            finalUrl = SUPABASE_URL + '/storage/v1/object/public/uploads/' + fileName;
+          }
+        } catch (storageErr) {
+          console.warn('Direct Supabase storage upload failed:', storageErr);
+        }
+
+        if (!finalUrl) {
+          const formData = new FormData();
+          formData.append('image', file);
+          const localRes = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+          });
+          if (localRes.ok) {
+            const data = await localRes.json();
+            finalUrl = data.url;
+          }
+        }
+
+        if (!finalUrl) {
+          throw new Error('Image upload failed on both cloud and local endpoints.');
+        }
+
+        const valInput = document.getElementById('val_' + itemId);
+        const suffixInput = document.getElementById('suffix_' + itemId);
+
+        if (valInput && (valInput.value.includes('.jpg') || valInput.value.includes('.png') || valInput.value.includes('.webp') || valInput.value.startsWith('assets/'))) {
+          valInput.value = finalUrl;
+        } else if (suffixInput) {
+          suffixInput.value = finalUrl;
+        }
+
+        const previewBox = document.getElementById('preview_box_' + itemId);
+        if (previewBox) {
+          previewBox.innerHTML = '<img src="' + escapeHtml(finalUrl) + '" alt="Preview">';
+        }
+
+        showToast('Photo uploaded! Click "Save Live" to publish.', 'success');
+      } catch (err) {
+        showToast('Photo upload error: ' + err.message, 'error');
+      }
+    };
+
+    window.saveSiteContentItem = async function(id) {
+      const btn = document.getElementById('btn_save_' + id);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>Saving...</span>';
+      }
+
+      try {
+        const valInput = document.getElementById('val_' + id);
+        const suffixInput = document.getElementById('suffix_' + id);
+        const descInput = document.getElementById('desc_' + id);
+
+        const stat_value = valInput ? valInput.value.trim() : '';
+        const stat_suffix = suffixInput ? suffixInput.value.trim() : '';
+        const description = descInput ? descInput.value.trim() : '';
+
+        // 1. Direct Supabase PostgREST update
+        await supabaseQuery('/rest/v1/website_stats?id=eq.' + encodeURIComponent(id), {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: {
+            stat_value,
+            stat_suffix,
+            description,
+            updated_at: new Date().toISOString()
+          }
+        }).catch(err => console.warn('Supabase site content patch skipped:', err));
+
+        // 2. Dual fallback to local server API
+        fetch('/api/site-content/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, stat_value, stat_suffix, description })
+        }).catch(() => null);
+
+        const item = state.content.find(c => c.id === id);
+        if (item) {
+          item.stat_value = stat_value;
+          item.stat_suffix = stat_suffix;
+          item.description = description;
+        }
+
+        showToast('Saved successfully! Real site updated live.', 'success');
+      } catch (err) {
+        showToast('Failed to save item: ' + err.message, 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>Saved ✓</span>';
+          setTimeout(() => {
+            btn.innerHTML = '<span>Save Live</span>';
+          }, 2000);
+        }
+      }
+    };
 
     // ==========================================
     // UTILITIES

@@ -2434,4 +2434,103 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // ===================== DYNAMIC SITE-WIDE CONTENT & VISUALS HYDRATION =====================
+  initDynamicSiteContent();
+
+  function initDynamicSiteContent() {
+    const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+
+    function applyContentToDOM(items) {
+      if (!Array.isArray(items) || items.length === 0) return;
+      items.forEach(item => {
+        if (!item || !item.id) return;
+        const elements = document.querySelectorAll(`[data-cms="${item.id}"]`);
+        if (!elements || elements.length === 0) return;
+
+        const val = item.stat_value;
+        const suffix = item.stat_suffix || '';
+
+        elements.forEach(el => {
+          const field = el.getAttribute('data-cms-field');
+          let targetVal = val;
+          if (field === 'description' || field === 'desc') {
+            targetVal = item.description;
+          } else if (field === 'suffix') {
+            targetVal = item.stat_suffix;
+          } else if (field === 'label') {
+            targetVal = item.label;
+          }
+
+          if (el.tagName === 'IMG') {
+            if (field === 'suffix' && item.stat_suffix) {
+              el.src = item.stat_suffix;
+            } else if (targetVal) {
+              el.src = targetVal;
+            }
+            if (suffix && field !== 'suffix') el.alt = suffix;
+          } else if (el.hasAttribute('data-cms-bg')) {
+            const bgVal = (field === 'suffix') ? item.stat_suffix : targetVal;
+            if (bgVal) el.style.backgroundImage = `url("${bgVal}")`;
+          } else if (el.tagName === 'A') {
+            if (field === 'href') {
+              if (item.stat_suffix) el.href = item.stat_suffix;
+              else if (targetVal) el.href = targetVal;
+            } else {
+              if (targetVal !== undefined && targetVal !== null) el.textContent = targetVal;
+              if (suffix && (suffix.startsWith('http') || suffix.startsWith('tel:') || suffix.startsWith('mailto:') || suffix.startsWith('#') || suffix.endsWith('.html'))) {
+                el.href = suffix;
+              }
+            }
+          } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            if (targetVal !== undefined && targetVal !== null) el.value = targetVal;
+          } else {
+            if (targetVal !== undefined && targetVal !== null) {
+              if (String(targetVal).includes('<') && String(targetVal).includes('>')) {
+                el.innerHTML = targetVal;
+              } else {
+                el.textContent = targetVal;
+              }
+            }
+          }
+        });
+      });
+    }
+
+    // 1. Fetch from Supabase website_stats (which houses all dynamic content keys)
+    fetch(`${SUPABASE_URL}/rest/v1/website_stats?select=*`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    })
+    .then(r => {
+      if (r.ok) return r.json();
+      throw new Error('Supabase fetch failed');
+    })
+    .then(items => {
+      if (Array.isArray(items) && items.length > 0) {
+        applyContentToDOM(items);
+      }
+    })
+    .catch(() => {
+      // 2. Fallback to /api/site-content -> site_content.json
+      fetch('/api/site-content')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (d && Array.isArray(d.items)) {
+            applyContentToDOM(d.items);
+          } else {
+            throw new Error('API failed');
+          }
+        })
+        .catch(() => {
+          fetch('site_content.json')
+            .then(r => r.ok ? r.json() : [])
+            .then(items => applyContentToDOM(items))
+            .catch(() => {});
+        });
+    });
+  }
+
 });

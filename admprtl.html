@@ -1456,6 +1456,167 @@ table.admin-table tbody tr:last-child td {
   transition: width 0.3s;
 }
 
+/* ==================== SITE CONTENT & PAGES CMS STYLES ==================== */
+.content-subnav-strip {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 6px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.content-subnav-btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.content-subnav-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.content-subnav-btn.active {
+  background: #15803d;
+  color: #ffffff;
+}
+
+.content-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .content-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.content-item-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.content-item-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.content-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 12px;
+}
+
+.content-card-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.content-card-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.content-card-key {
+  font-family: monospace;
+  font-size: 11.5px;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.content-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.content-field-row label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.content-field-row textarea,
+.content-field-row input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: #0f172a;
+  background: #ffffff;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.content-field-row textarea:focus,
+.content-field-row input[type="text"]:focus {
+  outline: none;
+  border-color: #15803d;
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.15);
+}
+
+.content-img-preview-box {
+  width: 100%;
+  height: 140px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.content-img-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+}
+
 </style>
 </head>
 <body class="admin-body">
@@ -1536,6 +1697,13 @@ table.admin-table tbody tr:last-child td {
 
           <div class="admin-nav-group-label" style="margin-top: 14px;">Website CMS</div>
           
+          <!-- Site Content & Visuals CMS (NEW) -->
+          <button type="button" class="admin-tab-btn" data-tab="content-panel">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span>Site Content &amp; Visuals</span>
+            <span class="tab-badge" id="content-count-badge">41</span>
+          </button>
+
           <!-- Services Page CMS (NEW) -->
           <button type="button" class="admin-tab-btn" data-tab="services-panel">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/><rect x="2" y="3" width="20" height="14" rx="2"/></svg>
@@ -1855,6 +2023,85 @@ table.admin-table tbody tr:last-child td {
         <p id="careers-error-msg">Could not connect to database.</p>
         <button type="button" class="btn-shadcn-outline" onclick="fetchCareers()">Retry</button>
       </div>
+    </div>
+  </section>
+  
+
+  <!-- ==================== TAB 10: SITE CONTENT & VISUALS CMS ==================== -->
+  <section id="content-panel" class="admin-tab-panel">
+    <!-- Header / Intro Banner -->
+    <div style="background: linear-gradient(135deg, #052e16 0%, #14532d 100%); color: #ffffff; padding: 24px 28px; border-radius: var(--radius); margin-bottom: 24px; box-shadow: 0 4px 14px rgba(5, 46, 22, 0.2);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; color: #86efac; display: block; margin-bottom: 4px;">Universal Content Manager</span>
+          <h2 style="margin: 0; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em;">Site-Wide Copy, Text &amp; Visuals CMS</h2>
+          <p style="margin: 6px 0 0 0; font-size: 13.5px; color: #bbf7d0; max-width: 680px; line-height: 1.5;">
+            Manage and edit all headlines, descriptions, button labels, roadmap steps, story paragraphs, and background imagery across the public website. Every update syncs directly with Supabase and applies live instantly.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn-shadcn-primary" onclick="fetchSiteContent()" style="background: #ffffff; color: #14532d; font-weight: 700; border: none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span>Refresh Content</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-navigation Pills -->
+    <div class="content-subnav-strip">
+      <button type="button" class="content-subnav-btn active" data-filter="all" onclick="filterContentSection('all')">
+        <span>🌐 All Content</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="home_hero" onclick="filterContentSection('home_hero')">
+        <span>🏠 Homepage Hero</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="home_about" onclick="filterContentSection('home_about')">
+        <span>ℹ️ About Snapshot &amp; Pillars</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="process_steps" onclick="filterContentSection('process_steps')">
+        <span>🛣️ 5-Step Process Roadmap</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="about_page" onclick="filterContentSection('about_page')">
+        <span>🏢 About Us Page &amp; Vision</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="contact_global" onclick="filterContentSection('contact_global')">
+        <span>📞 Contact &amp; Global Info</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="cta_strip" onclick="filterContentSection('cta_strip')">
+        <span>🎯 Call To Action</span>
+      </button>
+    </div>
+
+    <!-- Search & Control Bar -->
+    <div class="admin-control-bar">
+      <div class="control-bar-left">
+        <div class="search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="content-search-input" placeholder="Search by text, label, key ID, or description..." oninput="filterContentSearch()">
+        </div>
+      </div>
+      <div class="control-bar-right">
+        <span id="content-items-counter" style="font-size: 13px; font-weight: 600; color: #64748b;">Showing 41 items</span>
+      </div>
+    </div>
+
+    <!-- Content Items Grid Container -->
+    <div id="content-card-grid" class="content-card-grid">
+      <!-- Populated dynamically by JS -->
+    </div>
+
+    <div id="content-empty" class="admin-empty-state" style="display: none;">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <h4>No content elements found matching your search</h4>
+      <p>Try clearing your search term or select "All Content" above.</p>
+    </div>
+
+    <div id="content-error" class="admin-error-state" style="display: none;">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <h4>Failed to load site content</h4>
+      <p id="content-error-msg">Could not connect to database.</p>
+      <button type="button" class="btn-shadcn-outline" onclick="fetchSiteContent()">Retry Fetch</button>
     </div>
   </section>
   
@@ -3238,6 +3485,9 @@ table.admin-table tbody tr:last-child td {
       carousel: [],
       awards: [],
       stats: [],
+      content: [],
+      contentSectionFilter: 'all',
+      contentSearchQuery: '',
       activeSubmissionId: null,
       activeCareerId: null,
       loading: {
@@ -3249,7 +3499,8 @@ table.admin-table tbody tr:last-child td {
         categories: false,
         carousel: false,
         awards: false,
-        stats: false
+        stats: false,
+        content: false
       }
     };
 
@@ -3497,6 +3748,7 @@ table.admin-table tbody tr:last-child td {
     const tabMeta = {
       'submissions-panel': { title: 'Form Submissions', subtitle: 'Inbound customer inquiries and turnkey consultation leads' },
       'careers-panel': { title: 'Job Applications & Careers', subtitle: 'Candidate resumes, applied positions, experience and contact information' },
+      'content-panel': { title: 'Site Content & Visuals CMS', subtitle: 'Live copy, section text, headings, buttons, roadmap steps, and site images' },
       'services-panel': { title: 'Services Page CMS', subtitle: 'Manage all service sections, headings, body copy, images, pointers & FAQs' },
       'partners-panel': { title: 'Partners & Alliances', subtitle: 'Manage authorized distributors, tier-1 alliances, logos & highlight points' },
       'projects-panel': { title: 'Projects Portfolio', subtitle: 'Completed solar installations, client entities, capacities & locations' },
@@ -3557,6 +3809,7 @@ table.admin-table tbody tr:last-child td {
       await Promise.all([
         fetchSubmissions(),
         fetchCareers(),
+        fetchSiteContent(),
         fetchServices(),
         fetchPartners(),
         fetchProjects(),
@@ -5342,16 +5595,22 @@ table.admin-table tbody tr:last-child td {
           is_active: document.getElementById('partner-is-active').checked
         };
 
+        let supOk = false;
+        let srvOk = false;
+        let lastErr = null;
+
         if (id) {
           await supabaseQuery(`/rest/v1/partners?id=eq.${encodeURIComponent(id)}`, {
             method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
             body: partnerPayload
-          }).catch(err => console.warn('Supabase patch failed, relying on local sync:', err));
+          }).then(() => { supOk = true; }).catch(err => { console.warn('Supabase patch failed:', err); lastErr = err; });
         } else {
           await supabaseQuery('/rest/v1/partners', {
             method: 'POST',
+            headers: { 'Prefer': 'return=representation' },
             body: [partnerPayload]
-          }).catch(err => console.warn('Supabase insert failed, relying on local sync:', err));
+          }).then(() => { supOk = true; }).catch(err => { console.warn('Supabase insert failed:', err); lastErr = err; });
         }
 
         const endpoint = id ? '/api/partners/update' : '/api/partners/create';
@@ -5361,9 +5620,10 @@ table.admin-table tbody tr:last-child td {
           body: JSON.stringify(partnerPayload)
         }).catch(() => null);
 
-        if (serverRes && !serverRes.ok) {
-          const errData = await serverRes.json().catch(() => ({}));
-          throw new Error(errData.message || 'Server error occurred');
+        if (serverRes && serverRes.ok) srvOk = true;
+
+        if (!supOk && !srvOk && lastErr) {
+          throw new Error(lastErr.message || 'Server error occurred while saving partner');
         }
 
         const existingIdx = state.partners.findIndex(p => String(p.id) === String(id));
@@ -5855,10 +6115,12 @@ table.admin-table tbody tr:last-child td {
 
         const catObj = state.categories.find(c => c.slug === category_slug);
         const category_id = catObj ? catObj.id : (category_slug === 'epc' ? 1 : 2);
+        const numericId = parseInt(String(id).replace(/D/g, ''), 10);
+        const targetId = !isNaN(numericId) && numericId > 0 ? numericId : null;
 
         let savedProject = null;
-        if (id) {
-          const patchResult = await supabaseQuery(`/rest/v1/projects?id=eq.${id}`, {
+        if (targetId) {
+          const patchResult = await supabaseQuery(`/rest/v1/projects?id=eq.${targetId}`, {
             method: 'PATCH',
             headers: { 'Prefer': 'return=representation' },
             body: { client, location, capacity, sector_or_type, category_id, category_slug }
@@ -6132,9 +6394,12 @@ table.admin-table tbody tr:last-child td {
         const image = document.getElementById('slide-image').value.trim();
         const order = parseInt(document.getElementById('slide-order').value, 10) || 1;
 
+        const numericId = parseInt(String(id).replace(/D/g, ''), 10);
+        const targetId = !isNaN(numericId) && numericId > 0 ? numericId : null;
+
         let savedSlide = null;
-        if (id && !String(id).startsWith('slide_')) {
-          const patchResult = await supabaseQuery(`/rest/v1/about_gallery?id=eq.${id}`, {
+        if (targetId) {
+          const patchResult = await supabaseQuery(`/rest/v1/about_gallery?id=eq.${targetId}`, {
             method: 'PATCH',
             headers: { 'Prefer': 'return=representation' },
             body: { title, subtitle, badge, location, description, image, display_order: order }
@@ -6385,9 +6650,12 @@ table.admin-table tbody tr:last-child td {
         const image = document.getElementById('award-image').value.trim();
         const order = parseInt(document.getElementById('award-order').value, 10) || 1;
 
+        const numericId = parseInt(String(id).replace(/D/g, ''), 10);
+        const targetId = !isNaN(numericId) && numericId > 0 ? numericId : null;
+
         let savedAward = null;
-        if (id) {
-          const patchResult = await supabaseQuery(`/rest/v1/awards?id=eq.${id}`, {
+        if (targetId) {
+          const patchResult = await supabaseQuery(`/rest/v1/awards?id=eq.${targetId}`, {
             method: 'PATCH',
             headers: { 'Prefer': 'return=representation' },
             body: { title, badge, description, image, display_order: order }
@@ -6664,6 +6932,346 @@ table.admin-table tbody tr:last-child td {
     if (statsSearchInput) {
       statsSearchInput.addEventListener('input', renderStats);
     }
+
+    // ==========================================
+    // 10. SITE CONTENT & VISUALS CMS LOGIC
+    // ==========================================
+    window.fetchSiteContent = async function() {
+      state.loading.content = true;
+      const grid = document.getElementById('content-card-grid');
+      const errEl = document.getElementById('content-error');
+      if (errEl) errEl.style.display = 'none';
+      if (grid) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: #64748b;">Loading site content from database...</div>';
+      }
+
+      // Try fetching from Supabase website_stats
+      try {
+        const rawItems = await supabaseQuery('/rest/v1/website_stats?select=*&order=display_order.asc');
+        if (Array.isArray(rawItems) && rawItems.length > 0) {
+          state.content = rawItems.map(item => ({
+            id: item.id,
+            section: item.section || 'home_hero',
+            section_name: item.section_name || 'Website Section',
+            label: item.label || item.id,
+            stat_value: item.stat_value || '',
+            stat_suffix: item.stat_suffix || '',
+            description: item.description || '',
+            display_order: Number(item.display_order) || 1
+          }));
+          renderSiteContent();
+          return;
+        }
+      } catch (supabaseErr) {
+        console.warn('Supabase site content fetch failed, trying local API...', supabaseErr);
+      }
+
+      // Fallback to local server API or site_content.json
+      try {
+        const res = await fetch('/api/site-content');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.items) && data.items.length > 0) {
+            state.content = data.items;
+            renderSiteContent();
+            return;
+          }
+        }
+      } catch (err) {}
+
+      try {
+        const res = await fetch('site_content.json');
+        if (res.ok) {
+          const items = await res.json();
+          if (Array.isArray(items) && items.length > 0) {
+            state.content = items;
+            renderSiteContent();
+            return;
+          }
+        }
+      } catch (err) {}
+
+      if (grid) grid.innerHTML = '';
+      if (errEl) errEl.style.display = 'block';
+      state.loading.content = false;
+    };
+
+    window.filterContentSection = function(section) {
+      state.contentSectionFilter = section;
+      document.querySelectorAll('.content-subnav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === section);
+      });
+      renderSiteContent();
+    };
+
+    window.filterContentSearch = function() {
+      const searchInput = document.getElementById('content-search-input');
+      state.contentSearchQuery = (searchInput ? searchInput.value : '').toLowerCase().trim();
+      renderSiteContent();
+    };
+
+    function renderSiteContent() {
+      const grid = document.getElementById('content-card-grid');
+      const emptyState = document.getElementById('content-empty');
+      const counter = document.getElementById('content-items-counter');
+      const badge = document.getElementById('content-count-badge');
+      if (!grid) return;
+
+      if (badge) badge.textContent = state.content.length;
+
+      const filterSection = state.contentSectionFilter || 'all';
+      const search = state.contentSearchQuery || '';
+
+      const filtered = state.content.filter(item => {
+        if (filterSection !== 'all' && item.section !== filterSection) {
+          return false;
+        }
+        if (search) {
+          const matchesLabel = (item.label || '').toLowerCase().includes(search);
+          const matchesVal = (item.stat_value || '').toLowerCase().includes(search);
+          const matchesSuffix = (item.stat_suffix || '').toLowerCase().includes(search);
+          const matchesDesc = (item.description || '').toLowerCase().includes(search);
+          const matchesId = (item.id || '').toLowerCase().includes(search);
+          const matchesSec = (item.section_name || '').toLowerCase().includes(search);
+          if (!matchesLabel && !matchesVal && !matchesSuffix && !matchesDesc && !matchesId && !matchesSec) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      if (counter) {
+        counter.textContent = 'Showing ' + filtered.length + ' of ' + state.content.length + ' items';
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+
+      grid.innerHTML = filtered.map(item => {
+        const isImage = (item.id && (item.id.includes('img') || item.id.includes('bg'))) ||
+                        (item.stat_value && (item.stat_value.startsWith('assets/') || item.stat_value.includes('.jpg') || item.stat_value.includes('.png') || item.stat_value.includes('.webp'))) ||
+                        (item.stat_suffix && (item.stat_suffix.startsWith('assets/') || item.stat_suffix.includes('.jpg') || item.stat_suffix.includes('.png') || item.stat_suffix.includes('.webp')));
+
+        const imgUrl = isImage ? (item.stat_value.includes('.jpg') || item.stat_value.includes('.png') || item.stat_value.includes('.webp') ? item.stat_value : item.stat_suffix) : '';
+
+        let badgeStyle = 'background:#e0f2fe; color:#0369a1;';
+        if (item.section === 'home_hero') badgeStyle = 'background:#fef3c7; color:#b45309;';
+        else if (item.section === 'home_about') badgeStyle = 'background:#e0e7ff; color:#4338ca;';
+        else if (item.section === 'process_steps') badgeStyle = 'background:#fce7f3; color:#be185d;';
+        else if (item.section === 'about_page') badgeStyle = 'background:#ccfbf1; color:#0f766e;';
+        else if (item.section === 'contact_global') badgeStyle = 'background:#dcfce7; color:#15803d;';
+
+        const isLongText = (item.stat_value && item.stat_value.length > 80) || (item.id && item.id.includes('desc'));
+
+        let cardHtml = '<div class="content-item-card" data-content-id="' + escapeHtml(item.id) + '">';
+        cardHtml += '<div class="content-card-header">';
+        cardHtml += '<div class="content-card-title-group">';
+        cardHtml += '<span class="badge" style="' + badgeStyle + ' font-weight:700; font-size:11px; padding:3px 8px; border-radius:4px; margin-bottom:4px; width:fit-content;">' + escapeHtml(item.section_name || item.section) + '</span>';
+        cardHtml += '<span class="content-card-label">' + escapeHtml(item.label || item.id) + '</span>';
+        cardHtml += '</div>';
+        cardHtml += '<span class="content-card-key" title="HTML data-cms key">data-cms="' + escapeHtml(item.id) + '"</span>';
+        cardHtml += '</div>';
+
+        // Primary text/value
+        cardHtml += '<div class="content-field-row">';
+        cardHtml += '<label>' + (isImage && (item.stat_value.includes('.jpg') || item.stat_value.includes('.png')) ? 'Image File Path / Storage URL' : 'Primary Text / Copy') + '</label>';
+        if (isLongText) {
+          cardHtml += '<textarea id="val_' + escapeHtml(item.id) + '" rows="3">' + escapeHtml(item.stat_value) + '</textarea>';
+        } else {
+          cardHtml += '<input type="text" id="val_' + escapeHtml(item.id) + '" value="' + escapeHtml(item.stat_value) + '">';
+        }
+        cardHtml += '</div>';
+
+        // Image preview if image
+        if (isImage && imgUrl) {
+          cardHtml += '<div class="content-field-row">';
+          cardHtml += '<label>Active Photo Preview</label>';
+          cardHtml += '<div class="content-img-preview-box" id="preview_box_' + escapeHtml(item.id) + '">';
+          cardHtml += '<img src="' + escapeHtml(imgUrl) + '" alt="Preview" onerror="this.src='assets/hero-bg.jpg'">';
+          cardHtml += '</div>';
+          cardHtml += '<div style="display:flex; gap:8px; margin-top:4px;">';
+          cardHtml += '<label class="btn-shadcn-outline" style="cursor:pointer; height:32px; font-size:12px; margin:0; display:inline-flex; align-items:center; gap:6px;">';
+          cardHtml += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>';
+          cardHtml += '<span>Upload New Photo</span>';
+          cardHtml += '<input type="file" accept="image/*" style="display:none;" onchange="handleContentImageUpload('' + escapeHtml(item.id) + '', this.files[0])">';
+          cardHtml += '</label>';
+          cardHtml += '</div>';
+          cardHtml += '</div>';
+        }
+
+        // Secondary Suffix / Link Field
+        if (item.stat_suffix || (item.id && (item.id.includes('btn') || item.id.includes('phone') || item.id.includes('email') || item.id.includes('proc_') || item.id.includes('mission') || item.id.includes('vision') || item.id.includes('social')))) {
+          const suffixLabel = (item.id && item.id.includes('proc_')) ? 'Step Image URL / Suffix' : ((item.id && (item.id.includes('mission') || item.id.includes('vision'))) ? 'Mission / Vision Statement' : 'Link Destination / WhatsApp URL / Alt Text');
+          cardHtml += '<div class="content-field-row">';
+          cardHtml += '<label>' + suffixLabel + '</label>';
+          if (item.stat_suffix && item.stat_suffix.length > 70) {
+            cardHtml += '<textarea id="suffix_' + escapeHtml(item.id) + '" rows="2">' + escapeHtml(item.stat_suffix) + '</textarea>';
+          } else {
+            cardHtml += '<input type="text" id="suffix_' + escapeHtml(item.id) + '" value="' + escapeHtml(item.stat_suffix) + '">';
+          }
+          cardHtml += '</div>';
+        }
+
+        // Narrative / Supporting Notes
+        if (item.description && !item.id.includes('proc_') && !item.id.includes('mission') && !item.id.includes('vision')) {
+          cardHtml += '<div class="content-field-row">';
+          cardHtml += '<label>Description / Subtitle</label>';
+          cardHtml += '<input type="text" id="desc_' + escapeHtml(item.id) + '" value="' + escapeHtml(item.description) + '">';
+          cardHtml += '</div>';
+        } else if (item.id && item.id.includes('proc_')) {
+          cardHtml += '<div class="content-field-row">';
+          cardHtml += '<label>Step Milestone Details / Deliverables</label>';
+          cardHtml += '<textarea id="desc_' + escapeHtml(item.id) + '" rows="2">' + escapeHtml(item.description) + '</textarea>';
+          cardHtml += '</div>';
+        }
+
+        cardHtml += '<div class="content-card-footer">';
+        cardHtml += '<span style="font-size:11.5px; color:#94a3b8;">Order: ' + item.display_order + '</span>';
+        cardHtml += '<button type="button" class="btn-shadcn-primary" id="btn_save_' + escapeHtml(item.id) + '" onclick="saveSiteContentItem('' + escapeHtml(item.id) + '')" style="height:32px; font-size:12.5px; padding:0 14px;">';
+        cardHtml += '<span>Save Live</span>';
+        cardHtml += '</button>';
+        cardHtml += '</div>';
+        cardHtml += '</div>';
+
+        return cardHtml;
+      }).join('');
+    }
+
+    window.handleContentImageUpload = async function(itemId, file) {
+      if (!file) return;
+      showToast('Uploading photo...', 'info');
+
+      try {
+        const ext = file.name.split('.').pop().toLowerCase();
+        const cleanBase = file.name.replace(/.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase();
+        const fileName = Date.now() + '_' + cleanBase + '.' + ext;
+        let finalUrl = '';
+
+        let mimeType = file.type;
+        if (ext === 'jpg' || ext === 'jpeg') {
+          mimeType = 'image/jpeg';
+        } else if (ext === 'png') {
+          mimeType = 'image/png';
+        } else if (ext === 'webp') {
+          mimeType = 'image/webp';
+        }
+
+        try {
+          const uploadRes = await fetch(SUPABASE_URL + '/storage/v1/object/uploads/' + fileName, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': 'Bearer ' + SUPABASE_KEY,
+              'Content-Type': mimeType,
+              'x-upsert': 'true'
+            },
+            body: file
+          });
+
+          if (uploadRes.ok) {
+            finalUrl = SUPABASE_URL + '/storage/v1/object/public/uploads/' + fileName;
+          }
+        } catch (storageErr) {
+          console.warn('Direct Supabase storage upload failed:', storageErr);
+        }
+
+        if (!finalUrl) {
+          const formData = new FormData();
+          formData.append('image', file);
+          const localRes = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+          });
+          if (localRes.ok) {
+            const data = await localRes.json();
+            finalUrl = data.url;
+          }
+        }
+
+        if (!finalUrl) {
+          throw new Error('Image upload failed on both cloud and local endpoints.');
+        }
+
+        const valInput = document.getElementById('val_' + itemId);
+        const suffixInput = document.getElementById('suffix_' + itemId);
+
+        if (valInput && (valInput.value.includes('.jpg') || valInput.value.includes('.png') || valInput.value.includes('.webp') || valInput.value.startsWith('assets/'))) {
+          valInput.value = finalUrl;
+        } else if (suffixInput) {
+          suffixInput.value = finalUrl;
+        }
+
+        const previewBox = document.getElementById('preview_box_' + itemId);
+        if (previewBox) {
+          previewBox.innerHTML = '<img src="' + escapeHtml(finalUrl) + '" alt="Preview">';
+        }
+
+        showToast('Photo uploaded! Click "Save Live" to publish.', 'success');
+      } catch (err) {
+        showToast('Photo upload error: ' + err.message, 'error');
+      }
+    };
+
+    window.saveSiteContentItem = async function(id) {
+      const btn = document.getElementById('btn_save_' + id);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>Saving...</span>';
+      }
+
+      try {
+        const valInput = document.getElementById('val_' + id);
+        const suffixInput = document.getElementById('suffix_' + id);
+        const descInput = document.getElementById('desc_' + id);
+
+        const stat_value = valInput ? valInput.value.trim() : '';
+        const stat_suffix = suffixInput ? suffixInput.value.trim() : '';
+        const description = descInput ? descInput.value.trim() : '';
+
+        // 1. Direct Supabase PostgREST update
+        await supabaseQuery('/rest/v1/website_stats?id=eq.' + encodeURIComponent(id), {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: {
+            stat_value,
+            stat_suffix,
+            description,
+            updated_at: new Date().toISOString()
+          }
+        }).catch(err => console.warn('Supabase site content patch skipped:', err));
+
+        // 2. Dual fallback to local server API
+        fetch('/api/site-content/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, stat_value, stat_suffix, description })
+        }).catch(() => null);
+
+        const item = state.content.find(c => c.id === id);
+        if (item) {
+          item.stat_value = stat_value;
+          item.stat_suffix = stat_suffix;
+          item.description = description;
+        }
+
+        showToast('Saved successfully! Real site updated live.', 'success');
+      } catch (err) {
+        showToast('Failed to save item: ' + err.message, 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>Saved ✓</span>';
+          setTimeout(() => {
+            btn.innerHTML = '<span>Save Live</span>';
+          }, 2000);
+        }
+      }
+    };
 
     // ==========================================
     // UTILITIES

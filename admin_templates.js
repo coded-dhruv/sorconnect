@@ -77,6 +77,13 @@ module.exports = {
 
           <div class="admin-nav-group-label" style="margin-top: 14px;">Website CMS</div>
           
+          <!-- Site Content & Visuals CMS (NEW) -->
+          <button type="button" class="admin-tab-btn" data-tab="content-panel">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span>Site Content &amp; Visuals</span>
+            <span class="tab-badge" id="content-count-badge">41</span>
+          </button>
+
           <!-- Services Page CMS (NEW) -->
           <button type="button" class="admin-tab-btn" data-tab="services-panel">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/><rect x="2" y="3" width="20" height="14" rx="2"/></svg>
@@ -903,6 +910,86 @@ module.exports = {
         <p id="stats-error-msg">Could not connect to database.</p>
         <button type="button" class="btn-shadcn-outline" onclick="fetchStats()">Retry Fetch</button>
       </div>
+    </div>
+  </section>
+  `,
+
+  getContentPanel: () => `
+  <!-- ==================== TAB 10: SITE CONTENT & VISUALS CMS ==================== -->
+  <section id="content-panel" class="admin-tab-panel">
+    <!-- Header / Intro Banner -->
+    <div style="background: linear-gradient(135deg, #052e16 0%, #14532d 100%); color: #ffffff; padding: 24px 28px; border-radius: var(--radius); margin-bottom: 24px; box-shadow: 0 4px 14px rgba(5, 46, 22, 0.2);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; color: #86efac; display: block; margin-bottom: 4px;">Universal Content Manager</span>
+          <h2 style="margin: 0; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em;">Site-Wide Copy, Text &amp; Visuals CMS</h2>
+          <p style="margin: 6px 0 0 0; font-size: 13.5px; color: #bbf7d0; max-width: 680px; line-height: 1.5;">
+            Manage and edit all headlines, descriptions, button labels, roadmap steps, story paragraphs, and background imagery across the public website. Every update syncs directly with Supabase and applies live instantly.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn-shadcn-primary" onclick="fetchSiteContent()" style="background: #ffffff; color: #14532d; font-weight: 700; border: none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span>Refresh Content</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-navigation Pills -->
+    <div class="content-subnav-strip">
+      <button type="button" class="content-subnav-btn active" data-filter="all" onclick="filterContentSection('all')">
+        <span>🌐 All Content</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="home_hero" onclick="filterContentSection('home_hero')">
+        <span>🏠 Homepage Hero</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="home_about" onclick="filterContentSection('home_about')">
+        <span>ℹ️ About Snapshot &amp; Pillars</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="process_steps" onclick="filterContentSection('process_steps')">
+        <span>🛣️ 5-Step Process Roadmap</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="about_page" onclick="filterContentSection('about_page')">
+        <span>🏢 About Us Page &amp; Vision</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="contact_global" onclick="filterContentSection('contact_global')">
+        <span>📞 Contact &amp; Global Info</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="cta_strip" onclick="filterContentSection('cta_strip')">
+        <span>🎯 Call To Action</span>
+      </button>
+    </div>
+
+    <!-- Search & Control Bar -->
+    <div class="admin-control-bar">
+      <div class="control-bar-left">
+        <div class="search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="content-search-input" placeholder="Search by text, label, key ID, or description..." oninput="filterContentSearch()">
+        </div>
+      </div>
+      <div class="control-bar-right">
+        <span id="content-items-counter" style="font-size: 13px; font-weight: 600; color: #64748b;">Showing 41 items</span>
+      </div>
+    </div>
+
+    <!-- Content Items Grid Container -->
+    <div id="content-card-grid" class="content-card-grid">
+      <!-- Populated dynamically by JS -->
+    </div>
+
+    <div id="content-empty" class="admin-empty-state" style="display: none;">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <h4>No content elements found matching your search</h4>
+      <p>Try clearing your search term or select "All Content" above.</p>
+    </div>
+
+    <div id="content-error" class="admin-error-state" style="display: none;">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <h4>Failed to load site content</h4>
+      <p id="content-error-msg">Could not connect to database.</p>
+      <button type="button" class="btn-shadcn-outline" onclick="fetchSiteContent()">Retry Fetch</button>
     </div>
   </section>
   `,
