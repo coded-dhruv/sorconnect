@@ -3,7 +3,7 @@
     "id": "hero_capacity",
     "section": "hero_readout",
     "section_name": "Hero Readout Bar",
-    "stat_value": "150",
+    "stat_value": "200",
     "stat_suffix": "+ MW",
     "label": "Solar capacity managed",
     "description": "",
@@ -43,10 +43,10 @@
     "id": "why_portfolio",
     "section": "why_us",
     "section_name": "Why Sor Connect Section",
-    "stat_value": "150",
+    "stat_value": "200",
     "stat_suffix": "+",
     "label": "MW Portfolio",
-    "description": "From 2 MW in 2020 to 150+ MW today — our journey defines growth.",
+    "description": "From 2 MW in 2020 to 200+ MW today — our journey defines growth.",
     "display_order": 1
   },
   {
