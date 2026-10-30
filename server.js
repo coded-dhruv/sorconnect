@@ -158,6 +158,54 @@ function supabaseRestRequest(endpoint, method = 'POST', body = null) {
   });
 }
 
+// Helper: Upload file buffer to Supabase Storage bucket
+function uploadToSupabaseStorage(bucketName, filename, buffer, contentType) {
+  return new Promise((resolve) => {
+    try {
+      const url = new URL(`${SUPABASE_URL}/storage/v1/object/${encodeURIComponent(bucketName)}/${encodeURIComponent(filename)}`);
+      const options = {
+        hostname: url.hostname,
+        port: 443,
+        path: url.pathname,
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': contentType || 'application/octet-stream',
+          'Content-Length': buffer.length,
+          'x-upsert': 'true'
+        }
+      };
+
+      const req = https.request(options, (res) => {
+        let respData = '';
+        res.on('data', chunk => respData += chunk);
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucketName}/${encodeURIComponent(filename)}`;
+            console.log(`[SUPABASE STORAGE] File uploaded to bucket "${bucketName}": ${publicUrl}`);
+            resolve({ success: true, url: publicUrl });
+          } else {
+            console.warn(`[SUPABASE STORAGE] Bucket upload returned ${res.statusCode}: ${respData}`);
+            resolve({ success: false, error: respData });
+          }
+        });
+      });
+
+      req.on('error', (err) => {
+        console.warn(`[SUPABASE STORAGE] Upload request error: ${err.message}`);
+        resolve({ success: false, error: err.message });
+      });
+
+      req.write(buffer);
+      req.end();
+    } catch (e) {
+      console.warn(`[SUPABASE STORAGE] Exception: ${e.message}`);
+      resolve({ success: false, error: e.message });
+    }
+  });
+}
+
 // Sync Projects and Categories from Supabase
 async function syncFromSupabase() {
   try {
@@ -1255,275 +1303,6 @@ const server = http.createServer(async (req, res) => {
     sendJson(res, 400, { success: false, message: 'Invalid order list payload' });
     return;
   }
-
-  // 9. Services CMS APIs
-  if (urlPath === '/api/services') {
-    if (req.method === 'GET') {
-      const services = readJsonFile(SERVICES_FILE, []);
-      services.sort((a, b) => (Number(a.display_order !== undefined ? a.display_order : a.order) || 0) - (Number(b.display_order !== undefined ? b.display_order : b.order) || 0));
-      sendJson(res, 200, { success: true, services });
-      return;
-    }
-  }
-
-  if (req.method === 'POST' && urlPath === '/api/services/create') {
-    const payload = await parseBody(req);
-    const services = readJsonFile(SERVICES_FILE, []);
-
-    const title = (payload.title || '').trim();
-    if (!title) {
-      sendJson(res, 400, { success: false, message: 'Service title is required' });
-      return;
-    }
-
-    const rawSlug = (payload.slug || title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-    let slug = rawSlug || 'service-' + Date.now();
-    if (services.some(s => s.slug === slug)) {
-      slug = `${slug}-${Date.now()}`;
-    }
-
-    const newService = {
-      id: payload.id || slug,
-      slug: slug,
-      title: title,
-      nav_title: (payload.nav_title || title).trim(),
-      badge: (payload.badge || 'Solar Solutions').trim(),
-      subtitle: (payload.subtitle || '').trim(),
-      description: (payload.description || '').trim(),
-      image_1: (payload.image_1 || 'assets/svc-epc-1.jpg').trim(),
-      image_1_caption: (payload.image_1_caption || 'Turnkey Engineering').trim(),
-      image_2: (payload.image_2 || 'assets/svc-epc-2.jpg').trim(),
-      image_2_caption: (payload.image_2_caption || 'Industrial Installation').trim(),
-      offers_heading: (payload.offers_heading || 'What We Offer').trim(),
-      offers: Array.isArray(payload.offers) ? payload.offers : [],
-      standout_heading: (payload.standout_heading || 'Why Our Services Stand Out').trim(),
-      standout_points: Array.isArray(payload.standout_points) ? payload.standout_points : [],
-      faqs: Array.isArray(payload.faqs) ? payload.faqs : [],
-      form_sub: (payload.form_sub || 'Service Consultation').trim(),
-      form_title: (payload.form_title || 'Get a Turnkey Quote for Your Project').trim(),
-      form_desc: (payload.form_desc || 'Submit your site requirements and contact details. Our engineering division will share a custom quote.').trim(),
-      form_btn: (payload.form_btn || 'Get Quotation').trim(),
-      display_order: Number(payload.display_order) || (services.length + 1),
-      is_active: payload.is_active !== undefined ? Boolean(payload.is_active) : true,
-      created_at: new Date().toISOString()
-    };
-
-    services.push(newService);
-    writeJsonFile(SERVICES_FILE, services);
-
-    // Sync to Supabase if table exists
-    supabaseRestRequest('/rest/v1/services', 'POST', [newService]).catch(() => { });
-
-    sendJson(res, 200, { success: true, message: 'Service created successfully', service: newService });
-    return;
-  }
-
-  if (req.method === 'POST' && urlPath === '/api/services/update') {
-    const payload = await parseBody(req);
-    const services = readJsonFile(SERVICES_FILE, []);
-    const idx = services.findIndex(s => String(s.id) === String(payload.id) || String(s.slug) === String(payload.id));
-
-    if (idx !== -1) {
-      services[idx] = {
-        ...services[idx],
-        ...payload,
-        id: services[idx].id, // preserve ID
-        display_order: payload.display_order !== undefined ? Number(payload.display_order) : services[idx].display_order,
-        updated_at: new Date().toISOString()
-      };
-      writeJsonFile(SERVICES_FILE, services);
-
-      supabaseRestRequest(`/rest/v1/services?id=eq.${encodeURIComponent(services[idx].id)}`, 'PATCH', services[idx]).catch(() => { });
-
-      sendJson(res, 200, { success: true, message: 'Service updated successfully', service: services[idx] });
-    } else {
-      sendJson(res, 404, { success: false, message: 'Service not found' });
-    }
-    return;
-  }
-
-  if (req.method === 'POST' && urlPath === '/api/services/delete') {
-    const payload = await parseBody(req);
-    let services = readJsonFile(SERVICES_FILE, []);
-    const initialLen = services.length;
-    const targetId = String(payload.id || payload.slug);
-
-    services = services.filter(s => String(s.id) !== targetId && String(s.slug) !== targetId);
-    if (services.length < initialLen) {
-      writeJsonFile(SERVICES_FILE, services);
-      supabaseRestRequest(`/rest/v1/services?id=eq.${encodeURIComponent(targetId)}`, 'DELETE').catch(() => { });
-      sendJson(res, 200, { success: true, message: 'Service deleted successfully' });
-    } else {
-      sendJson(res, 404, { success: false, message: 'Service not found' });
-    }
-    return;
-  }
-
-  if (req.method === 'POST' && urlPath === '/api/services/reorder') {
-    const payload = await parseBody(req);
-    const { orderList } = payload;
-    if (Array.isArray(orderList)) {
-      const services = readJsonFile(SERVICES_FILE, []);
-      orderList.forEach(item => {
-        const found = services.find(s => String(s.id) === String(item.id) || String(s.slug) === String(item.id));
-        if (found) found.display_order = Number(item.order) || found.display_order;
-      });
-      writeJsonFile(SERVICES_FILE, services);
-      sendJson(res, 200, { success: true, message: 'Services reordered successfully' });
-      return;
-    }
-    sendJson(res, 400, { success: false, message: 'Invalid order list payload' });
-    return;
-  }
-
-  // 10. Partners CMS APIs
-  if (urlPath === '/api/partners') {
-    if (req.method === 'GET') {
-      const partners = readJsonFile(PARTNERS_FILE, []);
-      partners.sort((a, b) => (Number(a.display_order !== undefined ? a.display_order : a.order) || 0) - (Number(b.display_order !== undefined ? b.display_order : b.order) || 0));
-      sendJson(res, 200, { success: true, partners });
-      return;
-    }
-  }
-
-  if (req.method === 'POST' && urlPath === '/api/partners/create') {
-    const payload = await parseBody(req);
-    const partners = readJsonFile(PARTNERS_FILE, []);
-
-    const name = (payload.name || '').trim();
-    if (!name) {
-      sendJson(res, 400, { success: false, message: 'Partner name is required' });
-      return;
-    }
-
-    const newPartner = {
-      id: payload.id || 'partner_' + Date.now(),
-      name: name,
-      tier_badge: (payload.tier_badge || 'Channel Partner').trim(),
-      role: (payload.role || '').trim(),
-      logo: (payload.logo || 'assets/reliance-logo.jpeg').trim(),
-      preview_image: (payload.preview_image || '').trim(),
-      description: (payload.description || '').trim(),
-      features: Array.isArray(payload.features) ? payload.features : [],
-      display_order: Number(payload.display_order) || (partners.length + 1),
-      is_active: payload.is_active !== undefined ? Boolean(payload.is_active) : true,
-      created_at: new Date().toISOString()
-    };
-
-    partners.push(newPartner);
-    writeJsonFile(PARTNERS_FILE, partners);
-
-    supabaseRestRequest('/rest/v1/partners', 'POST', [newPartner]).catch(() => { });
-
-    sendJson(res, 200, { success: true, message: 'Partner created successfully', partner: newPartner });
-    return;
-  }
-
-  if (req.method === 'POST' && urlPath === '/api/partners/update') {
-    const payload = await parseBody(req);
-    const partners = readJsonFile(PARTNERS_FILE, []);
-    const idx = partners.findIndex(p => String(p.id) === String(payload.id));
-
-    if (idx !== -1) {
-      partners[idx] = {
-        ...partners[idx],
-        ...payload,
-        id: partners[idx].id,
-        display_order: payload.display_order !== undefined ? Number(payload.display_order) : partners[idx].display_order,
-        updated_at: new Date().toISOString()
-      };
-      writeJsonFile(PARTNERS_FILE, partners);
-
-      supabaseRestRequest(`/rest/v1/partners?id=eq.${encodeURIComponent(partners[idx].id)}`, 'PATCH', partners[idx]).catch(() => { });
-
-      sendJson(res, 200, { success: true, message: 'Partner updated successfully', partner: partners[idx] });
-    } else {
-      sendJson(res, 404, { success: false, message: 'Partner not found' });
-    }
-    return;
-  }
-
-  if (req.method === 'POST' && urlPath === '/api/partners/delete') {
-    const payload = await parseBody(req);
-    let partners = readJsonFile(PARTNERS_FILE, []);
-    const initialLen = partners.length;
-    const targetId = String(payload.id);
-
-    partners = partners.filter(p => String(p.id) !== targetId);
-    if (partners.length < initialLen) {
-      writeJsonFile(PARTNERS_FILE, partners);
-      supabaseRestRequest(`/rest/v1/partners?id=eq.${encodeURIComponent(targetId)}`, 'DELETE').catch(() => { });
-      sendJson(res, 200, { success: true, message: 'Partner deleted successfully' });
-    } else {
-      sendJson(res, 404, { success: false, message: 'Partner not found' });
-    }
-    return;
-  }
-
-  if (req.method === 'POST' && urlPath === '/api/partners/reorder') {
-    const payload = await parseBody(req);
-    const { orderList } = payload;
-    if (Array.isArray(orderList)) {
-      const partners = readJsonFile(PARTNERS_FILE, []);
-      orderList.forEach(item => {
-        const found = partners.find(p => String(p.id) === String(item.id));
-        if (found) found.display_order = Number(item.order) || found.display_order;
-      });
-      writeJsonFile(PARTNERS_FILE, partners);
-      sendJson(res, 200, { success: true, message: 'Partners reordered successfully' });
-      return;
-    }
-    sendJson(res, 400, { success: false, message: 'Invalid order list payload' });
-    return;
-  }
-
-// Helper: Upload file buffer to Supabase Storage bucket
-function uploadToSupabaseStorage(bucketName, filename, buffer, contentType) {
-  return new Promise((resolve) => {
-    try {
-      const url = new URL(`${SUPABASE_URL}/storage/v1/object/${encodeURIComponent(bucketName)}/${encodeURIComponent(filename)}`);
-      const options = {
-        hostname: url.hostname,
-        port: 443,
-        path: url.pathname,
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Content-Type': contentType || 'application/octet-stream',
-          'Content-Length': buffer.length,
-          'x-upsert': 'true'
-        }
-      };
-
-      const req = https.request(options, (res) => {
-        let respData = '';
-        res.on('data', chunk => respData += chunk);
-        res.on('end', () => {
-          if (res.statusCode >= 200 && res.statusCode < 300) {
-            const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucketName}/${encodeURIComponent(filename)}`;
-            console.log(`[SUPABASE STORAGE] File uploaded to bucket "${bucketName}": ${publicUrl}`);
-            resolve({ success: true, url: publicUrl });
-          } else {
-            console.warn(`[SUPABASE STORAGE] Bucket upload returned ${res.statusCode}: ${respData}`);
-            resolve({ success: false, error: respData });
-          }
-        });
-      });
-
-      req.on('error', (err) => {
-        console.warn(`[SUPABASE STORAGE] Upload request error: ${err.message}`);
-        resolve({ success: false, error: err.message });
-      });
-
-      req.write(buffer);
-      req.end();
-    } catch (e) {
-      console.warn(`[SUPABASE STORAGE] Exception: ${e.message}`);
-      resolve({ success: false, error: e.message });
-    }
-  });
-}
 
   // 11. Media Upload API (Saves to local assets/uploads/ AND uploads to Supabase Storage bucket 'uploads')
   if (req.method === 'POST' && urlPath === '/api/upload') {

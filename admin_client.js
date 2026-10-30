@@ -124,7 +124,17 @@ module.exports = {
         ...(options.headers || {})
       };
 
-      const res = await fetch(url, { ...options, headers });
+      let body = options.body;
+      if (body && typeof body === 'object' && !(body instanceof FormData) && !(body instanceof Blob)) {
+        body = JSON.stringify(body);
+      }
+
+      const fetchOptions = { ...options, headers };
+      if (body !== undefined) {
+        fetchOptions.body = body;
+      }
+
+      const res = await fetch(url, fetchOptions);
       if (!res.ok) {
         const errText = await res.text();
         throw new Error('Supabase ' + res.status + ': ' + errText);
@@ -1369,89 +1379,134 @@ module.exports = {
       }
     }
 
-    // Media Upload Handler (Uploads to Supabase Storage bucket 'uploads' + local fallback)
+    // Media Upload Handler (Direct Supabase Storage bucket 'uploads' + local fallback)
     async function handleMediaUpload(file, targetHiddenInputId, targetPreviewBoxId, targetStatusId) {
       if (!file) return;
-      if (!file.type.startsWith('image/')) {
+
+      const isImage = (file.type && file.type.startsWith('image/')) || /\.(jpg|jpeg|png|webp|svg|gif|bmp|avif)$/i.test(file.name || '');
+      if (!isImage) {
         showToast('Please select a valid image file (PNG, JPG, WebP, SVG).', 'error');
         return;
       }
-      if (file.size > 8 * 1024 * 1024) {
-        showToast('Image size exceeds 8MB limit.', 'error');
+      if (file.size > 10 * 1024 * 1024) {
+        showToast('Image size exceeds 10MB limit.', 'error');
         return;
       }
 
-      if (targetStatusId) {
-        const st = document.getElementById(targetStatusId);
-        if (st) { st.textContent = 'Uploading to Bucket...'; st.className = 'badge badge-amber'; }
+      const st = targetStatusId ? document.getElementById(targetStatusId) : null;
+      if (st) {
+        st.textContent = 'Uploading to Bucket...';
+        st.className = 'badge badge-amber';
       }
 
-      const reader = new FileReader();
-      reader.onload = async function(e) {
-        const base64Data = e.target.result;
-        updateSvcImgPreview(targetPreviewBoxId, base64Data, targetStatusId);
+      state.isUploading = true;
 
-        let finalUrl = base64Data;
-        let uploadedToSupabase = false;
+      // Clean file extension and normalize to valid Supabase Storage MIME type
+      const extMatch = (file.name || '').match(/\.([a-zA-Z0-9]+)$/);
+      let ext = extMatch ? extMatch[1].toLowerCase() : 'jpg';
+      if (ext === 'jpeg') ext = 'jpg';
 
-        // 1. Send to /api/upload which uploads to Supabase Storage bucket 'uploads' and saves to assets/uploads/
-        try {
-          const res = await fetch('/api/upload', {
+      let mimeType = 'image/jpeg';
+      if (ext === 'png') mimeType = 'image/png';
+      else if (ext === 'webp') mimeType = 'image/webp';
+      else if (ext === 'svg') mimeType = 'image/svg+xml';
+      else if (ext === 'gif') mimeType = 'image/gif';
+      else mimeType = 'image/jpeg';
+
+      const cleanBase = (file.name || 'image')
+        .replace(/\.[^/.]+$/, '')
+        .replace(/[^a-zA-Z0-9_-]/g, '_')
+        .substring(0, 30);
+      const uniqueFilename = Date.now() + '_' + cleanBase + '.' + ext;
+
+      // Show immediate local preview
+      let immediatePreviewUrl = '';
+      try {
+        immediatePreviewUrl = URL.createObjectURL(file);
+      } catch (e) {
+        immediatePreviewUrl = '';
+      }
+      if (immediatePreviewUrl) {
+        updateSvcImgPreview(targetPreviewBoxId, immediatePreviewUrl, targetStatusId);
+      }
+
+      let finalUrl = null;
+      let uploadedToSupabase = false;
+
+      // 1. Direct browser upload to Supabase Storage bucket 'uploads'
+      try {
+        const supUploadUrl = SUPABASE_URL + '/storage/v1/object/uploads/' + encodeURIComponent(uniqueFilename);
+        const supRes = await fetch(supUploadUrl, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_KEY,
+            'Content-Type': mimeType,
+            'x-upsert': 'true'
+          },
+          body: file
+        });
+
+        if (supRes.ok) {
+          finalUrl = SUPABASE_URL + '/storage/v1/object/public/uploads/' + encodeURIComponent(uniqueFilename);
+          uploadedToSupabase = true;
+        } else {
+          const errText = await supRes.text().catch(() => '');
+          console.warn('Direct Supabase Storage upload failed:', supRes.status, errText);
+        }
+      } catch (supErr) {
+        console.warn('Direct Supabase Storage upload network warning:', supErr);
+      }
+
+      // 2. Also send to local Node backend /api/upload if running (syncs local assets/uploads/)
+      try {
+        const base64Data = await new Promise((resolve) => {
+          const r = new FileReader();
+          r.onload = () => resolve(r.result);
+          r.onerror = () => resolve(null);
+          r.readAsDataURL(file);
+        });
+
+        if (base64Data) {
+          const srvRes = await fetch('/api/upload', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ filename: file.name, data: base64Data })
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data.url) {
+            body: JSON.stringify({ filename: uniqueFilename, data: base64Data })
+          }).catch(() => null);
+
+          if (srvRes && srvRes.ok) {
+            const data = await srvRes.json().catch(() => ({}));
+            if (!finalUrl && data.url) {
               finalUrl = data.url;
-              if (data.storage === 'supabase_bucket' || String(data.url).includes('.supabase.co/storage/')) {
-                uploadedToSupabase = true;
-              }
             }
           }
-        } catch (uploadErr) {
-          console.warn('Local /api/upload endpoint unavailable, attempting direct Supabase Storage upload...', uploadErr);
         }
+      } catch (srvErr) {
+        console.warn('Local /api/upload warning:', srvErr);
+      }
 
-        // 2. Direct browser upload to Supabase Storage bucket 'uploads' as fallback
-        if (!uploadedToSupabase) {
-          try {
-            const cleanBase = (file.name || 'media').replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
-            const ext = file.name.substring(file.name.lastIndexOf('.')) || '.jpg';
-            const uniqueFilename = Date.now() + '_' + cleanBase + ext;
+      state.isUploading = false;
 
-            const supRes = await fetch(SUPABASE_URL + '/storage/v1/object/uploads/' + encodeURIComponent(uniqueFilename), {
-              method: 'POST',
-              headers: {
-                'apikey': SUPABASE_KEY,
-                'Authorization': 'Bearer ' + SUPABASE_KEY,
-                'Content-Type': file.type || 'image/jpeg',
-                'x-upsert': 'true'
-              },
-              body: file
-            });
-
-            if (supRes.ok) {
-              finalUrl = SUPABASE_URL + '/storage/v1/object/public/uploads/' + encodeURIComponent(uniqueFilename);
-              uploadedToSupabase = true;
-            }
-          } catch (supErr) {
-            console.warn('Direct Supabase Storage upload error:', supErr);
-          }
+      if (!finalUrl) {
+        if (st) {
+          st.textContent = 'Upload Failed';
+          st.className = 'badge badge-rose';
         }
+        showToast('Image upload failed. Please verify internet connectivity.', 'error');
+        return;
+      }
 
-        const hiddenInput = document.getElementById(targetHiddenInputId);
-        if (hiddenInput) hiddenInput.value = finalUrl;
+      const hiddenInput = document.getElementById(targetHiddenInputId);
+      if (hiddenInput) {
+        hiddenInput.value = finalUrl;
+      }
 
-        updateSvcImgPreview(targetPreviewBoxId, finalUrl, targetStatusId);
-        if (uploadedToSupabase) {
-          showToast('Image uploaded directly to Supabase Storage bucket!', 'success');
-        } else {
-          showToast('Media uploaded and saved locally.', 'success');
-        }
-      };
-      reader.readAsDataURL(file);
+      updateSvcImgPreview(targetPreviewBoxId, finalUrl, targetStatusId);
+      if (uploadedToSupabase) {
+        showToast('Image uploaded directly to Supabase Storage bucket!', 'success');
+      } else {
+        showToast('Image uploaded and saved locally.', 'success');
+      }
     }
 
     // Setup File Upload Listeners
@@ -1461,6 +1516,7 @@ module.exports = {
       svcFile1.addEventListener('change', function() {
         if (this.files && this.files[0]) {
           handleMediaUpload(this.files[0], 'svc-image-1', 'svc-image-1-preview', 'svc-image-1-status');
+          this.value = '';
         }
       });
     }
@@ -1468,15 +1524,22 @@ module.exports = {
       svcFile2.addEventListener('change', function() {
         if (this.files && this.files[0]) {
           handleMediaUpload(this.files[0], 'svc-image-2', 'svc-image-2-preview', 'svc-image-2-status');
+          this.value = '';
         }
       });
     }
 
-    // Drag and Drop on Dropzones
+    // Drag and Drop on Dropzones + Click to Open File Picker
     function setupDropzone(dropzoneId, fileInputId, hiddenInputId, previewId, statusId) {
       const dropzone = document.getElementById(dropzoneId);
       const fileInput = document.getElementById(fileInputId);
       if (!dropzone || !fileInput) return;
+
+      dropzone.addEventListener('click', function(e) {
+        if (e.target !== fileInput && !e.target.closest('button')) {
+          fileInput.click();
+        }
+      });
 
       dropzone.addEventListener('dragover', function(e) {
         e.preventDefault();
@@ -1624,6 +1687,12 @@ module.exports = {
     document.getElementById('service-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       clearModalError('service-modal-error');
+
+      if (state.isUploading) {
+        showModalError('service-modal-error', 'Please wait until photo upload completes before saving.');
+        return;
+      }
+
       const saveBtn = document.getElementById('btn-save-service');
       saveBtn.disabled = true;
       saveBtn.innerHTML = '<span>Saving Service...</span>';
@@ -1658,17 +1727,19 @@ module.exports = {
           if (q || a) faqs.push({ q, a });
         });
 
+        const targetId = id || slug || ('svc_' + Date.now());
+
         const servicePayload = {
-          id: id || ('svc_' + slug),
+          id: targetId,
           slug: slug,
           title: document.getElementById('svc-title').value.trim(),
           nav_title: document.getElementById('svc-nav-title').value.trim() || document.getElementById('svc-title').value.trim(),
           badge: document.getElementById('svc-badge').value.trim() || 'Solar Service',
           subtitle: document.getElementById('svc-subtitle').value.trim(),
           description: document.getElementById('svc-description').value.trim(),
-          image_1: document.getElementById('svc-image-1').value.trim(),
+          image_1: document.getElementById('svc-image-1').value.trim() || 'assets/svc-epc-1.jpg',
           image_1_caption: document.getElementById('svc-image-1-caption').value.trim(),
-          image_2: document.getElementById('svc-image-2').value.trim(),
+          image_2: document.getElementById('svc-image-2').value.trim() || 'assets/svc-epc-2.jpg',
           image_2_caption: document.getElementById('svc-image-2-caption').value.trim(),
           offers_heading: document.getElementById('svc-offers-heading').value.trim() || 'What We Offer',
           offers: offers,
@@ -1683,30 +1754,49 @@ module.exports = {
           is_active: document.getElementById('svc-is-active').checked
         };
 
+        let supabaseOk = false;
+        let serverOk = false;
+        let lastError = null;
+
         // 1. Save to Supabase
-        if (id) {
-          await supabaseQuery(\`/rest/v1/services?id=eq.\${encodeURIComponent(id)}\`, {
-            method: 'PATCH',
-            body: servicePayload
-          }).catch(err => console.warn('Supabase patch failed, relying on local sync:', err));
-        } else {
-          await supabaseQuery('/rest/v1/services', {
-            method: 'POST',
-            body: [servicePayload]
-          }).catch(err => console.warn('Supabase insert failed, relying on local sync:', err));
+        try {
+          if (id) {
+            await supabaseQuery(\`/rest/v1/services?id=eq.\${encodeURIComponent(id)}\`, {
+              method: 'PATCH',
+              headers: { 'Prefer': 'return=representation' },
+              body: servicePayload
+            });
+          } else {
+            await supabaseQuery('/rest/v1/services', {
+              method: 'POST',
+              headers: { 'Prefer': 'return=representation' },
+              body: [servicePayload]
+            });
+          }
+          supabaseOk = true;
+        } catch (supErr) {
+          console.warn('Supabase service save warning:', supErr);
+          lastError = supErr;
         }
 
         // 2. Save to local server API
-        const endpoint = id ? '/api/services/update' : '/api/services/create';
-        const serverRes = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(servicePayload)
-        }).catch(() => null);
+        try {
+          const endpoint = id ? '/api/services/update' : '/api/services/create';
+          const serverRes = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(servicePayload)
+          });
+          if (serverRes && serverRes.ok) {
+            serverOk = true;
+          }
+        } catch (srvErr) {
+          console.warn('Local API service save warning:', srvErr);
+        }
 
-        if (serverRes && !serverRes.ok) {
-          const errData = await serverRes.json().catch(() => ({}));
-          throw new Error(errData.message || 'Server error occurred');
+        // If both failed, throw error
+        if (!supabaseOk && !serverOk && lastError) {
+          throw new Error(lastError.message || 'Unable to save service changes to server or Supabase.');
         }
 
         // Update local state
