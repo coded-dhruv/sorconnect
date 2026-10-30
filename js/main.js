@@ -2480,10 +2480,24 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           } else if (el.tagName === 'A') {
             if (field === 'href') {
-              if (item.stat_suffix) el.href = item.stat_suffix;
-              else if (targetVal) el.href = targetVal;
+              if (item.stat_suffix) {
+                el.href = item.stat_suffix;
+              } else if (targetVal) {
+                if (targetVal.startsWith('http') || targetVal.startsWith('tel:') || targetVal.startsWith('mailto:') || targetVal.startsWith('#')) {
+                  el.href = targetVal;
+                } else if (item.id && item.id.includes('phone')) {
+                  el.href = 'tel:' + targetVal.replace(/\s+/g, '');
+                } else if (item.id && item.id.includes('email')) {
+                  el.href = 'mailto:' + targetVal.trim();
+                } else {
+                  el.href = targetVal;
+                }
+              }
             } else {
-              if (targetVal !== undefined && targetVal !== null) el.textContent = targetVal;
+              // Crucial guard: Only replace textContent if the anchor tag is a leaf node (has no child elements like icons/spans)
+              if (el.children.length === 0 && targetVal !== undefined && targetVal !== null) {
+                el.textContent = targetVal;
+              }
               if (suffix && (suffix.startsWith('http') || suffix.startsWith('tel:') || suffix.startsWith('mailto:') || suffix.startsWith('#') || suffix.endsWith('.html'))) {
                 el.href = suffix;
               }

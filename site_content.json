@@ -334,8 +334,8 @@
     "section": "contact_global",
     "section_name": "Company Contact Details & Global Info",
     "label": "Primary Contact Phone",
-    "stat_value": "+91 80066 69001",
-    "stat_suffix": "tel:+918006669001",
+    "stat_value": "+91 7976990000",
+    "stat_suffix": "tel:+917976990000",
     "description": "Main business telephone number displayed in header & contact page",
     "display_order": 34
   },
@@ -343,10 +343,10 @@
     "id": "contact_phone_alt",
     "section": "contact_global",
     "section_name": "Company Contact Details & Global Info",
-    "label": "Secondary Phone / WhatsApp",
-    "stat_value": "+91 80066 69002",
-    "stat_suffix": "https://wa.me/918006669002",
-    "description": "Direct WhatsApp & support telephone number",
+    "label": "Secondary Phone / Branch",
+    "stat_value": "+91 63060 10000",
+    "stat_suffix": "tel:+916306010000",
+    "description": "Agra regional branch telephone number",
     "display_order": 35
   },
   {
@@ -374,7 +374,7 @@
     "section": "contact_global",
     "section_name": "Company Contact Details & Global Info",
     "label": "Headquarters Address",
-    "stat_value": "Plot No. 42, Sector 125, Expressway, Noida, Uttar Pradesh, India - 201303",
+    "stat_value": "F-02, P.No. 3/410, Sector 3, Chitrakoot, Vaishali Nagar, Jaipur, Rajasthan - 302021",
     "stat_suffix": "",
     "description": "Full corporate registered office address",
     "display_order": 38
@@ -384,7 +384,7 @@
     "section": "contact_global",
     "section_name": "Company Contact Details & Global Info",
     "label": "Working Hours & Schedule",
-    "stat_value": "Monday – Saturday: 9:00 AM – 6:30 PM IST",
+    "stat_value": "Monday – Saturday: 9:30 AM – 6:30 PM IST",
     "stat_suffix": "",
     "description": "Operating hours displayed on contact page & footer",
     "display_order": 39
@@ -403,10 +403,10 @@
     "id": "social_instagram",
     "section": "contact_global",
     "section_name": "Company Contact Details & Global Info",
-    "label": "Instagram Profile URL",
-    "stat_value": "https://instagram.com/sorconnect",
-    "stat_suffix": "Instagram",
-    "description": "Official Instagram profile link",
+    "label": "Instagram Handle / Profile",
+    "stat_value": "@sor.connect",
+    "stat_suffix": "https://www.instagram.com/sor.connect?cplk=ZDNlZDc0MzIxNw==",
+    "description": "Official Instagram profile handle and URL link",
     "display_order": 41
   },
   {

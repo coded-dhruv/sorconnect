@@ -5184,23 +5184,31 @@ footer.site-footer .container { position: relative; }
 
 .contact-channels-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1200px) {
+  .contact-channels-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 860px) {
   .contact-channels-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: 14px;
   }
   .contact-channels-strip {
     margin-top: -30px;
   }
 }
 
-@media (max-width: 580px) {
+@media (max-width: 540px) {
   .contact-channels-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
   .contact-channels-strip {
     margin-top: -20px;
