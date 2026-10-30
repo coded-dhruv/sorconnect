@@ -52,46 +52,14 @@ This web platform serves as Sor Connect's digital headquarters: capturing high-i
 
 The platform operates on a **Decoupled Dual-Tier Hybrid Architecture**, combining ultra-fast, pre-rendered semantic HTML5 client interfaces with a cloud PostgreSQL datastore (Supabase) and local JSON failover synchronization.
 
-```mermaid
-flowchart TD
-    Visitor([Web Visitor / Industrial Client])
-    AdminUser([Company Administrator])
-
-    subgraph EdgeTier ["Edge Routing & CDN (Vercel)"]
-        CleanRouter["Clean URL & 301 Router (vercel.json)"]
-        EdgeNodes["Edge Cache & SSL Termination"]
-    end
-
-    subgraph AppTier ["Application & Compute Tier"]
-        StaticHTML["Semantic HTML5 Pages (index, services, projects...)"]
-        NodeServer["Node.js HTTP/HTTPS Server (server.js)"]
-        AdminCompiled["Single-File Admin Portal (admprtl.html)"]
-    end
-
-    subgraph PersistenceTier ["Data & Object Storage Tier"]
-        subgraph CloudStorage ["Primary: Supabase Cloud"]
-            PG[(PostgreSQL DB: 8 Tables)]
-            Buckets[("Storage: 'uploads' Bucket")]
-        end
-        subgraph LocalFailover ["Secondary: Local Disk Failover"]
-            JSONFiles[("Flat JSON Files: submissions, careers, projects...")]
-        end
-    end
-
-    Visitor --> EdgeNodes
-    EdgeNodes --> CleanRouter
-    CleanRouter --> StaticHTML
-    StaticHTML -->|Live Hydration via REST| PG
-    StaticHTML -->|Form Leads & CV Uploads| NodeServer
-
-    NodeServer -->|Dual Write| PG
-    NodeServer -->|Dual Write| Buckets
-    NodeServer -->|Local Backup Write| JSONFiles
-
-    AdminUser --> AdminCompiled
-    AdminCompiled -->|Direct PostgREST CRUD| PG
-    AdminCompiled -->|Upload Media| Buckets
-```
+| Architecture Layer | Component Name | Runtime Responsibilities | Primary Protocol |
+|---|---|---|---|
+| **Edge & CDN Routing** | Vercel Global Edge (`vercel.json`) | SSL termination, clean URLs (strips `.html`), and 301 canonical redirects. | HTTPS (Port 443), TLS 1.3 |
+| **Compute & Microservices** | Node.js Runtime (`server.js`) | API request routing, body parsing, multipart resume uploads, and local failover sync. | HTTP REST, JSON |
+| **Compiled Admin Console** | Production Admin (`admprtl.html`) | Single-file management dashboard controlling all 8 website modules. | Standalone HTML/JS |
+| **Primary Cloud Persistence** | Supabase Cloud PostgreSQL | Authoritative relational database with 8 core tables protected by Row-Level Security. | PostgREST HTTPS API |
+| **Cloud Object Storage** | Supabase Storage (`uploads` bucket) | High-speed CDN repository for project photography and candidate resumes. | S3-compatible REST API |
+| **Local Disk Failover** | Flat JSON Storage (`*.json`) | Immutable disk backups ensuring zero inquiry loss during network outages. | Local File System (Node.js `fs`) |
 
 > 📖 **Deep Dive Document:** [docs/02-system-architecture.md](docs/02-system-architecture.md)
 
@@ -207,15 +175,16 @@ The administrative console is accessed at **`https://www.sorconnect.in/admprtl`*
 - **Row-Level Security (RLS):** Enabled on all tables. Public visitors have `SELECT` on public content and `INSERT` on lead forms.
 - **Storage Buckets:** Dedicated public bucket **`uploads`** with 10MB file limit and MIME-type enforcement for images and resume documents.
 
-```mermaid
-erDiagram
-    CATEGORIES ||--o{ PROJECTS : "categorizes"
-    CATEGORIES { bigint id PK, text name, text slug }
-    PROJECTS { bigint id PK, text title, text client, text capacity, text image, bigint category_id FK }
-    SUBMISSIONS { bigint id PK, text name, text whatsapp, text monthly_bill, text status }
-    CAREERS { bigint id PK, text name, text phone, text email, text position, text resume_url }
-    ABOUT_GALLERY { bigint id PK, text title, text subtitle, text image, int display_order }
-```
+| Database Table | Primary Key | Key Attributes Stored | Relationships & Constraints |
+|---|---|---|---|
+| `public.categories` | `id` (BigInt) | `name`, `slug`, `description` | Referenced by `projects.category_id`. |
+| `public.projects` | `id` (BigInt) | `title`, `client`, `capacity`, `location`, `image` | Foreign key `category_id &rarr; categories.id`. |
+| `public.submissions` | `id` (BigInt) | `name`, `whatsapp`, `monthly_bill`, `pincode`, `status` | Lead capture store; indexed by `created_at DESC`. |
+| `public.careers` | `id` (BigInt) | `name`, `phone`, `email`, `position`, `resume_url`, `status` | Stores candidate profiles & CV download links. |
+| `public.about_gallery`| `id` (BigInt) | `title`, `subtitle`, `badge`, `image`, `display_order` | Powers the About Us plant photo slider. |
+| `public.awards` | `id` (BigInt) | `title`, `badge`, `image`, `description`, `display_order` | Company achievements & green accolades. |
+| `public.services` | `id` (BigInt) | `title`, `short_desc`, `features`, `image`, `display_order` | Services breakdown cards on `/services`. |
+| `public.partners` | `id` (BigInt) | `name`, `logo`, `category`, `display_order` | Technology partners (Sungrow, Reliance, Waree). |
 
 > 📖 **Deep Dive Document:** [docs/07-database-schema.md](docs/07-database-schema.md)
 

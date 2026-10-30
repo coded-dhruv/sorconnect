@@ -20,18 +20,12 @@ To guarantee 99.9% uptime, zero lead loss, and peak search visibility, operation
 
 The platform maintains a **triple-redundant backup architecture**:
 
-```mermaid
-graph TD
-    PrimaryDB[(Supabase PostgreSQL)]
-    StorageBucket[(Supabase Storage: 'uploads')]
-    LocalJSON[(Local JSON Files: projects, submissions, etc.)]
-    GitRepo[(GitHub Repository)]
-    
-    PrimaryDB -.->|Automated Daily Snapshot| CloudBackup[(Supabase Cloud PITR)]
-    PrimaryDB -->|1-Click Manual Sync| LocalJSON
-    LocalJSON -->|git commit & push| GitRepo
-    StorageBucket -.->|Manual Archive Download| OfflineMedia[(Secure Hard Drive)]
-```
+| Backup Tier | Target Data Store | Backup Mechanism & Location | Frequency & Retention | Recovery Time (RTO) |
+|---|---|---|---|---|
+| **Tier 1: Cloud PITR** | Primary Supabase PostgreSQL | Automated continuous WAL snapshots in Supabase Cloud. | Daily rolling snapshots with 7 to 30 day point-in-time recovery. | < 10 Minutes |
+| **Tier 2: Local JSON Sync** | 8 Core Entity Datastores | One-click `/api/sync/supabase` pulls tables to root `*.json` files. | Executed monthly or prior to major marketing campaigns. | Instantaneous |
+| **Tier 3: Git Version Control** | Local JSON & Code Base | `git commit` and push to GitHub repository. | Permanent commit history. | < 5 Minutes |
+| **Tier 4: Standalone SQL Dump** | Entire Database Cluster | Manual `pg_dump` CLI utility exported to encrypted offline archive. | Recommended quarterly. | < 15 Minutes |
 
 ### 2.1 Automated Cloud Backups (Supabase)
 - **Point-in-Time Recovery (PITR):** Supabase automatically snapshots the entire database on a continuous basis.

@@ -2,24 +2,14 @@
 
 ## 1. Quick Diagnostic Decision Tree
 
-```mermaid
-flowchart TD
-    Problem[System Anomaly Detected] --> Cat{Identify Category}
-    
-    Cat -->|Admin Portal Error| AdminTree[Check Admin Issues]
-    Cat -->|Public Form Failure| FormTree[Check Form / API Issues]
-    Cat -->|404 / Missing Page| RouteTree[Check Edge & Clean URLs]
-    Cat -->|Images Broken / Blank| ImageTree[Check Storage & Assets]
-
-    AdminTree --> A1["PGRST205 Table Missing? &rarr; See Section 2.1"]
-    AdminTree --> A2["Login Fails / Denied? &rarr; See Section 2.2"]
-    
-    FormTree --> F1["Timeout / 500 Error? &rarr; See Section 2.3"]
-    FormTree --> F2["CV Upload Rejected? &rarr; See Section 2.4"]
-    
-    RouteTree --> R1["404 on Subpage Refresh? &rarr; See Section 2.5"]
-    ImageTree --> I1["Bucket URL 404? &rarr; See Section 2.6"]
-```
+| Symptom / Observed Anomaly | Primary Suspect Area | First Action to Take | Detailed Resolution Section |
+|---|---|---|---|
+| **Admin table fails with PGRST205** | Supabase table cache mismatch | Run SQL table creation script in Supabase SQL editor. | [Section 2.1: Missing Table Cache](#21-scenario-supabase-404-pgrst205---could-not-find-table-publiccarousel_slides) |
+| **Login fails with "Invalid credentials"** | Admin auth verification | Confirm username/password in `server.js` and verify browser `localStorage`. | [Section 2.2: Admin Login Denied](#22-scenario-admin-portal-login-fails-invalid-credentials) |
+| **Form shows loading spinner or timeout** | API endpoint / Server offline | Inspect network response to `POST /api/contact` in browser DevTools. | [Section 2.3: Form Submission Timeout](#23-scenario-customer-form-submission-fails-or-times-out) |
+| **Resume upload rejected in Careers** | File size / MIME validation | Ensure file is a PDF/DOC document under 10 MB. | [Section 2.4: Resume Upload Rejected](#24-scenario-resume-upload-rejected-in-careers-portal) |
+| **404 Not Found on browser refresh** | Web server clean URL routing | Check `cleanUrls: true` in `vercel.json` or Nginx `try_files`. | [Section 2.5: Subpage 404 on Refresh](#25-scenario-404-error-when-refreshing-subpages-eg-services) |
+| **Project or gallery photo displays broken** | Cloud storage bucket permissions | Confirm that Supabase `uploads` bucket is set to Public. | [Section 2.6: Broken Image Placeholders](#26-scenario-project-images-fail-to-render-broken-image-icon) |
 
 ---
 

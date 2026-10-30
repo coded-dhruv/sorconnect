@@ -43,13 +43,12 @@ Once running, access the local environments:
 > `admprtl.html` is a compiled production artifact. If you edit it directly, your changes will be completely erased the next time `build_admprtl.js` is executed.
 
 ### Correct Workflow for Admin Portal Modifications:
-```mermaid
-flowchart LR
-    Source1[admin_templates.js: Form HTML] --> Compiler[build_admprtl.js]
-    Source2[admin_client.js: Controller JS] --> Compiler
-    Source3[admin_styles.js: CSS Tokens] --> Compiler
-    Compiler -->|node build_admprtl.js| Output[admprtl.html]
-```
+| Source File | Content Managed | Build Script Role | Generated Artifact |
+|---|---|---|---|
+| `admin_templates.js` | Form HTML, modals, sidebar navigation, table shells. | Assembled as HTML structure strings by `build_admprtl.js`. | Included directly in compiled `admprtl.html`. |
+| `admin_client.js` | Client state, CRUD REST handlers, search filters, DOM rendering. | Injected into `<script>` tag by `build_admprtl.js`. | Included directly in compiled `admprtl.html`. |
+| `admin_styles.js` | Shadcn-inspired CSS variables, sidebar layouts, modal styles. | Injected into `<style>` tag by `build_admprtl.js`. | Included directly in compiled `admprtl.html`. |
+| **Compiler Script** | `node build_admprtl.js` | Reads all 3 source files and writes standalone output. | **`admprtl.html`** (Production ready) |
 
 1. **To modify form layouts, panels, or modals:** Edit `admin_templates.js`.
 2. **To modify client logic, REST queries, or table rendering:** Edit `admin_client.js`.

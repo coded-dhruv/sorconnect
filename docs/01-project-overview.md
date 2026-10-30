@@ -58,33 +58,18 @@ The Sor Connect web platform was engineered to serve four primary business manda
 
 ## 6. Complete Technology Stack
 
-```mermaid
-graph TD
-    subgraph ClientLayer ["Frontend / Client Layer"]
-        HTML["Semantic HTML5 (No SSR framework overhead)"]
-        CSS["Custom CSS3 Design System (--forest, --leaf, --ink)"]
-        JS["Vanilla ES6+ Client Engine (js/main.js)"]
-        GSAP["GSAP 3.12.5 + ScrollTrigger (CDN)"]
-    end
-
-    subgraph ServerLayer ["Backend & Edge Layer"]
-        Vercel["Vercel Edge Platform (Clean URLs, 301 Redirects)"]
-        NodeServer["Node.js HTTP/HTTPS Server (server.js)"]
-        AdminCompiler["Admin Template Engine (build_admprtl.js)"]
-    end
-
-    subgraph DataLayer ["Data & Storage Layer"]
-        SupabaseDB["Supabase PostgreSQL (8 Core Tables)"]
-        SupabaseStorage["Supabase Storage Bucket ('uploads')"]
-        LocalJSON["Local Flat-File Failover (*.json)"]
-    end
-
-    ClientLayer --> Vercel
-    Vercel --> NodeServer
-    NodeServer --> SupabaseDB
-    NodeServer --> SupabaseStorage
-    NodeServer --> LocalJSON
-```
+| Architecture Layer | Technology Component | Purpose & Implementation Details |
+|---|---|---|
+| **Frontend / Client Layer** | Semantic HTML5 | Pure semantic markup ensuring instant rendering and 100% search crawler parseability without SSR overhead. |
+| | Custom CSS3 System | Native CSS Custom Properties (`--forest`, `--leaf`, `--ink`) delivering responsive flex/grid layouts. |
+| | Vanilla ES6+ Engine (`js/main.js`) | Client interactivity, modal controls, and asynchronous Supabase data fetching with zero framework bloat. |
+| | GSAP 3.12.5 + ScrollTrigger | High-performance hardware-accelerated scroll reveals, statistics tickers, and magnetic buttons. |
+| **Backend & Edge Layer** | Vercel Edge Platform | Global CDN routing, automated TLS certificates, clean URLs, and permanent 301 redirects. |
+| | Node.js Server (`server.js`) | Lightweight HTTP/HTTPS runtime handling REST endpoints, file uploads, and dual-tier sync. |
+| | Admin Compiler (`build_admprtl.js`) | Node.js build script compiling modular templates and styles into a standalone `admprtl.html`. |
+| **Data & Storage Layer** | Supabase PostgreSQL | Relational cloud database hosting 8 production tables with Row-Level Security (RLS) enforcement. |
+| | Supabase Storage (`uploads`) | Public cloud object storage bucket for project photography, partner logos, and candidate CVs. |
+| | Local JSON Storage (`*.json`) | Resilient flat-file failover datastores preventing inquiry loss during network interruptions. |
 
 ### Detailed Component Inventory:
 

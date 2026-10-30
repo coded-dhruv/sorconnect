@@ -4,21 +4,13 @@
 
 The Sor Connect website is hosted on **Vercel's Global Edge Network**, providing sub-second edge routing, automated SSL certificate generation, and continuous CI/CD deployment linked to the project's GitHub repository.
 
-```mermaid
-flowchart LR
-    Dev([Developer / Git Push]) -->|git push origin main| GitHub[(GitHub Repository)]
-    GitHub -->|Webhook Trigger| VercelBuild[Vercel Edge CI/CD Pipeline]
-    
-    subgraph VercelEdge ["Vercel Global Edge Network"]
-        VercelBuild --> CDN1[Edge Region: Mumbai BOM1]
-        VercelBuild --> CDN2[Edge Region: Delhi DEL1]
-        VercelBuild --> CDN3[Global Fallback Nodes]
-    end
-    
-    User([End User / Client]) -->|DNS Lookup: sorconnect.in| Route53[Anycast DNS]
-    Route53 --> CDN1
-    Route53 --> CDN2
-```
+| Pipeline Stage | Responsible System | Action & Operational Details | Output / Verification |
+|---|---|---|---|
+| **1. Code Commit & Push** | Developer Workstation | `git push origin main` | Pushes version-controlled commits to GitHub repository. |
+| **2. Webhook Event** | GitHub | Dispatches automated build webhook to Vercel. | GitHub webhook logs HTTP 200 payload delivery. |
+| **3. Edge Build & Validation** | Vercel CI/CD Build Engine | Parses `vercel.json`, verifies static HTML/CSS/JS syntax, and generates edge routing tables. | Build artifact compiled in ~15-25 seconds. |
+| **4. Edge Distribution** | Vercel Global Anycast CDN | Distributes assets across global edge nodes (including Mumbai BOM1 & Delhi DEL1). | Sub-second latency for Indian visitors with automated TLS 1.3 encryption. |
+| **5. DNS Resolution** | Anycast DNS (Registrar) | Resolves `sorconnect.in` to `76.76.21.21` and `www` to `cname.vercel-dns.com`. | Connects end-users to the closest geographic edge server. |
 
 ---
 

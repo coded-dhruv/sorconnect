@@ -12,22 +12,14 @@ An exhaustive technical audit of the Sor Connect platform was conducted covering
 
 ## 2. Technical Debt Findings & Risk Matrix
 
-```mermaid
-quadrantChart
-    title Technical Debt: Impact vs Effort
-    x-axis Low Effort --> High Effort
-    y-axis Low Impact --> High Impact
-    quadrant-1 Strategic Refactoring
-    quadrant-2 High Priority Quick Wins
-    quadrant-3 Low Priority Backlog
-    quadrant-4 Architectural Evolution
-    "Env Credential Isolation": [0.25, 0.85]
-    "Security Headers in Vercel": [0.15, 0.65]
-    "Compress Raw JPEG Assets": [0.35, 0.70]
-    "Modularize server.js": [0.65, 0.60]
-    "Implement DB Pagination": [0.75, 0.45]
-    "Remove Legacy WhatsApp Images": [0.20, 0.30]
-```
+| Initiative | Technical Debt Category | Effort Level | Business Impact | Priority Quadrant |
+|---|---|---|---|---|
+| **Environment Credential Isolation** | Security Hardening | Low Effort | High Impact | **Immediate Quick Win** |
+| **Security Headers in Vercel** | Security Hardening | Low Effort | Medium Impact | **Immediate Quick Win** |
+| **Compress Raw JPEG Assets** | Performance / Web Vitals | Low-Medium Effort | High Impact | **Strategic Improvement** |
+| **Modularize `server.js`** | Code Maintainability | Medium Effort | Medium Impact | **Planned Evolution** |
+| **Implement DB Pagination** | Scalability | Medium-High Effort | Medium Impact | **Future Phase** |
+| **Prune Legacy Media Files** | Repository Hygiene | Low Effort | Low Impact | **Maintenance Backlog** |
 
 ---
 

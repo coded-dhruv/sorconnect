@@ -4,44 +4,13 @@
 
 The Sor Connect platform employs a **Hybrid Dual-Tier Decoupled Architecture**. It pairs pre-rendered, high-performance static HTML5 client interfaces with an asynchronous cloud datastore (Supabase PostgreSQL & Object Storage) and a self-healing local failover engine.
 
-```mermaid
-flowchart TD
-    User([End User Browser])
-    Admin([Administrator Browser])
-    
-    subgraph EdgeLayer ["Edge & Routing Layer (Vercel / Node.js)"]
-        Router["Clean URL & 301 Router (vercel.json / server.js)"]
-        StaticAssets["Static File Engine (HTML, CSS, JS, Media)"]
-        APIProxy["Lightweight API Engine (/api/*)"]
-    end
-
-    subgraph DataPlane ["Persistence & Storage Layer"]
-        subgraph PrimaryStorage ["Primary Cloud Tier (Supabase)"]
-            PostgreSQL[(Supabase PostgreSQL DB)]
-            StorageBucket[("Supabase Storage: 'uploads' Bucket")]
-        end
-        
-        subgraph SecondaryStorage ["Secondary Local Tier (Failover)"]
-            JSONFiles[("Local JSON Files: submissions, careers, projects, etc.")]
-        end
-    end
-
-    User -->|1. Request HTML/Assets| Router
-    Router --> StaticAssets
-    User -->|2. Async Client Fetch (Projects, Services)| PostgreSQL
-    User -->|3. Form Submission (Lead/Quote)| APIProxy
-    User -->|4. Career Apply with CV| APIProxy
-    
-    APIProxy -->|Dual Write| PostgreSQL
-    APIProxy -->|Dual Write| StorageBucket
-    APIProxy -->|Local Backup Write| JSONFiles
-    
-    Admin -->|Login & Dashboard Access| Router
-    Admin -->|CRUD Operations via REST| PostgreSQL
-    Admin -->|Fallback Sync| JSONFiles
-    
-    PostgreSQL -.->|Automated /api/sync| JSONFiles
-```
+| Architectural Tier | Primary Components | Functional Responsibilities | Communication Protocol |
+|---|---|---|---|
+| **Edge & Routing Tier** | Vercel Global Edge & Router (`vercel.json`) | Serves pre-compressed static assets, strips `.html` extensions via clean URLs, and executes 301 canonical redirects. | HTTPS (Port 443), TLS 1.3 |
+| **Compute & API Tier** | Node.js Runtime (`server.js`) | Lightweight REST endpoints (`/api/*`), body parsing, multipart resume streaming, and local disk synchronization. | HTTP/HTTPS REST, JSON |
+| **Primary Cloud Datastore** | Supabase Cloud (PostgreSQL 15+) | Authoritative relational database hosting 8 production tables protected by PostgreSQL Row-Level Security (RLS). | PostgREST HTTPS API (`/rest/v1/*`) |
+| **Primary Cloud Media** | Supabase Storage (`uploads` bucket) | Object storage repository for candidate PDF resumes, high-res project photography, and partner logos. | Supabase S3-compatible Storage API |
+| **Secondary Local Failover** | Local Flat JSON Files (`*.json`) | Immutable disk backups (`submissions.json`, `careers.json`, etc.) that ingest leads and applications if cloud connectivity is interrupted. | Local File System (Node.js `fs`) |
 
 ---
 
@@ -63,59 +32,24 @@ To eliminate the single-point-of-failure risk typical of cloud databases, the sy
 
 ### 3.1 Contact Form & Lead Capture Flow
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Customer as Website Visitor
-    participant Browser as Client Browser (js/main.js)
-    participant Server as Node.js Backend (/api/contact)
-    participant LocalDB as Local Disk (submissions.json)
-    participant Supabase as Supabase Cloud (submissions table)
-
-    Customer->>Browser: Fills Contact or Quick Quote Modal Form
-    Browser->>Browser: Validate Inputs (Phone regex, required fields)
-    Browser->>Server: HTTP POST /api/contact (JSON payload)
-    
-    Server->>LocalDB: Read existing submissions.json
-    Server->>LocalDB: Prepend new submission record & write to disk
-    
-    rect rgb(240, 255, 240)
-        Note over Server,Supabase: Asynchronous Cloud Persistence
-        Server->>Supabase: HTTPS POST /rest/v1/submissions
-        Supabase-->>Server: 201 Created (or Error logged without blocking user)
-    end
-    
-    Server-->>Browser: HTTP 200 { success: true, message: "..." }
-    Browser->>Customer: Display Success Confirmation & Optional WhatsApp CTA
-```
+| Step # | Origin | Destination | Action & Payload Details | Failure Handling / Resilience |
+|---|---|---|---|---|
+| **1** | Website Visitor | Browser Client | Fills Contact form or Quick Quote Modal with name, phone, bill, pincode, and note. | Browser validates 10-digit phone pattern and required fields. |
+| **2** | Browser Client | Node.js Backend (`server.js`) | Submits `POST /api/contact` with JSON body payload. | Returns HTTP 200 immediately once accepted into processing queue. |
+| **3** | Node.js Backend | Local Disk (`submissions.json`) | Reads existing JSON, unshifts new submission, writes synchronously to disk. | Guarantees lead is safely captured on local server disk first. |
+| **4** | Node.js Backend | Supabase PostgreSQL (`submissions`) | Asynchronously dispatches `POST /rest/v1/submissions` via HTTPS using Supabase REST API. | If Supabase is slow or unreachable, error is logged without blocking the user. |
+| **5** | Browser Client | Website Visitor | Displays green success toast and initiates optional one-click WhatsApp handoff. | Visitor sees instant confirmation with zero screen reload. |
 
 ### 3.2 Careers Application & Resume Upload Flow
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Candidate as Job Applicant
-    participant Browser as Client Browser (js/main.js)
-    participant Server as Node.js Backend (/api/careers/apply)
-    participant Bucket as Supabase Storage ('uploads')
-    participant DB as Supabase PostgreSQL (careers table)
-    participant LocalDB as Local Disk (careers.json)
-
-    Candidate->>Browser: Selects file (PDF/DOCX) & submits application
-    Browser->>Browser: Enforce file size (<10MB) & MIME type
-    Browser->>Server: HTTP POST /api/careers/apply (Multipart/JSON)
-    
-    alt File Attached
-        Server->>Bucket: Upload Buffer to /storage/v1/object/uploads/resumes/{timestamp}_{filename}
-        Bucket-->>Server: Return Public Resume URL
-    end
-    
-    Server->>DB: INSERT into careers table with resume_url
-    Server->>LocalDB: Update careers.json with full application record
-    
-    Server-->>Browser: HTTP 200 { success: true, applicationId: "..." }
-    Browser->>Candidate: Display green confirmation toast & reset form
-```
+| Step # | Origin | Destination | Action & Payload Details | Validation & Safeguards |
+|---|---|---|---|---|
+| **1** | Job Candidate | Browser Client | Selects PDF/DOC resume (<10MB) and fills target position, experience, and contact info. | Client validates file extension, file size, and mandatory contact fields. |
+| **2** | Browser Client | Node.js Backend (`server.js`) | Submits `POST /api/careers/apply` with multipart or base64 payload. | Validates payload integrity and extracts resume buffer. |
+| **3** | Node.js Backend | Supabase Storage (`uploads`) | Streams file buffer to `/storage/v1/object/uploads/resumes/{timestamp}_{filename}`. | Enforces 10MB limit and generates public HTTPS download URL. |
+| **4** | Node.js Backend | Supabase PostgreSQL (`careers`) | Executes `INSERT INTO careers` storing applicant details and generated `resume_url`. | Record indexed by creation date for rapid admin retrieval. |
+| **5** | Node.js Backend | Local Disk (`careers.json`) | Appends complete application object to local backup file. | Preserves offline backup copy of candidate record. |
+| **6** | Node.js Backend | Browser Client | Returns HTTP 200 `{ success: true, applicationId: ... }`. | Candidate receives confirmation toast and modal closes. |
 
 ---
 
@@ -140,38 +74,13 @@ The frontend utilizes a **progressive enhancement model**:
 
 ## 5. Security Boundaries & Network Architecture
 
-```mermaid
-graph LR
-    subgraph PublicZone ["Public Network (Untrusted)"]
-        PublicUser["Public Web Visitor"]
-    end
-
-    subgraph EdgeBoundary ["Edge & DMZ (Vercel / Cloudflare)"]
-        CDN["Global Edge CDN & SSL Termination"]
-        HeaderSec["Security Headers & Clean URL Engine"]
-    end
-
-    subgraph ComputeZone ["Application Server"]
-        NodeApp["Node.js Application (server.js)"]
-        AdminPortal["Admin Console (/admprtl)"]
-    end
-
-    subgraph DataZone ["Protected Data Perimeter"]
-        SupaPostgres[("Supabase DB (RLS Protected)")]
-        SupaBuckets[("Supabase Storage ('uploads')")]
-        LocalFiles[("Local JSON Files (Internal Disk)")]
-    end
-
-    PublicUser -->|HTTPS :443| CDN
-    CDN --> HeaderSec
-    HeaderSec --> NodeApp
-    
-    NodeApp -->|API Key (Anon with RLS)| SupaPostgres
-    NodeApp -->|API Key| SupaBuckets
-    NodeApp -->|File System IO| LocalFiles
-    
-    AdminPortal -.->|Token Authentication| NodeApp
-```
+| Security Zone | Boundary Component | Network Policy & Access Controls | Threat Mitigation |
+|---|---|---|---|
+| **Public Zone (Untrusted)** | Web Visitor Browser | HTTPS on Port 443 only. All HTTP traffic auto-upgraded to TLS 1.3 at edge. | Prevents packet sniffing and man-in-the-middle tampering. |
+| **Edge Boundary (DMZ)** | Vercel Global Edge & Clean URL Engine | Edge-level routing, DDoS absorption, and request normalization. | Blocks malformed URL attacks and isolates backend compute. |
+| **Application Server** | Node.js Runtime (`server.js`) | Localhost execution, memory stream limits on file uploads, and session token verification on `/admprtl`. | Prevents unauthorized admin execution and denial of service. |
+| **Protected Data Perimeter** | Supabase PostgreSQL & Cloud Storage | PostgreSQL Row-Level Security (RLS) policies; public client possesses only `anon` role keys; direct table modification denied. | Prevents unauthorized database tampering or private record access. |
+| **Internal Disk Perimeter** | Local Server File System (`*.json`) | Read/write strictly restricted to the Node.js process user; never exposed directly via public web roots. | Protects local inquiry backups from public enumeration. |
 
 ### Security Isolation Layers:
 - **Client-to-Database:** Client browsers never receive service-role database keys. All direct client queries use the public `anon` JWT key, strictly limited by PostgreSQL Row-Level Security policies.

@@ -10,16 +10,14 @@
 
 ## 2. Authentication & Session Management
 
-```mermaid
-stateDiagram-v2
-    [*] --> LoggedOut: Visit /admprtl
-    LoggedOut --> Authenticating: Submit Username & Password
-    Authenticating --> LoggedIn: Valid Credentials
-    Authenticating --> ErrorState: Invalid Credentials
-    ErrorState --> LoggedOut: Display error message
-    LoggedIn --> ViewingPanels: Navigate Sidebar
-    LoggedIn --> LoggedOut: Click "Sign Out" or Clear Storage
-```
+| Authentication State | Trigger / User Action | System Response & State Transition |
+|---|---|---|
+| **Logged Out** | User visits `/admprtl` | Checks `localStorage` for `sorconnect_auth_token`. If absent, renders Login Form overlay. |
+| **Authenticating** | User submits username & password | Validates against `/api/admin/login` or server credential registry. |
+| **Authentication Success** | Valid credentials verified | Generates unique session token, stores user profile in `localStorage`, and displays Dashboard Shell. |
+| **Authentication Failure** | Invalid password or user | Displays inline red error notification; user remains on Login Form. |
+| **Session Active** | User interacts with dashboard | Allows full read/write operations across all 8 CMS modules. |
+| **Session Terminated** | User clicks "Sign Out" | Clears `localStorage` session keys and immediately resets UI to Login Form. |
 
 1. **Login Credentials:**
    - **Authorized Usernames:** `admin`, `sorconnect`, `sorconnectadmin`, `info@sorconnect.com`

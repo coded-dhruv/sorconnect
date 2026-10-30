@@ -10,23 +10,14 @@ Following this protocol guarantees that the client has full, unhindered operatio
 
 ## 2. Master Asset Transfer Matrix
 
-```mermaid
-graph TD
-    DevTeam[Development Agency / Engineer]
-    ClientOwner[Client Executive Owner: Sor Connect]
-    
-    subgraph Assets ["Transferable Digital Assets"]
-        D1[1. Domain & DNS Control]
-        D2[2. Vercel Hosting Project]
-        D3[3. Supabase Cloud Database]
-        D4[4. GitHub Code Repository]
-        D5[5. Google Search Console & GA4]
-        D6[6. CMS Admin Credentials]
-    end
-
-    DevTeam -->|Ownership Transfer Protocol| Assets
-    Assets -->|Exclusive Custody & Key Rotation| ClientOwner
-```
+| Digital Asset Category | Current Custodian | Target Owner | Verification & Acceptance Criteria |
+|---|---|---|---|
+| **1. Domain Name & DNS** | Hostinger / GoDaddy Registrar | Sor Connect Executive | Full administrative access to nameservers and DNS records. |
+| **2. Edge Hosting Project** | Vercel Platform Team | Sor Connect Vercel Team | Project transferred cleanly; SSL certificates auto-renewing. |
+| **3. Cloud Database & Storage** | Supabase Project (`znjpzipedsowuyrpotgb`) | Sor Connect Admin (`Owner` role) | Master database credentials reset and stored in client password vault. |
+| **4. Source Code Repository** | GitHub (`coded-dhruv/sorconnect`) | Sor Connect Organization | Repository transferred with full commit history and admin privileges. |
+| **5. Search Console & GA4** | Google Marketing Platform | Sor Connect Google Account | Verified `Owner` permissions active in Google Search Console. |
+| **6. Admin Management Portal** | Local Node.js `/admprtl` | Sor Connect Operations Team | Admin passwords rotated and tested across all 8 modules. |
 
 ---
 

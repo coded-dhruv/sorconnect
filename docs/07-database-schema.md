@@ -13,104 +13,17 @@ The Sor Connect database layer is provisioned on **Supabase**, an enterprise-gra
 
 ---
 
-## 2. Entity-Relationship Diagram (ERD)
+## 2. Relational Entity Overview & Foreign Key Relationships
 
-```mermaid
-erDiagram
-    CATEGORIES ||--o{ PROJECTS : "classifies"
-    
-    CATEGORIES {
-        bigint id PK
-        text name
-        text slug
-        text description
-        timestamptz created_at
-    }
-
-    PROJECTS {
-        bigint id PK
-        text title
-        text client
-        text location
-        text capacity
-        text sector_or_type
-        text image
-        bigint category_id FK
-        timestamptz created_at
-    }
-
-    SUBMISSIONS {
-        bigint id PK
-        text name
-        text whatsapp
-        text monthly_bill
-        text pincode
-        text note
-        text status
-        text subject
-        text source_url
-        timestamptz created_at
-    }
-
-    CAREERS {
-        bigint id PK
-        text name
-        text phone
-        text email
-        text location
-        text position
-        text experience
-        text availability
-        text portfolio
-        text resume_url
-        text cover_note
-        text status
-        timestamptz created_at
-    }
-
-    ABOUT_GALLERY {
-        bigint id PK
-        text title
-        text subtitle
-        text badge
-        text description
-        text location
-        text image
-        int display_order
-        timestamptz created_at
-    }
-
-    AWARDS {
-        bigint id PK
-        text title
-        text badge
-        text description
-        text image
-        int display_order
-        timestamptz created_at
-    }
-
-    SERVICES {
-        bigint id PK
-        text title
-        text slug
-        text short_desc
-        text full_desc
-        text features
-        text image
-        int display_order
-        timestamptz created_at
-    }
-
-    PARTNERS {
-        bigint id PK
-        text name
-        text logo
-        text category
-        int display_order
-        timestamptz created_at
-    }
-```
+| Primary Entity Table | Related Foreign Table | Relationship Type | Join Key / Reference | Business Purpose |
+|---|---|---|---|---|
+| `public.categories` | `public.projects` | 1-to-Many (`1 : N`) | `projects.category_id &rarr; categories.id` | Groups solar installations into commercial, rooftop, utility, or KUSUM categories. |
+| `public.submissions` | *(Standalone Table)* | Independent Ingestion | `submissions.id` (PK) | Stores inbound commercial customer inquiries from website forms. |
+| `public.careers` | *(Standalone Table)* | Independent Ingestion | `careers.id` (PK) | Stores job applications and links to resume files in Supabase Storage. |
+| `public.about_gallery` | *(Standalone Table)* | Sequential List | Ordered by `display_order ASC` | Feeds the interactive plant slider on the About Us page. |
+| `public.awards` | *(Standalone Table)* | Sequential List | Ordered by `display_order ASC` | Feeds certifications, green badges, and awards on About and Home pages. |
+| `public.services` | *(Standalone Table)* | Ordered Catalog | Ordered by `display_order ASC` | Powers dynamic service cards on `/services` and quotation modals. |
+| `public.partners` | *(Standalone Table)* | Brand Directory | Ordered by `display_order ASC` | Displays technology partners (Sungrow, Reliance, Waree, etc.). |
 
 ---
 

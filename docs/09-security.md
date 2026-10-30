@@ -24,22 +24,12 @@ The Sor Connect website architecture enforces security across three distinct per
 
 All 8 application tables in Supabase PostgreSQL enforce Row-Level Security:
 
-```mermaid
-graph TD
-    Client["Browser / Client Request"]
-    AnonKey["Supabase Public Anon Key"]
-    RLSEngine{"PostgreSQL RLS Engine"}
-    
-    AllowPublicRead["ALLOW SELECT (Projects, Services, Gallery)"]
-    AllowPublicInsert["ALLOW INSERT (Submissions, Careers)"]
-    DenyPublicAlter["DENY DIRECT UPDATE / DELETE"]
-
-    Client --> AnonKey
-    AnonKey --> RLSEngine
-    RLSEngine -->|Read Queries| AllowPublicRead
-    RLSEngine -->|Lead/CV Ingestion| AllowPublicInsert
-    RLSEngine -->|Unauthorized Patch/Delete| DenyPublicAlter
-```
+| Operation Type | Target Database Tables | PostgreSQL RLS Policy | Security Enforcement Rule |
+|---|---|---|---|
+| **Public Read (`SELECT`)** | `projects`, `categories`, `services`, `about_gallery`, `awards`, `partners` | `FOR SELECT USING (true)` | **ALLOWED** — Enables public browsers to fetch verified portfolio items and service specifications. |
+| **Public Insert (`INSERT`)** | `submissions`, `careers` | `FOR INSERT WITH CHECK (true)` | **ALLOWED** — Allows anonymous prospective clients and job candidates to submit inquiries and applications. |
+| **Public Update (`UPDATE`)** | All Tables | Restricted / Authenticated Only | **DENIED** — Unauthenticated public clients cannot modify existing records or tamper with customer data. |
+| **Public Delete (`DELETE`)** | All Tables | Restricted / Authenticated Only | **DENIED** — Prevents unauthorized malicious record purges. |
 
 ### Key Security Safeguards:
 1. **Public Visitors Cannot Modify Live Data:** Unauthenticated public requests can only execute `SELECT` on public tables (`projects`, `services`, `categories`, `about_gallery`, `awards`) and `INSERT` on lead capture tables (`submissions`, `careers`).
