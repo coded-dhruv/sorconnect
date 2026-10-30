@@ -156,34 +156,51 @@ body { padding-top: 0; }
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
+  text-decoration: none;
 }
 .brand-mark {
-  width: 46px;
-  height: 46px;
+  width: 52px;
+  height: 52px;
   flex-shrink: 0;
   object-fit: contain;
 }
 .brand-text {
   display: flex;
   flex-direction: column;
-  line-height: 1.15;
+  justify-content: center;
+  line-height: 1.05;
 }
 .brand-text .name {
   font-family: var(--heading);
-  font-weight: 700;
-  font-size: 19px;
+  font-weight: 800;
+  font-size: clamp(21px, 2.3vw, 26px);
   color: var(--forest-deep);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.035em;
+  margin-bottom: 2px;
   transition: color var(--dur) var(--ease);
 }
 .brand-text .tag {
   font-family: var(--label);
-  font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   color: var(--leaf);
   text-transform: uppercase;
   transition: color var(--dur) var(--ease);
+}
+
+@media (max-width: 480px) {
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+  }
+  .brand-text .name {
+    font-size: 21px;
+  }
+  .brand-text .tag {
+    font-size: 9px;
+    letter-spacing: 0.03em;
+  }
 }
 
 /* Nav links — crisp dark text synced with white navbar */
