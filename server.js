@@ -1605,8 +1605,8 @@ function uploadToSupabaseStorage(bucketName, filename, buffer, contentType) {
     return;
   }
 
-  // Clean URL handling: /home or / -> index.html
-  if (urlPath === '/' || urlPath === '/home') {
+  // Clean URL handling: / -> index.html
+  if (urlPath === '/') {
     const indexPath = path.join(__dirname, 'index.html');
     fs.readFile(indexPath, (err, content) => {
       if (!err) {
@@ -1620,9 +1620,9 @@ function uploadToSupabaseStorage(bucketName, filename, buffer, contentType) {
     return;
   }
 
-  // Redirect /index.html to /home
-  if (urlPath === '/index.html') {
-    res.writeHead(301, { 'Location': '/home' });
+  // Redirect /home and /index.html to / (canonical root)
+  if (urlPath === '/home' || urlPath === '/index.html') {
+    res.writeHead(301, { 'Location': '/' });
     res.end();
     return;
   }
