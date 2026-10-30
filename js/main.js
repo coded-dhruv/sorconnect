@@ -2471,7 +2471,13 @@ document.addEventListener('DOMContentLoaded', function () {
             if (suffix && field !== 'suffix') el.alt = suffix;
           } else if (el.hasAttribute('data-cms-bg')) {
             const bgVal = (field === 'suffix') ? item.stat_suffix : targetVal;
-            if (bgVal) el.style.backgroundImage = `url("${bgVal}")`;
+            if (bgVal) {
+              if (el.classList.contains('svc-section')) {
+                el.style.backgroundImage = `radial-gradient(circle at 50% 15%, rgba(52, 211, 153, 0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(6, 22, 16, 0.76) 0%, rgba(8, 28, 20, 0.54) 45%, rgba(5, 18, 13, 0.82) 100%), url("${bgVal}")`;
+              } else {
+                el.style.backgroundImage = `url("${bgVal}")`;
+              }
+            }
           } else if (el.tagName === 'A') {
             if (field === 'href') {
               if (item.stat_suffix) el.href = item.stat_suffix;

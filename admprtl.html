@@ -1701,7 +1701,7 @@ table.admin-table tbody tr:last-child td {
           <button type="button" class="admin-tab-btn" data-tab="content-panel">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             <span>Site Content &amp; Visuals</span>
-            <span class="tab-badge" id="content-count-badge">41</span>
+            <span class="tab-badge" id="content-count-badge">50</span>
           </button>
 
           <!-- Services Page CMS (NEW) -->
@@ -2055,6 +2055,9 @@ table.admin-table tbody tr:last-child td {
       </button>
       <button type="button" class="content-subnav-btn" data-filter="home_hero" onclick="filterContentSection('home_hero')">
         <span>🏠 Homepage Hero</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="home_services" onclick="filterContentSection('home_services')">
+        <span>⚡ What We Do (4 Cards)</span>
       </button>
       <button type="button" class="content-subnav-btn" data-filter="home_about" onclick="filterContentSection('home_about')">
         <span>ℹ️ About Snapshot &amp; Pillars</span>
@@ -7061,6 +7064,7 @@ table.admin-table tbody tr:last-child td {
 
         let badgeStyle = 'background:#e0f2fe; color:#0369a1;';
         if (item.section === 'home_hero') badgeStyle = 'background:#fef3c7; color:#b45309;';
+        else if (item.section === 'home_services') badgeStyle = 'background:#ecfdf5; color:#047857;';
         else if (item.section === 'home_about') badgeStyle = 'background:#e0e7ff; color:#4338ca;';
         else if (item.section === 'process_steps') badgeStyle = 'background:#fce7f3; color:#be185d;';
         else if (item.section === 'about_page') badgeStyle = 'background:#ccfbf1; color:#0f766e;';
@@ -7105,8 +7109,13 @@ table.admin-table tbody tr:last-child td {
         }
 
         // Secondary Suffix / Link Field
-        if (item.stat_suffix || (item.id && (item.id.includes('btn') || item.id.includes('phone') || item.id.includes('email') || item.id.includes('proc_') || item.id.includes('mission') || item.id.includes('vision') || item.id.includes('social')))) {
-          const suffixLabel = (item.id && item.id.includes('proc_')) ? 'Step Image URL / Suffix' : ((item.id && (item.id.includes('mission') || item.id.includes('vision'))) ? 'Mission / Vision Statement' : 'Link Destination / WhatsApp URL / Alt Text');
+        if (item.stat_suffix || (item.id && (item.id.includes('btn') || item.id.includes('phone') || item.id.includes('email') || item.id.includes('proc_') || item.id.includes('svc_') || item.id.includes('mission') || item.id.includes('vision') || item.id.includes('social')))) {
+          let suffixLabel = 'Link Destination / WhatsApp URL / Alt Text';
+          if (item.id && (item.id.includes('proc_') || item.id.includes('svc_card'))) {
+            suffixLabel = 'Card Photo Path / Image URL';
+          } else if (item.id && (item.id.includes('mission') || item.id.includes('vision'))) {
+            suffixLabel = 'Mission / Vision Statement';
+          }
           cardHtml += '<div class="content-field-row">';
           cardHtml += '<label>' + suffixLabel + '</label>';
           if (item.stat_suffix && item.stat_suffix.length > 70) {
@@ -7118,14 +7127,10 @@ table.admin-table tbody tr:last-child td {
         }
 
         // Narrative / Supporting Notes
-        if (item.description && !item.id.includes('proc_') && !item.id.includes('mission') && !item.id.includes('vision')) {
+        if (item.description && !item.id.includes('mission') && !item.id.includes('vision')) {
+          const descLabel = (item.id.includes('proc_') || item.id.includes('svc_card')) ? 'Card Subtitle / Description Text' : 'Description / Subtitle';
           cardHtml += '<div class="content-field-row">';
-          cardHtml += '<label>Description / Subtitle</label>';
-          cardHtml += '<input type="text" id="desc_' + escapeHtml(item.id) + '" value="' + escapeHtml(item.description) + '">';
-          cardHtml += '</div>';
-        } else if (item.id && item.id.includes('proc_')) {
-          cardHtml += '<div class="content-field-row">';
-          cardHtml += '<label>Step Milestone Details / Deliverables</label>';
+          cardHtml += '<label>' + descLabel + '</label>';
           cardHtml += '<textarea id="desc_' + escapeHtml(item.id) + '" rows="2">' + escapeHtml(item.description) + '</textarea>';
           cardHtml += '</div>';
         }

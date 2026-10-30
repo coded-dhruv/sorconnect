@@ -81,7 +81,7 @@ module.exports = {
           <button type="button" class="admin-tab-btn" data-tab="content-panel">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             <span>Site Content &amp; Visuals</span>
-            <span class="tab-badge" id="content-count-badge">41</span>
+            <span class="tab-badge" id="content-count-badge">50</span>
           </button>
 
           <!-- Services Page CMS (NEW) -->
@@ -943,6 +943,9 @@ module.exports = {
       </button>
       <button type="button" class="content-subnav-btn" data-filter="home_hero" onclick="filterContentSection('home_hero')">
         <span>🏠 Homepage Hero</span>
+      </button>
+      <button type="button" class="content-subnav-btn" data-filter="home_services" onclick="filterContentSection('home_services')">
+        <span>⚡ What We Do (4 Cards)</span>
       </button>
       <button type="button" class="content-subnav-btn" data-filter="home_about" onclick="filterContentSection('home_about')">
         <span>ℹ️ About Snapshot &amp; Pillars</span>

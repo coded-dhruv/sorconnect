@@ -3598,6 +3598,7 @@ module.exports = {
 
         let badgeStyle = 'background:#e0f2fe; color:#0369a1;';
         if (item.section === 'home_hero') badgeStyle = 'background:#fef3c7; color:#b45309;';
+        else if (item.section === 'home_services') badgeStyle = 'background:#ecfdf5; color:#047857;';
         else if (item.section === 'home_about') badgeStyle = 'background:#e0e7ff; color:#4338ca;';
         else if (item.section === 'process_steps') badgeStyle = 'background:#fce7f3; color:#be185d;';
         else if (item.section === 'about_page') badgeStyle = 'background:#ccfbf1; color:#0f766e;';
@@ -3642,8 +3643,13 @@ module.exports = {
         }
 
         // Secondary Suffix / Link Field
-        if (item.stat_suffix || (item.id && (item.id.includes('btn') || item.id.includes('phone') || item.id.includes('email') || item.id.includes('proc_') || item.id.includes('mission') || item.id.includes('vision') || item.id.includes('social')))) {
-          const suffixLabel = (item.id && item.id.includes('proc_')) ? 'Step Image URL / Suffix' : ((item.id && (item.id.includes('mission') || item.id.includes('vision'))) ? 'Mission / Vision Statement' : 'Link Destination / WhatsApp URL / Alt Text');
+        if (item.stat_suffix || (item.id && (item.id.includes('btn') || item.id.includes('phone') || item.id.includes('email') || item.id.includes('proc_') || item.id.includes('svc_') || item.id.includes('mission') || item.id.includes('vision') || item.id.includes('social')))) {
+          let suffixLabel = 'Link Destination / WhatsApp URL / Alt Text';
+          if (item.id && (item.id.includes('proc_') || item.id.includes('svc_card'))) {
+            suffixLabel = 'Card Photo Path / Image URL';
+          } else if (item.id && (item.id.includes('mission') || item.id.includes('vision'))) {
+            suffixLabel = 'Mission / Vision Statement';
+          }
           cardHtml += '<div class="content-field-row">';
           cardHtml += '<label>' + suffixLabel + '</label>';
           if (item.stat_suffix && item.stat_suffix.length > 70) {
@@ -3655,14 +3661,10 @@ module.exports = {
         }
 
         // Narrative / Supporting Notes
-        if (item.description && !item.id.includes('proc_') && !item.id.includes('mission') && !item.id.includes('vision')) {
+        if (item.description && !item.id.includes('mission') && !item.id.includes('vision')) {
+          const descLabel = (item.id.includes('proc_') || item.id.includes('svc_card')) ? 'Card Subtitle / Description Text' : 'Description / Subtitle';
           cardHtml += '<div class="content-field-row">';
-          cardHtml += '<label>Description / Subtitle</label>';
-          cardHtml += '<input type="text" id="desc_' + escapeHtml(item.id) + '" value="' + escapeHtml(item.description) + '">';
-          cardHtml += '</div>';
-        } else if (item.id && item.id.includes('proc_')) {
-          cardHtml += '<div class="content-field-row">';
-          cardHtml += '<label>Step Milestone Details / Deliverables</label>';
+          cardHtml += '<label>' + descLabel + '</label>';
           cardHtml += '<textarea id="desc_' + escapeHtml(item.id) + '" rows="2">' + escapeHtml(item.description) + '</textarea>';
           cardHtml += '</div>';
         }

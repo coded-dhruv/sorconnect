@@ -408,5 +408,95 @@
     "stat_suffix": "Instagram",
     "description": "Official Instagram profile link",
     "display_order": 41
+  },
+  {
+    "id": "home_services_badge",
+    "section": "home_services",
+    "section_name": "What We Do (Homepage Services)",
+    "label": "Services Section Eyebrow Badge",
+    "stat_value": "What We Do",
+    "stat_suffix": "",
+    "description": "Eyebrow tag above main services heading",
+    "display_order": 42
+  },
+  {
+    "id": "home_services_title",
+    "section": "home_services",
+    "section_name": "What We Do (Homepage Services)",
+    "label": "Services Section Main Headline",
+    "stat_value": "One partner, every stage of the plant's life.",
+    "stat_suffix": "",
+    "description": "Prominent headline on What We Do section",
+    "display_order": 43
+  },
+  {
+    "id": "home_services_sub",
+    "section": "home_services",
+    "section_name": "What We Do (Homepage Services)",
+    "label": "Services Section Subheadline",
+    "stat_value": "From the first feasibility study to twenty-five years of operation, Sor Connect's in-house teams handle design, procurement, construction and after-care.",
+    "stat_suffix": "",
+    "description": "Lead description beneath What We Do headline",
+    "display_order": 44
+  },
+  {
+    "id": "home_services_bg",
+    "section": "home_services",
+    "section_name": "What We Do (Homepage Services)",
+    "label": "Services Background Photo",
+    "stat_value": "assets/what-we-do-bg.jpg",
+    "stat_suffix": "What We Do Agri-solar Background",
+    "description": "High-resolution background image behind What We Do section",
+    "display_order": 45
+  },
+  {
+    "id": "home_svc_card1",
+    "section": "home_services",
+    "section_name": "What We Do (Homepage Services)",
+    "label": "Service Card 1: Title & Photo",
+    "stat_value": "EPC Services",
+    "stat_suffix": "assets/svc-epc.jpg",
+    "description": "Engineering, Procurement & Construction — Tier-1 modules, complete civil & electrical execution, on schedule.",
+    "display_order": 46
+  },
+  {
+    "id": "home_svc_card2",
+    "section": "home_services",
+    "section_name": "What We Do (Homepage Services)",
+    "label": "Service Card 2: Title & Photo",
+    "stat_value": "Installation & Commissioning",
+    "stat_suffix": "assets/svc-kusum.jpg",
+    "description": "Safety testing, grid synchronisation, and evacuation of power into the client's LT panel — done right, first time.",
+    "display_order": 47
+  },
+  {
+    "id": "home_svc_card3",
+    "section": "home_services",
+    "section_name": "What We Do (Homepage Services)",
+    "label": "Service Card 3: Title & Photo",
+    "stat_value": "Operation & Maintenance",
+    "stat_suffix": "assets/svc-om.jpg",
+    "description": "24/7 monitoring, preventive servicing, and 12 free engineer visits in year one to protect your output.",
+    "display_order": 48
+  },
+  {
+    "id": "home_svc_card4",
+    "section": "home_services",
+    "section_name": "What We Do (Homepage Services)",
+    "label": "Service Card 4: Title & Photo",
+    "stat_value": "Solar Designing",
+    "stat_suffix": "assets/svc-liaison.jpg",
+    "description": "Yield analysis, electrical & structural design, and full plant simulation before a single panel is ordered.",
+    "display_order": 49
+  },
+  {
+    "id": "home_services_btn",
+    "section": "home_services",
+    "section_name": "What We Do (Homepage Services)",
+    "label": "View All Services Button Text & Link",
+    "stat_value": "View All Services",
+    "stat_suffix": "services.html",
+    "description": "Bottom button label and target page link",
+    "display_order": 50
   }
 ]
