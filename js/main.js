@@ -695,6 +695,112 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // ===================== AUTOMATED CONTACT FORM POPUP (5 TIMES IN 5 MINUTES) =====================
+  // Automatically pops up once every 1 minute of site exploration, up to 5 times maximum, stopping after 5 minutes.
+  (function initAutomatedContactPopup() {
+    // Never trigger on the administrative portal
+    if (window.location.pathname.indexOf('/admprtl') !== -1 || window.location.pathname.indexOf('/admin') !== -1) {
+      return;
+    }
+
+    const POPUP_INTERVAL_MS = 60 * 1000;         // 1 Minute (60,000 ms)
+    const POPUP_MAX_DURATION_MS = 5 * 60 * 1000; // 5 Minutes (300,000 ms)
+    const POPUP_MAX_COUNT = 5;                    // 5 Times Maximum
+
+    // Check if user has already submitted an inquiry in this session
+    try {
+      if (sessionStorage.getItem('sor_form_submitted') === 'true') {
+        return;
+      }
+    } catch (e) {
+      return;
+    }
+
+    // Get or initialize session start timestamp
+    let sessionStartTime = parseInt(sessionStorage.getItem('sor_session_start_time'), 10);
+    if (!sessionStartTime || isNaN(sessionStartTime)) {
+      sessionStartTime = Date.now();
+      try {
+        sessionStorage.setItem('sor_session_start_time', String(sessionStartTime));
+      } catch (e) {}
+    }
+
+    // Check if 5 minutes have already expired
+    if ((Date.now() - sessionStartTime) >= POPUP_MAX_DURATION_MS) {
+      return;
+    }
+
+    // Get current popup counter
+    let popupCount = parseInt(sessionStorage.getItem('sor_auto_popup_count'), 10) || 0;
+    if (popupCount >= POPUP_MAX_COUNT) {
+      return;
+    }
+
+    function triggerPopup() {
+      // Re-verify conditions
+      try {
+        if (sessionStorage.getItem('sor_form_submitted') === 'true') return;
+      } catch (e) {}
+
+      const now = Date.now();
+      const elapsed = now - sessionStartTime;
+
+      if (elapsed >= POPUP_MAX_DURATION_MS) {
+        try {
+          sessionStorage.setItem('sor_auto_popup_count', String(POPUP_MAX_COUNT));
+        } catch (e) {}
+        return;
+      }
+
+      let count = parseInt(sessionStorage.getItem('sor_auto_popup_count'), 10) || 0;
+      if (count >= POPUP_MAX_COUNT) return;
+
+      // Only open if not already open
+      const quoteOverlay = document.getElementById('quote-modal-overlay');
+      const careersOverlay = document.getElementById('careers-modal-overlay');
+      const isQuoteOpen = quoteOverlay && quoteOverlay.classList.contains('active');
+      const isCareersOpen = careersOverlay && careersOverlay.classList.contains('active');
+
+      if (!isQuoteOpen && !isCareersOpen) {
+        openQuoteModal(
+          'Connect with Sor Connect Solar Experts',
+          'Explore your customized solar feasibility, tariff savings, and turnkey execution plan with our senior engineering team.'
+        );
+      }
+
+      // Record this popup trigger
+      count++;
+      try {
+        sessionStorage.setItem('sor_auto_popup_count', String(count));
+      } catch (e) {}
+
+      // Schedule next popup if under 5 times and under 5 minutes
+      if (count < POPUP_MAX_COUNT && (Date.now() - sessionStartTime) < POPUP_MAX_DURATION_MS) {
+        scheduleNext();
+      }
+    }
+
+    function scheduleNext() {
+      try {
+        if (sessionStorage.getItem('sor_form_submitted') === 'true') return;
+      } catch (e) {}
+
+      const now = Date.now();
+      const count = parseInt(sessionStorage.getItem('sor_auto_popup_count'), 10) || 0;
+      if (count >= POPUP_MAX_COUNT) return;
+
+      // Calculate target time for the next popup slot (1 min, 2 min, 3 min, 4 min, 5 min)
+      const targetTime = sessionStartTime + (count + 1) * POPUP_INTERVAL_MS;
+      if (targetTime > sessionStartTime + POPUP_MAX_DURATION_MS) return;
+
+      const delay = Math.max(1000, targetTime - now);
+      setTimeout(triggerPopup, delay);
+    }
+
+    // Initiate the scheduling for this page session
+    scheduleNext();
+  })();
+
   // ===================== CAREERS GLOBAL MODAL SYSTEM =====================
   let selectedResumeFile = null;
 
@@ -1342,7 +1448,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       }
 
-      // UI Success Feedback: Close quote modal immediately if open
+      // UI Success Feedback: Close quote modal immediately if open and suppress further popups
+      try {
+        sessionStorage.setItem('sor_form_submitted', 'true');
+      } catch (e) {}
+
       if (formId === 'quote-modal-form' || formEl.closest('.quote-modal-overlay')) {
         closeQuoteModal();
       }
