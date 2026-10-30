@@ -3629,13 +3629,13 @@ module.exports = {
           cardHtml += '<div class="content-field-row">';
           cardHtml += '<label>Active Photo Preview</label>';
           cardHtml += '<div class="content-img-preview-box" id="preview_box_' + escapeHtml(item.id) + '">';
-          cardHtml += '<img src="' + escapeHtml(imgUrl) + '" alt="Preview" onerror="this.src=\'assets/hero-bg.jpg\'">';
+          cardHtml += '<img src="' + escapeHtml(imgUrl) + '" alt="Preview">';
           cardHtml += '</div>';
           cardHtml += '<div style="display:flex; gap:8px; margin-top:4px;">';
           cardHtml += '<label class="btn-shadcn-outline" style="cursor:pointer; height:32px; font-size:12px; margin:0; display:inline-flex; align-items:center; gap:6px;">';
           cardHtml += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>';
           cardHtml += '<span>Upload New Photo</span>';
-          cardHtml += '<input type="file" accept="image/*" style="display:none;" onchange="handleContentImageUpload(\'' + escapeHtml(item.id) + '\', this.files[0])">';
+          cardHtml += '<input type="file" accept="image/*" style="display:none;" data-id="' + escapeHtml(item.id) + '" onchange="handleContentImageUpload(this.dataset.id, this.files[0])">';
           cardHtml += '</label>';
           cardHtml += '</div>';
           cardHtml += '</div>';
@@ -3669,7 +3669,7 @@ module.exports = {
 
         cardHtml += '<div class="content-card-footer">';
         cardHtml += '<span style="font-size:11.5px; color:#94a3b8;">Order: ' + item.display_order + '</span>';
-        cardHtml += '<button type="button" class="btn-shadcn-primary" id="btn_save_' + escapeHtml(item.id) + '" onclick="saveSiteContentItem(\'' + escapeHtml(item.id) + '\')" style="height:32px; font-size:12.5px; padding:0 14px;">';
+        cardHtml += '<button type="button" class="btn-shadcn-primary" id="btn_save_' + escapeHtml(item.id) + '" data-id="' + escapeHtml(item.id) + '" onclick="saveSiteContentItem(this.dataset.id)" style="height:32px; font-size:12.5px; padding:0 14px;">';
         cardHtml += '<span>Save Live</span>';
         cardHtml += '</button>';
         cardHtml += '</div>';
