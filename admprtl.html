@@ -7548,23 +7548,18 @@ table.admin-table tbody tr:last-child td {
 
       try {
         const rawEvents = await supabaseQuery('/rest/v1/events?select=*&order=display_order.asc,event_date.desc');
-        if (Array.isArray(rawEvents) && rawEvents.length > 0) {
+        if (Array.isArray(rawEvents)) {
           state.events = rawEvents;
         } else {
-          // Fallback to local events.json
-          const fbRes = await fetch('events.json');
-          if (fbRes.ok) {
-            state.events = await fbRes.json();
-          } else {
-            state.events = [];
-          }
+          state.events = [];
         }
       } catch (err) {
-        console.warn('Supabase fetch failed for events (table might not exist yet), loading events.json fallback:', err);
+        console.warn('Supabase fetch for events:', err);
         try {
           const fbRes = await fetch('events.json');
           if (fbRes.ok) {
-            state.events = await fbRes.json();
+            const fb = await fbRes.json();
+            state.events = Array.isArray(fb) ? fb : [];
           } else {
             state.events = [];
           }
@@ -7622,7 +7617,15 @@ table.admin-table tbody tr:last-child td {
 
       if (filtered.length === 0) {
         tbody.innerHTML = '';
-        if (emptyState) emptyState.style.display = 'block';
+        if (emptyState) {
+          emptyState.style.display = 'block';
+          const p = emptyState.querySelector('p');
+          if (p) {
+            p.textContent = state.events.length === 0
+              ? 'No events published yet. Click "+ Add New Event" above to create your first event!'
+              : 'No events found matching your search.';
+          }
+        }
         return;
       }
 

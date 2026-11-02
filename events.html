@@ -131,20 +131,20 @@
         <!-- Floating Hero Quick Stats Bar -->
         <div class="events-hero-stats fade-up">
           <div class="events-hero-stat-card">
-            <div class="num" id="stat-total-events">6+</div>
-            <div class="lbl">Major Expos &amp; Summits</div>
+            <div class="num">200+ <span style="font-size:16px; color: var(--emerald);">MW</span></div>
+            <div class="lbl">Solar Capacity Managed</div>
           </div>
           <div class="events-hero-stat-card">
-            <div class="num">2</div>
-            <div class="lbl">State Leadership Awards</div>
-          </div>
-          <div class="events-hero-stat-card">
-            <div class="num">2,500+</div>
-            <div class="lbl">B2B Consultations Held</div>
+            <div class="num">130+</div>
+            <div class="lbl">Field Engineers</div>
           </div>
           <div class="events-hero-stat-card">
             <div class="num">13</div>
             <div class="lbl">States Covered Pan-India</div>
+          </div>
+          <div class="events-hero-stat-card">
+            <div class="num">98.6%</div>
+            <div class="lbl">Average Grid Uptime</div>
           </div>
         </div>
       </div>
@@ -153,7 +153,29 @@
     <!-- ============ INTERACTIVE CONTROLS & FILTER BAR ============ -->
     <section class="section" style="padding-top: 0; padding-bottom: 20px;">
       <div class="container">
-        <div class="events-controls-wrap fade-up" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+
+        <!-- Coming Soon State Container (Shown when no events are published yet) -->
+        <div id="events-coming-soon" class="events-coming-soon-card fade-up" style="display: none;">
+          <div class="coming-soon-badge">
+            <span class="pulse-dot"></span>
+            <span>Coming Soon</span>
+          </div>
+          <h2 class="coming-soon-title">Exciting Events &amp; Expos on the Horizon</h2>
+          <p class="coming-soon-desc">
+            We are curating our upcoming clean energy exhibitions, technical solar seminars, and project milestone ceremonies across India. Check back soon for confirmed dates and visitor passes.
+          </p>
+          <div class="coming-soon-actions">
+            <a href="javascript:void(0)" class="btn btn-primary" data-open-modal="quote" data-modal-title="Connect With Sor Connect Leadership">
+              <span>Meet Our Team</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="projects.html" class="btn btn-outline" style="border-color: var(--sage-line); color: var(--forest-deep);">
+              <span>Explore Our Projects</span>
+            </a>
+          </div>
+        </div>
+
+        <div id="events-controls-wrap" class="events-controls-wrap fade-up" style="display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
 
           <div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-weight: 800; font-size: 16px; color: var(--forest-deep);">All Events</span>
@@ -188,12 +210,9 @@
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
           </svg>
-          <h3 style="font-size: 19px; font-weight: 700; color: var(--forest-deep); margin-bottom: 6px;">No Matching
-            Events Found</h3>
-          <p style="font-size: 14px; color: var(--ink-soft); max-width: 420px; margin: 0 auto 16px;">Try adjusting your
-            search terms or filter selection to view our upcoming and celebrated gatherings.</p>
-          <button type="button" class="btn btn-outline" onclick="resetEventFilters()" style="padding: 8px 18px;">Reset
-            All Filters</button>
+          <h3 style="font-size: 19px; font-weight: 700; color: var(--forest-deep); margin-bottom: 6px;">No Matching Events Found</h3>
+          <p style="font-size: 14px; color: var(--ink-soft); max-width: 420px; margin: 0 auto 16px;">Try adjusting your search terms to view published gatherings.</p>
+          <button type="button" class="btn btn-outline" onclick="resetEventFilters()" style="padding: 8px 18px;">Reset Search</button>
         </div>
 
       </div>
@@ -392,7 +411,7 @@
           });
           if (res.ok) {
             const data = await res.json();
-            if (Array.isArray(data) && data.length > 0) {
+            if (Array.isArray(data)) {
               allEvents = data;
               render();
               return;
@@ -406,12 +425,15 @@
         try {
           const fallbackRes = await fetch('events.json');
           if (fallbackRes.ok) {
-            allEvents = await fallbackRes.json();
-            render();
+            const fbData = await fallbackRes.json();
+            allEvents = Array.isArray(fbData) ? fbData : [];
+          } else {
+            allEvents = [];
           }
         } catch (fbErr) {
-          console.error('[EVENTS] Could not load events.json fallback:', fbErr);
+          allEvents = [];
         }
+        render();
       }
 
       function formatDate(dateStr) {
@@ -467,6 +489,24 @@
 
       function render() {
         updateCounts();
+
+        const comingSoonEl = document.getElementById('events-coming-soon');
+        const controlsWrap = document.getElementById('events-controls-wrap');
+
+        // When no events exist in database or system
+        if (allEvents.length === 0) {
+          if (comingSoonEl) comingSoonEl.style.display = 'block';
+          if (controlsWrap) controlsWrap.style.display = 'none';
+          if (featuredContainer) featuredContainer.innerHTML = '';
+          if (gridEl) gridEl.innerHTML = '';
+          if (emptyStateEl) emptyStateEl.style.display = 'none';
+          return;
+        }
+
+        // Events exist! Show search controls and hide Coming Soon card
+        if (comingSoonEl) comingSoonEl.style.display = 'none';
+        if (controlsWrap) controlsWrap.style.display = 'flex';
+
         const filtered = getFilteredEvents();
 
         // 1. Featured Top Event
