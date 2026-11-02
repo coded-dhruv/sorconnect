@@ -35,107 +35,121 @@
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    .careers-dept-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 16px;
-      border-radius: 999px;
-      background: #f1f5f9;
-      color: #475569;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.2s ease;
-    }
-    .careers-dept-pill:hover {
-      background: #e2e8f0;
-      color: var(--forest-deep);
-    }
-    .careers-dept-pill.active {
-      background: var(--forest-deep);
-      color: #ffffff;
-      border-color: var(--forest-deep);
+    .jobs-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
-    .job-card {
+    .job-list-item {
       background: #ffffff;
       border: 1px solid var(--sage-line, #e2e8f0);
       border-radius: 14px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-    }
-    .job-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 28px -8px rgba(6, 78, 59, 0.12);
-      border-color: rgba(16, 185, 129, 0.4);
-    }
-    .job-card-top {
-      margin-bottom: 16px;
-    }
-    .job-card-badges {
+      padding: 22px 28px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
+      justify-content: space-between;
+      gap: 24px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
+    .job-list-item:hover {
+      border-color: rgba(16, 185, 129, 0.45);
+      box-shadow: 0 12px 28px -6px rgba(6, 78, 59, 0.09);
+      transform: translateY(-2px);
+    }
+
+    .job-list-left {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .job-list-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .job-list-title {
+      font-family: var(--heading, 'Montserrat', sans-serif);
+      font-size: 18.5px;
+      font-weight: 800;
+      color: var(--forest-deep, #052e16);
+      margin: 0;
+      line-height: 1.3;
+    }
+
     .job-badge {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       padding: 3px 9px;
       border-radius: 6px;
     }
+
     .job-badge-dept {
       background: rgba(16, 185, 129, 0.12);
       color: var(--leaf, #059669);
     }
+
     .job-badge-type {
       background: #f1f5f9;
       color: #475569;
     }
-    .job-card-title {
-      font-family: var(--heading, 'Montserrat', sans-serif);
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--forest-deep, #052e16);
-      line-height: 1.3;
-      margin-bottom: 10px;
+
+    .job-list-desc {
+      font-size: 13.5px;
+      color: var(--ink-soft, #475569);
+      line-height: 1.55;
+      margin: 6px 0 10px 0;
     }
-    .job-card-meta {
+
+    .job-list-meta {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 18px;
       flex-wrap: wrap;
       font-size: 12.5px;
       color: #64748b;
-      margin-bottom: 12px;
     }
-    .job-card-meta-item {
+
+    .job-list-meta-item {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     }
-    .job-card-desc {
+
+    .job-list-right {
+      flex-shrink: 0;
+    }
+
+    .job-apply-btn {
+      padding: 10px 22px;
       font-size: 13.5px;
-      color: var(--ink-soft, #475569);
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-    .job-card-action {
-      display: flex;
+      font-weight: 700;
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid #f1f5f9;
-      padding-top: 16px;
-      margin-top: auto;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .job-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px;
+      }
+      .job-list-right {
+        width: 100%;
+      }
+      .job-apply-btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -196,60 +210,15 @@
       </div>
     </section>
 
-    <!-- ============ WHY JOIN US / CULTURE PILLARS ============ -->
-    <section class="section section-tight section-sage">
-      <div class="container">
-        <div class="section-head fade-up" style="text-align: center; max-width: 680px; margin: 0 auto 36px auto;">
-          <span class="eyebrow">Life at Sor Connect</span>
-          <h2>Why Build Your Career With Us</h2>
-          <p style="color: var(--ink-soft); margin-top: 8px;">A culture centered on safety, engineering excellence, rapid merit-based progression, and real-world impact across India.</p>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
-          <div style="background: #ffffff; border: 1px solid var(--sage-line); border-radius: 14px; padding: 26px;">
-            <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(16, 185, 129, 0.12); color: var(--leaf); display: flex; align-items: center; justify-content: center; margin-bottom: 14px;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            </div>
-            <h3 style="font-size: 17px; font-weight: 800; color: var(--forest-deep); margin-bottom: 8px;">200+ MW Portfolio Scale</h3>
-            <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin: 0;">Gain direct hands-on experience executing multi-megawatt industrial rooftops, ground-mount parks, and PM-KUSUM feeder grids.</p>
-          </div>
-
-          <div style="background: #ffffff; border: 1px solid var(--sage-line); border-radius: 14px; padding: 26px;">
-            <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(59, 130, 246, 0.12); color: #2563eb; display: flex; align-items: center; justify-content: center; margin-bottom: 14px;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <h3 style="font-size: 17px; font-weight: 800; color: var(--forest-deep); margin-bottom: 8px;">Zero-Compromise HSE</h3>
-            <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin: 0;">Safety is our non-negotiable benchmark. All field engineers are provided with certified PPE, electrical LOTO kits, and regular site safety drills.</p>
-          </div>
-
-          <div style="background: #ffffff; border: 1px solid var(--sage-line); border-radius: 14px; padding: 26px;">
-            <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(245, 158, 11, 0.12); color: #d97706; display: flex; align-items: center; justify-content: center; margin-bottom: 14px;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M16 12l-4-4-4 4M12 8v8"/></svg>
-            </div>
-            <h3 style="font-size: 17px; font-weight: 800; color: var(--forest-deep); margin-bottom: 8px;">Tier-1 Industry Exposure</h3>
-            <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin: 0;">Collaborate directly with top global OEM partners including Reliance New Energy, Sungrow, Hitachi Energy, and Waaree.</p>
-          </div>
-
-          <div style="background: #ffffff; border: 1px solid var(--sage-line); border-radius: 14px; padding: 26px;">
-            <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(139, 92, 246, 0.12); color: #7c3aed; display: flex; align-items: center; justify-content: center; margin-bottom: 14px;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            </div>
-            <h3 style="font-size: 17px; font-weight: 800; color: var(--forest-deep); margin-bottom: 8px;">Merit-Based Growth</h3>
-            <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin: 0;">We reward technical initiative and site ownership. Field supervisors and engineers regularly advance to project managers and cluster heads.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ============ OPEN POSITIONS DIRECTORY ============ -->
-    <section class="section" id="openings-section">
+    <section class="section" id="openings-section" style="padding-top: 50px;">
       <div class="container">
         
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; margin-bottom: 26px;">
           <div>
             <span class="eyebrow">Active Openings</span>
             <h2 style="margin: 0; font-size: clamp(26px, 3.5vw, 34px);">Currently Hiring Positions</h2>
-            <p style="color: var(--ink-soft); margin: 6px 0 0 0; font-size: 15px;">Explore opportunities across engineering, site execution, HSE, sales, and administration.</p>
+            <p style="color: var(--ink-soft); margin: 6px 0 0 0; font-size: 15px;">Explore open engineering, operations, HSE, and administrative positions across India.</p>
           </div>
           <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 999px; padding: 6px 16px;">
             <span class="pulse-dot" style="margin-right: 2px;"></span>
@@ -257,45 +226,36 @@
           </div>
         </div>
 
-        <!-- Search & Filter Controls -->
-        <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
+        <!-- Search Bar -->
+        <div style="margin-bottom: 26px;">
           <div class="events-search-wrap" style="max-width: 100%;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input type="text" id="jobs-search-input" class="events-search-input" placeholder="Search positions by title, department, location, or keyword...">
-          </div>
-
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="jobs-dept-filters">
-            <button type="button" class="careers-dept-pill active" data-dept="all">All Departments</button>
-            <button type="button" class="careers-dept-pill" data-dept="Site Operations">Site Operations</button>
-            <button type="button" class="careers-dept-pill" data-dept="Engineering">Engineering</button>
-            <button type="button" class="careers-dept-pill" data-dept="Quality & HSE">Quality &amp; HSE</button>
-            <button type="button" class="careers-dept-pill" data-dept="Sales & Business Development">Sales &amp; BD</button>
-            <button type="button" class="careers-dept-pill" data-dept="Operations & Management">Operations &amp; Management</button>
-            <button type="button" class="careers-dept-pill" data-dept="Admin & Support">Admin &amp; Support</button>
-            <button type="button" class="careers-dept-pill" data-dept="Marketing & Media">Marketing</button>
-            <button type="button" class="careers-dept-pill" data-dept="Finance & Accounts">Finance &amp; Accounts</button>
+            <input type="text" id="jobs-search-input" class="events-search-input" placeholder="Search by role title, department, location, or keyword...">
           </div>
         </div>
 
-        <!-- Job Cards Grid -->
-        <div id="jobs-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+        <!-- Job List Container -->
+        <div id="jobs-list" class="jobs-list-container">
           <!-- Dynamically populated via JS -->
         </div>
 
         <!-- Empty Filter State -->
-        <div id="jobs-empty-state" class="event-empty-box" style="display: none;">
+        <div id="jobs-empty-state" class="event-empty-box" style="display: none; margin-top: 20px;">
           <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--leaf)" stroke-width="1.8" style="margin-bottom: 12px;">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
           </svg>
           <h3 style="font-size: 19px; font-weight: 700; color: var(--forest-deep); margin-bottom: 6px;">No Matching Positions Found</h3>
-          <p style="font-size: 14px; color: var(--ink-soft); max-width: 420px; margin: 0 auto 16px;">Try clearing your search terms or select "All Departments" above to view active opportunities.</p>
-          <button type="button" class="btn btn-outline" onclick="resetJobFilters()" style="padding: 8px 18px;">Reset Filters</button>
+          <p style="font-size: 14px; color: var(--ink-soft); max-width: 420px; margin: 0 auto 16px;">Try clearing your search query to view all active hiring positions.</p>
+          <button type="button" class="btn btn-outline" onclick="resetJobFilters()" style="padding: 8px 18px;">Reset Search</button>
         </div>
+
+      </div>
+    </section>
 
       </div>
     </section>
@@ -507,15 +467,13 @@
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
 
       let allJobs = [];
-      let activeDept = 'all';
       let searchQuery = '';
       let selectedFile = null;
 
-      const gridEl = document.getElementById('jobs-grid');
+      const listEl = document.getElementById('jobs-list');
       const emptyEl = document.getElementById('jobs-empty-state');
       const countEl = document.getElementById('jobs-count-text');
       const searchInput = document.getElementById('jobs-search-input');
-      const deptButtons = document.querySelectorAll('#jobs-dept-filters .careers-dept-pill');
       const positionSelect = document.getElementById('career-page-position');
 
       // Dropzone elements
@@ -568,14 +526,14 @@
         allJobs.forEach(job => {
           const opt = document.createElement('option');
           opt.value = job.title;
-          opt.textContent = `${job.title} (${job.department})`;
+          opt.textContent = `${job.title} (${job.department || 'General'})`;
           positionSelect.appendChild(opt);
         });
 
         // Also add general option
         const genOpt = document.createElement('option');
-        genOpt.value = 'Open Application / Other';
-        genOpt.textContent = 'Open Application / Other Position';
+        genOpt.value = 'Other / Open Application';
+        genOpt.textContent = 'Other / Open Application';
         positionSelect.appendChild(genOpt);
 
         if (currentVal) positionSelect.value = currentVal;
@@ -583,9 +541,6 @@
 
       function getFilteredJobs() {
         return allJobs.filter(job => {
-          if (activeDept !== 'all' && job.department !== activeDept) {
-            return false;
-          }
           if (searchQuery) {
             const q = searchQuery.toLowerCase();
             const match = (job.title || '').toLowerCase().includes(q) ||
@@ -606,38 +561,38 @@
         }
 
         if (filtered.length === 0) {
-          gridEl.innerHTML = '';
+          listEl.innerHTML = '';
           emptyEl.style.display = 'block';
           return;
         }
 
         emptyEl.style.display = 'none';
-        gridEl.innerHTML = filtered.map(job => {
+        listEl.innerHTML = filtered.map(job => {
           return `
-            <article class="job-card fade-up">
-              <div class="job-card-top">
-                <div class="job-card-badges">
+            <article class="job-list-item fade-up">
+              <div class="job-list-left">
+                <div class="job-list-header">
+                  <h3 class="job-list-title">${escapeHtml(job.title)}</h3>
                   <span class="job-badge job-badge-dept">${escapeHtml(job.department || 'Engineering')}</span>
-                  <span class="job-badge job-badge-type">${escapeHtml(job.job_type || 'Full Time')}</span>
+                  <span class="job-badge job-badge-type">${escapeHtml(job.type || job.job_type || 'Full-time')}</span>
                 </div>
-                <h3 class="job-card-title">${escapeHtml(job.title)}</h3>
-                <div class="job-card-meta">
-                  <span class="job-card-meta-item">
+                <p class="job-list-desc">${escapeHtml(job.description || '')}</p>
+                <div class="job-list-meta">
+                  <span class="job-list-meta-item">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     <span>${escapeHtml(job.location || 'Pan-India')}</span>
                   </span>
-                  <span class="job-card-meta-item">
+                  <span class="job-list-meta-item">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                    <span>${escapeHtml(job.experience || '2 - 5 Years')}</span>
+                    <span>Exp: ${escapeHtml(job.experience || '2+ Years')}</span>
                   </span>
                 </div>
-                <p class="job-card-desc">${escapeHtml(job.description || '')}</p>
               </div>
 
-              <div class="job-card-action">
-                <button type="button" class="btn btn-outline" onclick="selectRoleAndApply('${escapeHtml(job.title)}')" style="padding: 7px 16px; font-size: 13px; font-weight: 700; border-color: var(--leaf); color: var(--leaf);">
-                  <span>Apply For Role</span>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              <div class="job-list-right">
+                <button type="button" class="btn btn-primary job-apply-btn" onclick="selectRoleAndApply('${escapeHtml(job.title)}')">
+                  <span>Apply for Role</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
               </div>
             </article>
@@ -654,36 +609,22 @@
           formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
         const nameInput = document.getElementById('career-page-name');
-        if (nameInput) setTimeout(() => nameInput.focus(), 400);
+        if (nameInput) setTimeout(() => nameInput.focus(), 450);
       };
 
       window.resetJobFilters = function() {
-        activeDept = 'all';
         searchQuery = '';
         if (searchInput) searchInput.value = '';
-        deptButtons.forEach(btn => {
-          if (btn.getAttribute('data-dept') === 'all') btn.classList.add('active');
-          else btn.classList.remove('active');
-        });
         renderJobs();
       };
 
-      // Search & Dept Listeners
+      // Search Listener
       if (searchInput) {
         searchInput.addEventListener('input', (e) => {
           searchQuery = e.target.value.trim();
           renderJobs();
         });
       }
-
-      deptButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          deptButtons.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          activeDept = btn.getAttribute('data-dept');
-          renderJobs();
-        });
-      });
 
       // Dropzone interactions
       if (dropzone && fileInput) {

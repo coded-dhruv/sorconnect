@@ -1295,8 +1295,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Attach modal trigger to all "Get a Free Quote" & "Request a Site Assessment" CTAs
   function attachModalTriggers() {
-    // Careers modal triggers across the entire site
-    const careersTriggers = document.querySelectorAll('[data-open-modal="careers"], [data-open-modal="career"], .btn-open-careers, a[href="careers.html"], a[href="/careers"], a[href="careers"]');
+    // Careers modal triggers (only for explicit modal buttons, never intercept page navigation)
+    const careersTriggers = document.querySelectorAll('.trigger-careers-modal');
     careersTriggers.forEach(el => {
       el.addEventListener('click', function(e) {
         e.preventDefault();
