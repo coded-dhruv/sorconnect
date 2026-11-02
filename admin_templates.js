@@ -944,10 +944,10 @@ module.exports = {
     </div>
 
     <!-- Metrics -->
-    <div class="metrics-grid">
+    <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
       <div class="metric-card">
         <div>
-          <div class="metric-label">Total Events &amp; Expos</div>
+          <div class="metric-label">Total Events</div>
           <div class="metric-value" id="events-stat-total">0</div>
         </div>
         <div class="metric-icon-wrap" style="background:#f0fdf4; color:#15803d;">
@@ -956,29 +956,20 @@ module.exports = {
       </div>
       <div class="metric-card">
         <div>
-          <div class="metric-label">Upcoming Gatherings</div>
-          <div class="metric-value" id="events-stat-upcoming">0</div>
+          <div class="metric-label">Featured Events</div>
+          <div class="metric-value" id="events-stat-featured">0</div>
         </div>
         <div class="metric-icon-wrap" style="background:#ecfdf5; color:#047857;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
       </div>
       <div class="metric-card">
         <div>
-          <div class="metric-label">Past / Completed Milestones</div>
-          <div class="metric-value" id="events-stat-past">0</div>
-        </div>
-        <div class="metric-icon-wrap" style="background:#f1f5f9; color:#475569;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
-        </div>
-      </div>
-      <div class="metric-card">
-        <div>
-          <div class="metric-label">Exhibitions &amp; Summits</div>
-          <div class="metric-value" id="events-stat-exhibitions">0</div>
+          <div class="metric-label">Events with Scheduled Dates</div>
+          <div class="metric-value" id="events-stat-dated">0</div>
         </div>
         <div class="metric-icon-wrap" style="background:#eff6ff; color:#1d4ed8;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
         </div>
       </div>
     </div>
@@ -988,25 +979,7 @@ module.exports = {
       <div class="control-bar-left">
         <div class="search-box">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="events-search" placeholder="Search events by title, venue, city, booth...">
-        </div>
-        <div class="filter-dropdown-wrap">
-          <select id="events-category-filter" class="filter-select">
-            <option value="all">All Categories</option>
-            <option value="Exhibition">Exhibitions &amp; Expos</option>
-            <option value="Conference">Conferences &amp; Summits</option>
-            <option value="Award & Gala">Awards &amp; Galas</option>
-            <option value="Workshop">Workshops &amp; Seminars</option>
-            <option value="Inauguration">Inaugurations &amp; Groundbreakings</option>
-            <option value="Community & CSR">Community &amp; CSR</option>
-          </select>
-        </div>
-        <div class="filter-dropdown-wrap">
-          <select id="events-status-filter" class="filter-select">
-            <option value="all">All Statuses</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="completed">Completed / Past</option>
-          </select>
+          <input type="text" id="events-search" placeholder="Search events by title, summary, city, or venue...">
         </div>
       </div>
 
@@ -1025,12 +998,9 @@ module.exports = {
           <thead>
             <tr>
               <th style="width: 76px;">Cover</th>
-              <th>Event Title &amp; Details</th>
-              <th>Category</th>
+              <th>Event Title &amp; Summary</th>
               <th>Date &amp; Schedule</th>
-              <th>Venue &amp; City</th>
-              <th>Status</th>
-              <th>Photos</th>
+              <th>Venue &amp; Location</th>
               <th style="text-align: right; width: 140px;">Actions</th>
             </tr>
           </thead>
@@ -1041,7 +1011,7 @@ module.exports = {
       </div>
       <div id="events-empty-state" class="table-empty-state" style="display: none;">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <p>No events found matching your filter criteria.</p>
+        <p>No events found matching your search.</p>
       </div>
     </div>
   </section>
@@ -2003,72 +1973,46 @@ module.exports = {
 
           <input type="hidden" id="event-form-id" name="id">
 
-          <div class="modal-form-row two-col">
-            <div class="modal-form-group">
-              <label for="event-title">Event Title <span style="color:red;">*</span></label>
-              <input type="text" id="event-title" name="title" required placeholder="e.g. Renewable Energy India Expo 2026">
-            </div>
-            <div class="modal-form-group">
-              <label for="event-category">Category <span style="color:red;">*</span></label>
-              <select id="event-category" name="category" required>
-                <option value="Exhibition">Exhibition &amp; Expo</option>
-                <option value="Conference">Conference &amp; Summit</option>
-                <option value="Award & Gala">Award &amp; Gala</option>
-                <option value="Workshop">Workshop &amp; Seminar</option>
-                <option value="Inauguration">Inauguration &amp; Groundbreaking</option>
-                <option value="Community & CSR">Community &amp; CSR</option>
-              </select>
-            </div>
+          <div class="modal-form-group">
+            <label for="event-title">Event Title <span style="color:red;">*</span></label>
+            <input type="text" id="event-title" name="title" required placeholder="e.g. Renewable Energy India Expo 2026">
           </div>
 
-          <div class="modal-form-row three-col">
+          <div class="modal-form-row two-col">
             <div class="modal-form-group">
-              <label for="event-date">Start Date <span style="color:red;">*</span></label>
-              <input type="date" id="event-date" name="event_date" required>
+              <label for="event-date">Start Date <span style="font-weight: normal; color: #64748b;">(Optional)</span></label>
+              <input type="date" id="event-date" name="event_date">
             </div>
             <div class="modal-form-group">
               <label for="event-end-date">End Date <span style="font-weight: normal; color: #64748b;">(Optional)</span></label>
               <input type="date" id="event-end-date" name="end_date">
             </div>
-            <div class="modal-form-group">
-              <label for="event-status">Status <span style="color:red;">*</span></label>
-              <select id="event-status" name="status" required>
-                <option value="upcoming">Upcoming</option>
-                <option value="completed">Completed / Past</option>
-              </select>
-            </div>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="event-time">Time / Hours <span style="font-weight: normal; color: #64748b;">(Optional)</span></label>
+            <input type="text" id="event-time" name="time_schedule" placeholder="e.g. 10:00 AM – 6:00 PM IST">
           </div>
 
           <div class="modal-form-row two-col">
             <div class="modal-form-group">
-              <label for="event-time">Time / Hours</label>
-              <input type="text" id="event-time" name="time_schedule" placeholder="e.g. 10:00 AM – 6:00 PM IST">
+              <label for="event-venue">Venue Name <span style="font-weight: normal; color: #64748b;">(Optional)</span></label>
+              <input type="text" id="event-venue" name="venue" placeholder="e.g. India Expo Mart, Greater Noida">
             </div>
             <div class="modal-form-group">
-              <label for="event-booth">Booth / Stall Info</label>
-              <input type="text" id="event-booth" name="booth_info" placeholder="e.g. Hall 3, Booth B-114">
-            </div>
-          </div>
-
-          <div class="modal-form-row two-col">
-            <div class="modal-form-group">
-              <label for="event-venue">Venue Name <span style="color:red;">*</span></label>
-              <input type="text" id="event-venue" name="venue" required placeholder="e.g. India Expo Mart, Greater Noida">
-            </div>
-            <div class="modal-form-group">
-              <label for="event-city">City / State <span style="color:red;">*</span></label>
-              <input type="text" id="event-city" name="city" required placeholder="e.g. Greater Noida, Delhi NCR">
+              <label for="event-city">City / State <span style="font-weight: normal; color: #64748b;">(Optional)</span></label>
+              <input type="text" id="event-city" name="city" placeholder="e.g. Greater Noida, Delhi NCR">
             </div>
           </div>
 
           <div class="modal-form-group">
-            <label for="event-summary">Short Summary (Card Preview) <span style="color:red;">*</span></label>
-            <textarea id="event-summary" name="summary" rows="2" required placeholder="Brief 1-2 sentence overview shown on the event card..."></textarea>
+            <label for="event-summary">Short Summary <span style="color:red;">*</span></label>
+            <textarea id="event-summary" name="summary" rows="2" required placeholder="Brief overview shown on the event card..."></textarea>
           </div>
 
           <div class="modal-form-group">
-            <label for="event-description">Full Description &amp; Highlights</label>
-            <textarea id="event-description" name="description" rows="4" placeholder="Detailed event agenda, key takeaways, booth highlights, topics covered..."></textarea>
+            <label for="event-description">Full Description &amp; Details <span style="font-weight: normal; color: #64748b;">(Optional)</span></label>
+            <textarea id="event-description" name="description" rows="4" placeholder="Detailed event agenda, highlights, topics covered..."></textarea>
           </div>
 
           <!-- Cover Image Upload Box -->
@@ -2119,13 +2063,6 @@ module.exports = {
               <button type="button" class="asset-option-btn event-preset-btn" data-src="assets/partner-reliance-booth.jpg"><img src="assets/partner-reliance-booth.jpg"> Partner Booth</button>
               <button type="button" class="asset-option-btn event-preset-btn" data-src="assets/team-reliance-launch.jpg"><img src="assets/team-reliance-launch.jpg"> Team Ceremony</button>
             </div>
-          </div>
-
-          <!-- Additional Gallery Photos -->
-          <div class="modal-form-group">
-            <label for="event-gallery-input">Additional Gallery Photos (Comma or Newline separated URLs)</label>
-            <textarea id="event-gallery-input" name="gallery_urls" rows="2" placeholder="assets/partner-reliance-expo.jpg, assets/partner-reliance-booth.jpg"></textarea>
-            <span style="font-size: 11.5px; color: #64748b; margin-top: 3px; display: block;">Enter multiple photo paths or URLs separated by commas.</span>
           </div>
 
           <div class="modal-form-row three-col">

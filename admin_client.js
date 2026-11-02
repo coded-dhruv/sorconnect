@@ -3880,9 +3880,8 @@ module.exports = {
       if (!tbody) return;
 
       const total = state.events.length;
-      const upcoming = state.events.filter(e => e.status === 'upcoming').length;
-      const past = state.events.filter(e => e.status === 'completed' || e.status === 'past').length;
-      const exhibitions = state.events.filter(e => e.category === 'Exhibition' || e.category === 'Conference').length;
+      const featured = state.events.filter(e => e.featured).length;
+      const withDate = state.events.filter(e => e.event_date).length;
 
       // Update counters
       const bBadge = document.getElementById('events-count-badge');
@@ -3891,32 +3890,21 @@ module.exports = {
       const sTotal = document.getElementById('events-stat-total');
       if (sTotal) sTotal.textContent = total;
 
-      const sUp = document.getElementById('events-stat-upcoming');
-      if (sUp) sUp.textContent = upcoming;
+      const sFeatured = document.getElementById('events-stat-featured');
+      if (sFeatured) sFeatured.textContent = featured;
 
-      const sPast = document.getElementById('events-stat-past');
-      if (sPast) sPast.textContent = past;
+      const sDated = document.getElementById('events-stat-dated');
+      if (sDated) sDated.textContent = withDate;
 
-      const sEx = document.getElementById('events-stat-exhibitions');
-      if (sEx) sEx.textContent = exhibitions;
-
-      // Filter
+      // Filter by search query
       const q = (state.eventsSearchQuery || '').toLowerCase();
-      const catFilter = state.eventsCategoryFilter || 'all';
-      const statusFilter = state.eventsStatusFilter || 'all';
-
       const filtered = state.events.filter(ev => {
-        if (catFilter !== 'all' && ev.category !== catFilter) return false;
-        if (statusFilter === 'upcoming' && ev.status !== 'upcoming') return false;
-        if (statusFilter === 'completed' && ev.status !== 'completed' && ev.status !== 'past') return false;
-
         if (q) {
           const match = (ev.title || '').toLowerCase().includes(q) ||
             (ev.venue || '').toLowerCase().includes(q) ||
             (ev.city || '').toLowerCase().includes(q) ||
             (ev.summary || '').toLowerCase().includes(q) ||
-            (ev.booth_info || '').toLowerCase().includes(q) ||
-            (ev.category || '').toLowerCase().includes(q);
+            (ev.organizer || '').toLowerCase().includes(q);
           if (!match) return false;
         }
         return true;
@@ -3931,21 +3919,6 @@ module.exports = {
       if (emptyState) emptyState.style.display = 'none';
 
       tbody.innerHTML = filtered.map(ev => {
-        const isUpcoming = ev.status === 'upcoming';
-        const statusBadge = isUpcoming
-          ? '<span class="badge badge-emerald" style="cursor:pointer;" onclick="toggleEventStatus(' + ev.id + ')" title="Click to toggle status"><span class="pulse-dot" style="margin-right:4px;"></span>Upcoming</span>'
-          : '<span class="badge badge-slate" style="cursor:pointer;" onclick="toggleEventStatus(' + ev.id + ')" title="Click to toggle status">Completed</span>';
-
-        let categoryBadge = '<span class="badge badge-slate">' + escapeHtml(ev.category || 'Event') + '</span>';
-        if (ev.category === 'Exhibition') categoryBadge = '<span class="badge badge-amber">Exhibition</span>';
-        else if (ev.category === 'Conference') categoryBadge = '<span class="badge badge-indigo">Conference</span>';
-        else if (ev.category === 'Award & Gala') categoryBadge = '<span class="badge badge-emerald">Award &amp; Gala</span>';
-        else if (ev.category === 'Workshop') categoryBadge = '<span class="badge badge-sky">Workshop</span>';
-        else if (ev.category === 'Inauguration') categoryBadge = '<span class="badge badge-violet">Inauguration</span>';
-
-        const gallery = Array.isArray(ev.gallery_urls) ? ev.gallery_urls : [];
-        const photoCount = gallery.length > 0 ? gallery.length : 1;
-
         let rowHtml = '<tr>';
         rowHtml += '<td><div style="width: 58px; height: 42px; border-radius: 6px; overflow: hidden; background: #e2e8f0; border: 1px solid var(--admin-border);">';
         rowHtml += '<img src="' + escapeHtml(ev.image_url || 'assets/partner-reliance-expo.jpg') + '" alt="Cover" style="width:100%; height:100%; object-fit:cover;" onerror="handleEventImgErr(this)">';
@@ -3956,34 +3929,22 @@ module.exports = {
         rowHtml += escapeHtml(ev.title);
         if (ev.featured) rowHtml += ' <span class="badge badge-amber" style="margin-left: 6px; font-size: 10px; padding: 2px 6px;">Featured</span>';
         rowHtml += '</div>';
-        rowHtml += '<div style="font-size: 12px; color: #64748b; max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + escapeHtml(ev.summary || '') + '</div>';
+        rowHtml += '<div style="font-size: 12px; color: #64748b; max-width: 360px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + escapeHtml(ev.summary || '') + '</div>';
         rowHtml += '</td>';
 
-        rowHtml += '<td>' + categoryBadge + '</td>';
-
         rowHtml += '<td>';
-        rowHtml += '<div style="font-weight: 600; font-size: 13px; color: var(--admin-text);">' + escapeHtml(ev.event_date || '') + '</div>';
+        rowHtml += '<div style="font-weight: 600; font-size: 13px; color: var(--admin-text);">' + escapeHtml(ev.event_date || '—') + '</div>';
         if (ev.time_schedule) rowHtml += '<div style="font-size: 11.5px; color: #64748b;">' + escapeHtml(ev.time_schedule) + '</div>';
         rowHtml += '</td>';
 
         rowHtml += '<td>';
-        rowHtml += '<div style="font-weight: 600; font-size: 12.5px; color: var(--admin-text);">' + escapeHtml(ev.city || '') + '</div>';
-        rowHtml += '<div style="font-size: 11.5px; color: #64748b; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + escapeHtml(ev.venue || '') + '">' + escapeHtml(ev.venue || '') + '</div>';
-        if (ev.booth_info) rowHtml += '<div style="font-size: 11px; font-weight:700; color: #059669;">' + escapeHtml(ev.booth_info) + '</div>';
-        rowHtml += '</td>';
-
-        rowHtml += '<td>' + statusBadge + '</td>';
-
-        rowHtml += '<td>';
-        rowHtml += '<span class="badge badge-slate" style="display:inline-flex; align-items:center; gap:4px;">';
-        rowHtml += '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
-        rowHtml += '<span>' + photoCount + '</span>';
-        rowHtml += '</span>';
+        rowHtml += '<div style="font-weight: 600; font-size: 12.5px; color: var(--admin-text);">' + escapeHtml(ev.city || '—') + '</div>';
+        if (ev.venue) rowHtml += '<div style="font-size: 11.5px; color: #64748b; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + escapeHtml(ev.venue) + '">' + escapeHtml(ev.venue) + '</div>';
         rowHtml += '</td>';
 
         rowHtml += '<td style="text-align: right;">';
         rowHtml += '<div style="display: inline-flex; gap: 6px; align-items: center;">';
-        rowHtml += '<button type="button" class="btn-action-icon" onclick="editEvent(' + ev.id + ')" title="Edit Event Details & Photos">';
+        rowHtml += '<button type="button" class="btn-action-icon" onclick="editEvent(' + ev.id + ')" title="Edit Event">';
         rowHtml += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
         rowHtml += '</button>';
         rowHtml += '<button type="button" class="btn-action-icon danger" onclick="deleteEvent(' + ev.id + ')" title="Delete Event">';
@@ -4001,12 +3962,26 @@ module.exports = {
       const form = document.getElementById('event-form');
       if (form) form.reset();
 
-      document.getElementById('event-modal-title').textContent = 'Add New Event / Expo';
+      document.getElementById('event-modal-title').textContent = 'Add New Event';
       document.getElementById('event-form-id').value = '';
 
-      // Default date to today
-      const todayStr = new Date().toISOString().split('T')[0];
-      document.getElementById('event-date').value = todayStr;
+      const dateEl = document.getElementById('event-date');
+      if (dateEl) dateEl.value = '';
+
+      const endEl = document.getElementById('event-end-date');
+      if (endEl) endEl.value = '';
+
+      const timeEl = document.getElementById('event-time');
+      if (timeEl) timeEl.value = '';
+
+      const venueEl = document.getElementById('event-venue');
+      if (venueEl) venueEl.value = '';
+
+      const cityEl = document.getElementById('event-city');
+      if (cityEl) cityEl.value = '';
+
+      const descEl = document.getElementById('event-description');
+      if (descEl) descEl.value = '';
 
       // Default image
       document.getElementById('event-image').value = 'assets/partner-reliance-expo.jpg';
@@ -4025,26 +4000,33 @@ module.exports = {
       const ev = state.events.find(e => e.id === Number(id));
       if (!ev) return;
 
-      document.getElementById('event-modal-title').textContent = 'Edit Event / Expo';
+      document.getElementById('event-modal-title').textContent = 'Edit Event';
       document.getElementById('event-form-id').value = ev.id;
       document.getElementById('event-title').value = ev.title || '';
-      document.getElementById('event-category').value = ev.category || 'Exhibition';
-      document.getElementById('event-date').value = ev.event_date || '';
-      document.getElementById('event-end-date').value = ev.end_date || '';
-      document.getElementById('event-status').value = ev.status || 'upcoming';
-      document.getElementById('event-time').value = ev.time_schedule || '';
-      document.getElementById('event-booth').value = ev.booth_info || '';
-      document.getElementById('event-venue').value = ev.venue || '';
-      document.getElementById('event-city').value = ev.city || '';
+
+      const dateEl = document.getElementById('event-date');
+      if (dateEl) dateEl.value = ev.event_date || '';
+
+      const endEl = document.getElementById('event-end-date');
+      if (endEl) endEl.value = ev.end_date || '';
+
+      const timeEl = document.getElementById('event-time');
+      if (timeEl) timeEl.value = ev.time_schedule || '';
+
+      const venueEl = document.getElementById('event-venue');
+      if (venueEl) venueEl.value = ev.venue || '';
+
+      const cityEl = document.getElementById('event-city');
+      if (cityEl) cityEl.value = ev.city || '';
+
       document.getElementById('event-summary').value = ev.summary || '';
-      document.getElementById('event-description').value = ev.description || '';
+
+      const descEl = document.getElementById('event-description');
+      if (descEl) descEl.value = ev.description || '';
 
       const img = ev.image_url || 'assets/partner-reliance-expo.jpg';
       document.getElementById('event-image').value = img;
       updateSvcImgPreview('event-image-preview', img, 'event-image-status');
-
-      const gallery = Array.isArray(ev.gallery_urls) ? ev.gallery_urls.join(', ') : (ev.gallery_urls || '');
-      document.getElementById('event-gallery-input').value = gallery;
 
       document.getElementById('event-organizer').value = ev.organizer || 'Sor Connect';
       document.getElementById('event-reg-url').value = ev.registration_url || '';
@@ -4079,29 +4061,6 @@ module.exports = {
       }
     };
 
-    window.toggleEventStatus = async function(id) {
-      const ev = state.events.find(e => e.id === Number(id));
-      if (!ev) return;
-      const newStatus = ev.status === 'upcoming' ? 'completed' : 'upcoming';
-
-      try {
-        try {
-          await supabaseQuery('/rest/v1/events?id=eq.' + id, {
-            method: 'PATCH',
-            body: JSON.stringify({ status: newStatus, updated_at: new Date().toISOString() })
-          });
-        } catch (dbErr) {
-          console.warn('Supabase status update failed (local fallback):', dbErr);
-        }
-
-        ev.status = newStatus;
-        renderEvents();
-        showToast('Event marked as ' + newStatus.toUpperCase(), 'success');
-      } catch (err) {
-        showToast('Error updating status: ' + err.message, 'error');
-      }
-    };
-
     async function handleEventFormSubmit(e) {
       e.preventDefault();
       const saveBtn = document.getElementById('btn-save-event');
@@ -4110,36 +4069,23 @@ module.exports = {
 
       const idVal = document.getElementById('event-form-id').value;
       const title = document.getElementById('event-title').value.trim();
-      const category = document.getElementById('event-category').value;
-      const eventDate = document.getElementById('event-date').value;
-      const endDate = document.getElementById('event-end-date').value || null;
-      const status = document.getElementById('event-status').value;
-      const timeSchedule = document.getElementById('event-time').value.trim();
-      const boothInfo = document.getElementById('event-booth').value.trim();
-      const venue = document.getElementById('event-venue').value.trim();
-      const city = document.getElementById('event-city').value.trim();
+      const eventDate = document.getElementById('event-date')?.value || null;
+      const endDate = document.getElementById('event-end-date')?.value || null;
+      const timeSchedule = document.getElementById('event-time')?.value.trim() || null;
+      const venue = document.getElementById('event-venue')?.value.trim() || null;
+      const city = document.getElementById('event-city')?.value.trim() || null;
       const summary = document.getElementById('event-summary').value.trim();
-      const description = document.getElementById('event-description').value.trim();
+      const description = document.getElementById('event-description')?.value.trim() || null;
       const imageUrl = document.getElementById('event-image').value.trim() || 'assets/partner-reliance-expo.jpg';
-      const organizer = document.getElementById('event-organizer').value.trim() || 'Sor Connect';
-      const registrationUrl = document.getElementById('event-reg-url').value.trim();
-      const displayOrder = parseInt(document.getElementById('event-order').value, 10) || 1;
-      const featured = document.getElementById('event-featured').checked;
+      const organizer = document.getElementById('event-organizer')?.value.trim() || 'Sor Connect';
+      const registrationUrl = document.getElementById('event-reg-url')?.value.trim() || null;
+      const displayOrder = parseInt(document.getElementById('event-order')?.value, 10) || 1;
+      const featured = !!document.getElementById('event-featured')?.checked;
 
-      // Parse gallery URLs from textarea
-      const galleryRaw = document.getElementById('event-gallery-input').value;
-      let galleryUrls = galleryRaw
-        .split(/[\\n,]+/)
-        .map(u => u.trim())
-        .filter(u => u.length > 0);
-      if (galleryUrls.length === 0 && imageUrl) {
-        galleryUrls = [imageUrl];
-      }
-
-      if (!title || !eventDate || !venue || !city || !summary) {
+      if (!title || !summary || !imageUrl) {
         if (errorAlert) {
           errorAlert.style.display = 'flex';
-          errorAlert.querySelector('.msg-text').textContent = 'Please fill out all required fields (*).';
+          errorAlert.querySelector('.msg-text').textContent = 'Please fill out all required fields: Event Title, Short Summary, and Cover Photo.';
         }
         return;
       }
@@ -4147,18 +4093,14 @@ module.exports = {
       const payload = {
         title: title,
         slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-        category: category,
         event_date: eventDate,
         end_date: endDate,
         time_schedule: timeSchedule,
         venue: venue,
         city: city,
-        status: status,
-        booth_info: boothInfo,
         summary: summary,
         description: description,
         image_url: imageUrl,
-        gallery_urls: galleryUrls,
         organizer: organizer,
         registration_url: registrationUrl,
         featured: featured,
@@ -4234,22 +4176,6 @@ module.exports = {
     if (evSearch) {
       evSearch.addEventListener('input', function(e) {
         state.eventsSearchQuery = e.target.value.trim();
-        renderEvents();
-      });
-    }
-
-    const evCatFilter = document.getElementById('events-category-filter');
-    if (evCatFilter) {
-      evCatFilter.addEventListener('change', function(e) {
-        state.eventsCategoryFilter = e.target.value;
-        renderEvents();
-      });
-    }
-
-    const evStatusFilter = document.getElementById('events-status-filter');
-    if (evStatusFilter) {
-      evStatusFilter.addEventListener('change', function(e) {
-        state.eventsStatusFilter = e.target.value;
         renderEvents();
       });
     }

@@ -153,41 +153,21 @@
     <!-- ============ INTERACTIVE CONTROLS & FILTER BAR ============ -->
     <section class="section" style="padding-top: 0; padding-bottom: 20px;">
       <div class="container">
-        <div class="events-controls-wrap fade-up">
+        <div class="events-controls-wrap fade-up" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
 
-          <!-- Category and Status Filter Tabs -->
-          <div class="events-filter-tabs" id="events-tabs">
-            <button type="button" class="event-tab-btn active" data-filter="all">
-              <span>All Events</span>
-              <span class="badge-pill" id="badge-all-count">6</span>
-            </button>
-            <button type="button" class="event-tab-btn" data-filter="upcoming">
-              <span>Upcoming</span>
-              <span class="badge-pill" id="badge-upcoming-count">2</span>
-            </button>
-            <button type="button" class="event-tab-btn" data-filter="completed">
-              <span>Past Milestones</span>
-              <span class="badge-pill" id="badge-past-count">4</span>
-            </button>
-            <button type="button" class="event-tab-btn" data-filter="Exhibition">
-              <span>Exhibitions &amp; Expos</span>
-            </button>
-            <button type="button" class="event-tab-btn" data-filter="Award & Gala">
-              <span>Awards &amp; Galas</span>
-            </button>
-            <button type="button" class="event-tab-btn" data-filter="Workshop">
-              <span>Workshops &amp; Seminars</span>
-            </button>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-weight: 800; font-size: 16px; color: var(--forest-deep);">All Events</span>
+            <span class="badge-pill" id="badge-all-count" style="background: var(--leaf); color: #fff; font-size: 12px; padding: 3px 10px; border-radius: 999px; font-weight: 700;">0</span>
           </div>
 
           <!-- Live Search Bar -->
-          <div class="events-search-wrap">
+          <div class="events-search-wrap" style="flex: 1; max-width: 440px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
             <input type="text" id="events-search" class="events-search-input"
-              placeholder="Search by title, city, booth, venue...">
+              placeholder="Search events by title, summary, venue, city...">
           </div>
 
         </div>
@@ -250,11 +230,6 @@
         <img id="modal-banner-img" src="" alt="Event cover photo">
         <div class="event-modal-banner-overlay"></div>
         <div class="event-modal-banner-meta">
-          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-            <span class="event-category-pill" id="modal-category"
-              style="position: static; display: inline-block;"></span>
-            <span class="event-status-pill" id="modal-status" style="position: static; display: inline-flex;"></span>
-          </div>
           <h2 id="modal-title"
             style="font-family: var(--heading); font-size: clamp(20px, 3vw, 26px); font-weight: 800; color: #ffffff; line-height: 1.25;">
           </h2>
@@ -267,25 +242,18 @@
         <!-- Quick Meta Details Grid -->
         <div
           style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; background: #f8faf9; border: 1px solid var(--sage-line); border-radius: 10px; padding: 14px 18px; margin-bottom: 22px;">
-          <div>
+          <div id="modal-schedule-wrap">
             <div
               style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.05em;">
               Date &amp; Schedule</div>
             <div id="modal-schedule" style="font-size: 13.5px; font-weight: 700; color: var(--forest-deep); margin-top: 3px;">
             </div>
           </div>
-          <div>
+          <div id="modal-venue-wrap">
             <div
               style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.05em;">
-              Venue &amp; City</div>
+              Venue &amp; Location</div>
             <div id="modal-venue" style="font-size: 13.5px; font-weight: 700; color: var(--forest-deep); margin-top: 3px;">
-            </div>
-          </div>
-          <div id="modal-booth-wrap" style="display: none;">
-            <div
-              style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.05em;">
-              Booth / Location</div>
-            <div id="modal-booth" style="font-size: 13.5px; font-weight: 700; color: var(--leaf); margin-top: 3px;">
             </div>
           </div>
           <div>
@@ -304,17 +272,6 @@
             Overview &amp; Highlights</h4>
           <div id="modal-description"
             style="font-size: 14px; line-height: 1.65; color: var(--ink); white-space: pre-line;"></div>
-        </div>
-
-        <!-- Photo Gallery Section -->
-        <div id="modal-gallery-section" style="margin-bottom: 24px;">
-          <h4
-            style="font-family: var(--heading); font-size: 15px; font-weight: 700; color: var(--forest-deep); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-            <span>Event Photo Gallery</span>
-            <span id="modal-gallery-count"
-              style="font-size: 12px; font-weight: 600; color: #64748b; background: #e2e8f0; padding: 2px 8px; border-radius: 999px;"></span>
-          </h4>
-          <div class="event-modal-gallery-row" id="modal-gallery-row"></div>
         </div>
 
         <!-- Action Links -->
@@ -417,14 +374,12 @@
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
 
       let allEvents = [];
-      let activeFilter = 'all';
       let searchQuery = '';
 
       const gridEl = document.getElementById('events-grid');
       const featuredContainer = document.getElementById('events-featured-container');
       const emptyStateEl = document.getElementById('events-empty-state');
       const searchInput = document.getElementById('events-search');
-      const tabBtns = document.querySelectorAll('.event-tab-btn');
 
       // Fetch Events: Try Supabase first, fallback to events.json
       async function loadEventsData() {
@@ -488,45 +443,24 @@
 
       function updateCounts() {
         const total = allEvents.length;
-        const upcomingCount = allEvents.filter(e => e.status === 'upcoming').length;
-        const pastCount = allEvents.filter(e => e.status === 'completed' || e.status === 'past').length;
-
         const totalStat = document.getElementById('stat-total-events');
         if (totalStat) totalStat.textContent = total + '+';
 
         const bAll = document.getElementById('badge-all-count');
         if (bAll) bAll.textContent = total;
-
-        const bUp = document.getElementById('badge-upcoming-count');
-        if (bUp) bUp.textContent = upcomingCount;
-
-        const bPast = document.getElementById('badge-past-count');
-        if (bPast) bPast.textContent = pastCount;
       }
 
       function getFilteredEvents() {
         return allEvents.filter(ev => {
-          // Status/Category Filter
-          if (activeFilter === 'upcoming') {
-            if (ev.status !== 'upcoming') return false;
-          } else if (activeFilter === 'completed') {
-            if (ev.status !== 'completed' && ev.status !== 'past') return false;
-          } else if (activeFilter !== 'all') {
-            if (ev.category !== activeFilter) return false;
-          }
-
-          // Search Query Filter
           if (searchQuery) {
             const q = searchQuery.toLowerCase();
             const textMatch = (ev.title || '').toLowerCase().includes(q) ||
               (ev.venue || '').toLowerCase().includes(q) ||
               (ev.city || '').toLowerCase().includes(q) ||
               (ev.summary || '').toLowerCase().includes(q) ||
-              (ev.category || '').toLowerCase().includes(q) ||
-              (ev.booth_info || '').toLowerCase().includes(q);
+              (ev.organizer || '').toLowerCase().includes(q);
             if (!textMatch) return false;
           }
-
           return true;
         });
       }
@@ -536,8 +470,8 @@
         const filtered = getFilteredEvents();
 
         // 1. Featured Top Event
-        if (activeFilter === 'all' && !searchQuery) {
-          const featuredEvent = allEvents.find(e => e.featured) || allEvents.find(e => e.status === 'upcoming') || allEvents[0];
+        if (!searchQuery) {
+          const featuredEvent = allEvents.find(e => e.featured) || allEvents[0];
           if (featuredEvent) {
             renderFeaturedHero(featuredEvent);
           } else {
@@ -557,44 +491,37 @@
         emptyStateEl.style.display = 'none';
 
         gridEl.innerHTML = filtered.map(ev => {
-          const parts = getDateParts(ev.event_date);
-          const isUpcoming = ev.status === 'upcoming';
-          const statusText = isUpcoming ? '<span class="pulse-dot"></span> Upcoming' : 'Completed';
-          const statusClass = isUpcoming ? 'upcoming' : 'completed';
-          const gallery = Array.isArray(ev.gallery_urls) ? ev.gallery_urls : [];
-          const photoCount = gallery.length > 0 ? gallery.length : 1;
+          const hasDate = !!ev.event_date;
+          const parts = hasDate ? getDateParts(ev.event_date) : null;
+          const locStr = [ev.venue, ev.city].filter(Boolean).join(', ') || 'India';
 
           return `
             <article class="event-card fade-up">
               <div class="event-card-media">
                 <img src="${escapeHtml(ev.image_url || 'assets/partner-reliance-expo.jpg')}" alt="${escapeHtml(ev.title)}" class="event-card-img" loading="lazy" onerror="this.src='assets/partner-reliance-expo.jpg'">
-                <span class="event-category-pill">${escapeHtml(ev.category || 'Event')}</span>
-                <span class="event-status-pill ${statusClass}">${statusText}</span>
-                <div class="event-date-ribbon">
-                  <span class="day">${parts.day}</span>
-                  <span class="month-yr">
-                    <span>${parts.month}</span>
-                    <span style="font-size: 9.5px; opacity: 0.8;">${parts.year}</span>
-                  </span>
-                </div>
+                ${hasDate ? `
+                  <div class="event-date-ribbon">
+                    <span class="day">${parts.day}</span>
+                    <span class="month-yr">
+                      <span>${parts.month}</span>
+                      <span style="font-size: 9.5px; opacity: 0.8;">${parts.year}</span>
+                    </span>
+                  </div>
+                ` : ''}
               </div>
 
               <div class="event-card-body">
                 <div class="event-location-row">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span>${escapeHtml(ev.city || 'India')} · ${escapeHtml(ev.venue || 'Venue')}</span>
+                  <span>${escapeHtml(locStr)}</span>
                 </div>
 
                 <h3 class="event-card-title">${escapeHtml(ev.title)}</h3>
                 <p class="event-card-summary">${escapeHtml(ev.summary || '')}</p>
 
-                <div class="event-card-footer">
-                  <span class="event-gallery-tag">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    <span>${photoCount} Photo${photoCount > 1 ? 's' : ''}</span>
-                  </span>
+                <div class="event-card-footer" style="justify-content: flex-end;">
                   <button type="button" class="event-details-btn" onclick="openEventModal(${ev.id})">
-                    <span>View Details &amp; Gallery</span>
+                    <span>View Event Details</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </button>
                 </div>
@@ -605,39 +532,35 @@
       }
 
       function renderFeaturedHero(ev) {
-        const isUpcoming = ev.status === 'upcoming';
-        const statusText = isUpcoming ? '✦ Next Major Expo ✦' : '✦ Featured Milestone ✦';
-        const formattedDate = formatDate(ev.event_date) + (ev.end_date && ev.end_date !== ev.event_date ? ' – ' + formatDate(ev.end_date) : '');
+        const formattedDate = ev.event_date ? (formatDate(ev.event_date) + (ev.end_date && ev.end_date !== ev.event_date ? ' – ' + formatDate(ev.end_date) : '')) : '';
+        const locStr = [ev.venue, ev.city].filter(Boolean).join(' · ') || 'Sor Connect';
 
         featuredContainer.innerHTML = `
           <div class="event-featured-card">
             <div class="event-featured-img-wrap">
               <img src="${escapeHtml(ev.image_url || 'assets/partner-reliance-expo.jpg')}" alt="${escapeHtml(ev.title)}" class="event-featured-img">
               <div class="event-featured-overlay-badge">
-                <span class="pulse-dot"></span>
-                <span>${statusText}</span>
+                <span>✦ Featured Event ✦</span>
               </div>
             </div>
             <div class="event-featured-content">
               <div>
                 <div class="event-featured-header">
-                  <span class="eyebrow">${escapeHtml(ev.category)} · ${escapeHtml(ev.city)}</span>
+                  <span class="eyebrow">${escapeHtml(locStr)}</span>
                   <h2 class="event-featured-title">${escapeHtml(ev.title)}</h2>
                 </div>
 
                 <div class="event-meta-pill-row">
-                  <span class="event-meta-pill">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
-                    <span>${formattedDate}</span>
-                  </span>
-                  <span class="event-meta-pill">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span>${escapeHtml(ev.venue)}</span>
-                  </span>
-                  ${ev.booth_info ? `
-                    <span class="event-meta-pill" style="border-color: rgba(52, 211, 153, 0.4); color: #34d399;">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                      <span>${escapeHtml(ev.booth_info)}</span>
+                  ${formattedDate ? `
+                    <span class="event-meta-pill">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                      <span>${formattedDate}</span>
+                    </span>
+                  ` : ''}
+                  ${ev.venue ? `
+                    <span class="event-meta-pill">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      <span>${escapeHtml(ev.venue)}</span>
                     </span>
                   ` : ''}
                 </div>
@@ -650,8 +573,8 @@
                   <span>Explore Event Details</span>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
-                <a href="javascript:void(0)" class="btn btn-outline" style="border-color: rgba(255,255,255,0.4); color: #ffffff;" data-open-modal="quote" data-modal-title="Schedule Meeting at ${escapeHtml(ev.title)}">
-                  <span>Schedule Booth Meeting</span>
+                <a href="javascript:void(0)" class="btn btn-outline" style="border-color: rgba(255,255,255,0.4); color: #ffffff;" data-open-modal="quote" data-modal-title="Connect Regarding ${escapeHtml(ev.title)}">
+                  <span>Connect With Us</span>
                 </a>
               </div>
             </div>
@@ -676,68 +599,43 @@
 
         const modal = document.getElementById('event-detail-modal');
         const bannerImg = document.getElementById('modal-banner-img');
-        const catEl = document.getElementById('modal-category');
-        const statusEl = document.getElementById('modal-status');
         const titleEl = document.getElementById('modal-title');
+        const schedWrap = document.getElementById('modal-schedule-wrap');
         const schedEl = document.getElementById('modal-schedule');
+        const venueWrap = document.getElementById('modal-venue-wrap');
         const venueEl = document.getElementById('modal-venue');
-        const boothWrap = document.getElementById('modal-booth-wrap');
-        const boothEl = document.getElementById('modal-booth');
         const orgEl = document.getElementById('modal-organizer');
         const descEl = document.getElementById('modal-description');
-        const galleryRow = document.getElementById('modal-gallery-row');
-        const galleryCount = document.getElementById('modal-gallery-count');
         const rsvpBtn = document.getElementById('modal-rsvp-btn');
 
-        bannerImg.src = ev.image_url || 'assets/partner-reliance-expo.jpg';
-        catEl.textContent = ev.category || 'Event';
+        if (bannerImg) bannerImg.src = ev.image_url || 'assets/partner-reliance-expo.jpg';
+        if (titleEl) titleEl.textContent = ev.title;
 
-        const isUpcoming = ev.status === 'upcoming';
-        statusEl.className = 'event-status-pill ' + (isUpcoming ? 'upcoming' : 'completed');
-        statusEl.innerHTML = isUpcoming ? '<span class="pulse-dot"></span> Upcoming' : 'Completed';
-
-        titleEl.textContent = ev.title;
-
-        const formattedDate = formatDate(ev.event_date) + (ev.end_date && ev.end_date !== ev.event_date ? ' – ' + formatDate(ev.end_date) : '');
-        schedEl.textContent = formattedDate + (ev.time_schedule ? ` (${ev.time_schedule})` : '');
-
-        venueEl.textContent = (ev.venue ? ev.venue + ', ' : '') + (ev.city || 'India');
-
-        if (ev.booth_info) {
-          boothWrap.style.display = 'block';
-          boothEl.textContent = ev.booth_info;
+        if (ev.event_date) {
+          if (schedWrap) schedWrap.style.display = 'block';
+          const formattedDate = formatDate(ev.event_date) + (ev.end_date && ev.end_date !== ev.event_date ? ' – ' + formatDate(ev.end_date) : '');
+          if (schedEl) schedEl.textContent = formattedDate + (ev.time_schedule ? ` (${ev.time_schedule})` : '');
         } else {
-          boothWrap.style.display = 'none';
+          if (schedWrap) schedWrap.style.display = 'none';
         }
 
-        orgEl.textContent = ev.organizer || 'Sor Connect';
-        descEl.textContent = ev.description || ev.summary || '';
+        const locStr = [ev.venue, ev.city].filter(Boolean).join(', ');
+        if (locStr) {
+          if (venueWrap) venueWrap.style.display = 'block';
+          if (venueEl) venueEl.textContent = locStr;
+        } else {
+          if (venueWrap) venueWrap.style.display = 'none';
+        }
 
-        // Gallery Photos
-        const gallery = Array.isArray(ev.gallery_urls) && ev.gallery_urls.length > 0 ? ev.gallery_urls : [ev.image_url || 'assets/partner-reliance-expo.jpg'];
-        galleryCount.textContent = gallery.length + ' Photos';
-
-        galleryRow.innerHTML = gallery.map((imgUrl, idx) => `
-          <div class="event-modal-gallery-thumb ${idx === 0 ? 'active' : ''}" onclick="swapModalBanner('${escapeHtml(imgUrl)}', this)">
-            <img src="${escapeHtml(imgUrl)}" alt="Event Photo ${idx + 1}" loading="lazy" onerror="this.src='assets/partner-reliance-expo.jpg'">
-          </div>
-        `).join('');
+        if (orgEl) orgEl.textContent = ev.organizer || 'Sor Connect';
+        if (descEl) descEl.textContent = ev.description || ev.summary || '';
 
         if (rsvpBtn) {
-          rsvpBtn.setAttribute('data-modal-title', 'Schedule Meeting for ' + ev.title);
+          rsvpBtn.setAttribute('data-modal-title', 'Connect Regarding ' + ev.title);
         }
 
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
-      };
-
-      window.swapModalBanner = function (newImgUrl, thumbEl) {
-        const bannerImg = document.getElementById('modal-banner-img');
-        if (bannerImg) bannerImg.src = newImgUrl;
-
-        const thumbs = document.querySelectorAll('.event-modal-gallery-thumb');
-        thumbs.forEach(t => t.classList.remove('active'));
-        if (thumbEl) thumbEl.classList.add('active');
       };
 
       window.closeEventModal = function () {
@@ -755,25 +653,10 @@
       }
 
       window.resetEventFilters = function () {
-        activeFilter = 'all';
         searchQuery = '';
         if (searchInput) searchInput.value = '';
-        tabBtns.forEach(btn => {
-          if (btn.getAttribute('data-filter') === 'all') btn.classList.add('active');
-          else btn.classList.remove('active');
-        });
         render();
       };
-
-      // Tab filtering listeners
-      tabBtns.forEach(btn => {
-        btn.addEventListener('click', function () {
-          tabBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          activeFilter = btn.getAttribute('data-filter') || 'all';
-          render();
-        });
-      });
 
       // Search input listener
       if (searchInput) {
