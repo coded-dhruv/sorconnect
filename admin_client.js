@@ -1157,20 +1157,38 @@ module.exports = {
           state.jobs = rawJobs;
           renderJobPostings();
           populateCareersFilterPositions();
+          state.loading.jobs = false;
           return;
         }
       } catch (supErr) {
-        console.warn('Supabase job postings fetch failed, trying local API...', supErr);
+        console.warn('Supabase job postings fetch failed, trying fallbacks...', supErr);
       }
 
+      // Fallback 1: Static job_postings.json file (works everywhere)
+      try {
+        const staticRes = await fetch('job_postings.json');
+        if (staticRes.ok) {
+          const staticJobs = await staticRes.json();
+          if (Array.isArray(staticJobs) && staticJobs.length > 0) {
+            state.jobs = staticJobs;
+            renderJobPostings();
+            populateCareersFilterPositions();
+            state.loading.jobs = false;
+            return;
+          }
+        }
+      } catch (stErr) {}
+
+      // Fallback 2: Local node server /api/jobs
       try {
         const res = await fetch('/api/jobs');
         if (res.ok) {
           const data = await res.json();
-          if (data && Array.isArray(data.jobs)) {
+          if (data && Array.isArray(data.jobs) && data.jobs.length > 0) {
             state.jobs = data.jobs;
             renderJobPostings();
             populateCareersFilterPositions();
+            state.loading.jobs = false;
             return;
           }
         }

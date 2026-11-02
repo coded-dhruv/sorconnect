@@ -5,9 +5,13 @@
     "department": "Engineering",
     "location": "Jaipur / Pan-India",
     "experience": "2 - 5 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Preparation of 2D/3D solar layout designs in AutoCAD, string sizing, shadow analysis, and PVsyst energy yield simulation for C&I rooftop and MW-scale utility solar plants.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 1,
     "display_order": 1
   },
   {
@@ -16,9 +20,13 @@
     "department": "Quality & HSE",
     "location": "Site-Based / Pan-India",
     "experience": "3 - 6 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Enforcing zero-compromise HSE policies, job safety analysis (JSA), electrical safety lock-out tag-out (LOTO), working-at-height controls, and safety tool audits on EPC sites.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 2,
     "display_order": 2
   },
   {
@@ -27,9 +35,13 @@
     "department": "Project Management",
     "location": "Jaipur / Regional",
     "experience": "5 - 9 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "End-to-end execution of turnkey industrial rooftop and ground-mounted solar plants, DISCOM net-metering approvals, vendor coordination, contractor management, and commissioning timelines.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 3,
     "display_order": 3
   },
   {
@@ -38,9 +50,13 @@
     "department": "Site Operations",
     "location": "Site-Based (Rajasthan / UP / Gujarat)",
     "experience": "2 - 4 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "On-site civil foundation supervision, module mounting structure (MMS) alignment, DC/AC cabling, string inverter termination, and daily progress reporting (DPR).",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 4,
     "display_order": 4
   },
   {
@@ -49,9 +65,13 @@
     "department": "Site Operations",
     "location": "Site-Based / North India",
     "experience": "2 - 5 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Direct supervision of site workforce, material tracking, structural torque checking, electrical conduit routing, and strict adherence to engineering drawings.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 5,
     "display_order": 5
   },
   {
@@ -60,9 +80,13 @@
     "department": "Site Operations",
     "location": "Jaipur / Field Offices",
     "experience": "1 - 3 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Liaison between head office engineering, site teams, and logistics partners for dispatch scheduling, material delivery verification, and compliance paperwork.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 6,
     "display_order": 6
   },
   {
@@ -71,9 +95,13 @@
     "department": "Operations & Management",
     "location": "Regional Clusters",
     "experience": "6 - 10 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Managing multi-site EPC project portfolios across assigned regional clusters, tracking milestone billing, DISCOM grid synchronizations, and team allocation.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 7,
     "display_order": 7
   },
   {
@@ -82,9 +110,13 @@
     "department": "Quality & HSE",
     "location": "Jaipur / Site Audits",
     "experience": "3 - 6 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "In-process quality inspections, IV curve tracer testing, thermal imaging, grounding resistance audits, Tier-1 module quality checks, and FAT/SAT certifications.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 8,
     "display_order": 8
   },
   {
@@ -93,9 +125,13 @@
     "department": "Operations & Maintenance",
     "location": "Pan-India",
     "experience": "2 - 5 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "24/7 solar plant performance monitoring via SCADA IoT gateways, scheduled thermography, robotic/manual module washing cycles, preventive maintenance, and PR improvement.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 9,
     "display_order": 9
   },
   {
@@ -104,9 +140,13 @@
     "department": "Site Operations",
     "location": "Pan-India Sites",
     "experience": "4 - 7 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Hands-on electrical installations, HT/LT panel terminations, transformer oil testing, earth pit maintenance, and high-voltage breaker commissioning.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 10,
     "display_order": 10
   },
   {
@@ -115,9 +155,13 @@
     "department": "Site Operations",
     "location": "Jaipur / Field Training",
     "experience": "0 - 1 Years / Freshers",
+    "type": "Internship",
     "job_type": "Internship",
     "description": "Apprenticeship under senior field engineers learning solar PV layout, module stringing, DC crimping, multimeter testing, and safety protocols.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 11,
     "display_order": 11
   },
   {
@@ -126,9 +170,13 @@
     "department": "Admin & Support",
     "location": "Jaipur HQ",
     "experience": "1 - 3 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "General office upkeep, documentation archiving, facility management, and logistics support for corporate and field operations.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 12,
     "display_order": 12
   },
   {
@@ -137,9 +185,13 @@
     "department": "Finance & Accounts",
     "location": "Jaipur HQ",
     "experience": "3 - 6 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "EPC vendor ledger reconciliation, GST compliance, Tally ERP entries, client billing, TDS filing, and project-wise cost accounting.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 13,
     "display_order": 13
   },
   {
@@ -148,9 +200,13 @@
     "department": "Sales & Business Development",
     "location": "Jaipur / Delhi NCR",
     "experience": "5 - 8 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Driving multi-megawatt commercial & industrial (C&I) solar EPC sales, consulting industrial leaders on Capex/Opex solar returns, and leading high-performing sales teams.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 14,
     "display_order": 14
   },
   {
@@ -159,9 +215,13 @@
     "department": "Admin & Support",
     "location": "Jaipur HQ",
     "experience": "1 - 3 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Data entry, preparing techno-commercial quotes, updating CRM leads, DISCOM portal applications, and coordinating documentation with engineering teams.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 15,
     "display_order": 15
   },
   {
@@ -170,9 +230,13 @@
     "department": "Sales & Support",
     "location": "Jaipur HQ",
     "experience": "1 - 3 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Connecting with prospective commercial rooftop clients, explaining government subsidies under PM Surya Ghar and industrial solar savings, and setting engineering audit visits.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 16,
     "display_order": 16
   },
   {
@@ -181,9 +245,13 @@
     "department": "Marketing & Media",
     "location": "Jaipur / Hybrid",
     "experience": "2 - 5 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Managing corporate presence across LinkedIn, Instagram, and YouTube. Creating engaging site reels, milestone project showcases, award ceremonies, and thought-leadership posts.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 17,
     "display_order": 17
   },
   {
@@ -192,9 +260,13 @@
     "department": "Marketing & Media",
     "location": "Jaipur HQ",
     "experience": "2 - 4 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "SEO optimization, Google Ads campaigns for clean energy leads, performance tracking, landing page CRO, and local search visibility across North Indian industrial zones.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 18,
     "display_order": 18
   },
   {
@@ -203,9 +275,13 @@
     "department": "Admin & Support",
     "location": "Jaipur HQ",
     "experience": "2 - 4 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Managing daily office flow, front desk, travel arrangements for field engineers, client visit hospitality, and procurement of internal supplies.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 19,
     "display_order": 19
   },
   {
@@ -214,9 +290,13 @@
     "department": "Sales & Business Development",
     "location": "Pan-India",
     "experience": "4 - 7 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Expanding Sor Connect's client footprint in industrial sectors like marble processing, textiles, pharmaceuticals, and cold storage across Rajasthan, Gujarat, and UP.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 20,
     "display_order": 20
   },
   {
@@ -225,9 +305,13 @@
     "department": "Quality & HSE",
     "location": "Field Sites",
     "experience": "3 - 5 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Conducting daily safety toolbox talks, hazard identification, emergency preparedness drills, environmental compliance audits, and personal protective equipment (PPE) enforcement.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 21,
     "display_order": 21
   },
   {
@@ -236,9 +320,13 @@
     "department": "Procurement & Supply Chain",
     "location": "Jaipur HQ",
     "experience": "5 - 8 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Procurement of Tier-1 solar modules (Reliance, Waaree, Adani), string inverters (Sungrow, Hitachi), MMS structures, DC cables, and negotiating best vendor lead times.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 22,
     "display_order": 22
   },
   {
@@ -247,9 +335,13 @@
     "department": "Site Operations",
     "location": "Pan-India",
     "experience": "2 - 4 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Electrical wiring, string combining, earthing electrode installation, lightning arrestor setups, and inverter terminal connections.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 23,
     "display_order": 23
   },
   {
@@ -258,9 +350,13 @@
     "department": "Engineering",
     "location": "Jaipur / Field Visits",
     "experience": "5 - 8 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Senior electrical engineering oversight, single line diagram (SLD) sign-offs, grid synchronization studies, HT transformer protection, and CEIG statutory clearances.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 24,
     "display_order": 24
   },
   {
@@ -269,9 +365,13 @@
     "department": "Site Operations",
     "location": "Site-Based",
     "experience": "1 - 2 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Assisting on site for module mounting, cable tray routing, DC connector crimping, and pre-commissioning continuity testing.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 25,
     "display_order": 25
   },
   {
@@ -280,9 +380,13 @@
     "department": "Operations & Management",
     "location": "Regional Hubs",
     "experience": "8 - 12 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Leading regional operations, project governance, key client relationship management, and state DISCOM liaison for rapid net-metering sanctions.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 26,
     "display_order": 26
   },
   {
@@ -291,9 +395,13 @@
     "department": "Sales & Business Development",
     "location": "Jaipur / Field Visits",
     "experience": "1 - 3 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Field outreach to commercial and residential property owners, evaluating rooftop space, explaining tariff reduction, and closing turnkey solar proposals.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 27,
     "display_order": 27
   },
   {
@@ -302,9 +410,13 @@
     "department": "Sales & Support",
     "location": "Jaipur HQ",
     "experience": "1 - 3 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Preparing technical proposals, ROI payback schedules, client pitch decks, and coordinating site visit schedules with field engineers.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 28,
     "display_order": 28
   },
   {
@@ -313,9 +425,13 @@
     "department": "Site Operations",
     "location": "Site-Based",
     "experience": "2 - 5 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "On-site mechanical fabrication, elevated superstructure mounting, hot-dip galvanized steel torqueing, ballasted foundation placement, and module clamping.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 29,
     "display_order": 29
   },
   {
@@ -324,9 +440,13 @@
     "department": "Human Resources",
     "location": "Jaipur HQ",
     "experience": "2 - 4 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Candidate screening, interview scheduling, engineer onboarding, technical skills assessment coordination, employee welfare, and field team payroll support.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 30,
     "display_order": 30
   },
   {
@@ -335,9 +455,13 @@
     "department": "Site Operations",
     "location": "Site-Based",
     "experience": "4 - 7 Years",
+    "type": "Full Time",
     "job_type": "Full Time",
     "description": "Overall on-site responsibility for commissioning safety, material security, contractor coordination, daily civil & electrical inspection, and client handovers.",
+    "requirements": [],
+    "active": true,
     "is_active": true,
+    "order_index": 31,
     "display_order": 31
   }
 ]

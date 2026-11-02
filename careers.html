@@ -527,7 +527,7 @@
 
       async function fetchJobPostings() {
         try {
-          const res = await fetch(`${SUPABASE_URL}/rest/v1/job_postings?is_active=eq.true&order=display_order.asc,title.asc`, {
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/job_postings?active=eq.true&order=order_index.asc,id.asc`, {
             headers: {
               'apikey': SUPABASE_KEY,
               'Authorization': `Bearer ${SUPABASE_KEY}`
@@ -550,7 +550,7 @@
           const fbRes = await fetch('job_postings.json');
           if (fbRes.ok) {
             const fbData = await fbRes.json();
-            allJobs = Array.isArray(fbData) ? fbData.filter(j => j.is_active !== false) : [];
+            allJobs = Array.isArray(fbData) ? fbData.filter(j => j.active !== false && j.is_active !== false) : [];
           }
         } catch (fbErr) {
           console.error('[CAREERS] Could not load job_postings.json fallback:', fbErr);
