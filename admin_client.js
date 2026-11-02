@@ -217,8 +217,8 @@ module.exports = {
     });
 
     // Login Form Submit
-    loginForm.addEventListener('submit', async function(e) {
-      e.preventDefault();
+    window.submitAdminLogin = async function(e) {
+      if (e && e.preventDefault) e.preventDefault();
       loginError.style.display = 'none';
       loginSubmitBtn.disabled = true;
       loginSubmitBtn.innerHTML = '<span>Verifying credentials...</span>';
@@ -272,7 +272,12 @@ module.exports = {
 
       loginSubmitBtn.disabled = false;
       loginSubmitBtn.innerHTML = '<span>Sign In to Admin Portal</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-    });
+      return false;
+    };
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', window.submitAdminLogin);
+    }
 
     // Logout
     logoutBtn.addEventListener('click', function() {
@@ -3862,6 +3867,13 @@ module.exports = {
       }
     };
 
+    window.handleEventImgErr = function(img) {
+      if (img) {
+        img.onerror = null;
+        img.src = 'assets/partner-reliance-expo.jpg';
+      }
+    };
+
     function renderEvents() {
       const tbody = document.getElementById('events-table-body');
       const emptyState = document.getElementById('events-empty-state');
@@ -3936,7 +3948,7 @@ module.exports = {
 
         let rowHtml = '<tr>';
         rowHtml += '<td><div style="width: 58px; height: 42px; border-radius: 6px; overflow: hidden; background: #e2e8f0; border: 1px solid var(--admin-border);">';
-        rowHtml += '<img src="' + escapeHtml(ev.image_url || 'assets/partner-reliance-expo.jpg') + '" alt="Cover" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=\'assets/partner-reliance-expo.jpg\'">';
+        rowHtml += '<img src="' + escapeHtml(ev.image_url || 'assets/partner-reliance-expo.jpg') + '" alt="Cover" style="width:100%; height:100%; object-fit:cover;" onerror="handleEventImgErr(this)">';
         rowHtml += '</div></td>';
 
         rowHtml += '<td>';
@@ -4117,7 +4129,7 @@ module.exports = {
       // Parse gallery URLs from textarea
       const galleryRaw = document.getElementById('event-gallery-input').value;
       let galleryUrls = galleryRaw
-        .split(/[\n,]+/)
+        .split(/[\\n,]+/)
         .map(u => u.trim())
         .filter(u => u.length > 0);
       if (galleryUrls.length === 0 && imageUrl) {

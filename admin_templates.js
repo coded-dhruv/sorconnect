@@ -20,7 +20,7 @@ module.exports = {
         <span id="login-error-text">Invalid credentials. Access denied.</span>
       </div>
 
-      <form id="admin-login-form" class="login-form">
+      <form id="admin-login-form" class="login-form" onsubmit="event.preventDefault(); if (window.submitAdminLogin) window.submitAdminLogin(event); return false;" action="javascript:void(0);">
         <div class="form-group">
           <label for="admin-user-input">Admin Username</label>
           <input type="text" id="admin-user-input" required autocomplete="username" placeholder="Enter Admin Username" value="">
