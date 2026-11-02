@@ -26,6 +26,7 @@ const mimeTypes = {
 
 const SUBMISSIONS_FILE = path.join(__dirname, 'submissions.json');
 const CAREERS_FILE = path.join(__dirname, 'careers.json');
+const JOB_POSTINGS_FILE = path.join(__dirname, 'job_postings.json');
 const PROJECTS_FILE = path.join(__dirname, 'projects.json');
 const CATEGORIES_FILE = path.join(__dirname, 'categories.json');
 const GALLERY_FILE = path.join(__dirname, 'about_gallery.json');
@@ -657,6 +658,76 @@ const server = http.createServer(async (req, res) => {
     } catch (e) {}
 
     sendJson(res, 200, { success: true, message: 'Application deleted successfully' });
+    return;
+  }
+
+  // 4c. Job Openings / Hiring Positions APIs
+  if (urlPath === '/api/jobs') {
+    if (req.method === 'GET') {
+      const jobs = readJsonFile(JOB_POSTINGS_FILE, []);
+      sendJson(res, 200, { success: true, jobs });
+      return;
+    }
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/jobs/save') {
+    try {
+      const payload = await parseBody(req);
+      const jobs = readJsonFile(JOB_POSTINGS_FILE, []);
+      const isEdit = !!payload.id;
+
+      let savedJob;
+      if (isEdit) {
+        const idx = jobs.findIndex(j => String(j.id) === String(payload.id));
+        if (idx !== -1) {
+          jobs[idx] = Object.assign({}, jobs[idx], payload, { updated_at: new Date().toISOString() });
+          savedJob = jobs[idx];
+        } else {
+          savedJob = Object.assign({}, payload, { updated_at: new Date().toISOString() });
+          jobs.push(savedJob);
+        }
+      } else {
+        savedJob = Object.assign({}, payload, {
+          id: Date.now(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        });
+        jobs.unshift(savedJob);
+      }
+      writeJsonFile(JOB_POSTINGS_FILE, jobs);
+
+      // Async sync to Supabase job_postings table
+      try {
+        if (isEdit) {
+          supabaseRestRequest(`/rest/v1/job_postings?id=eq.${encodeURIComponent(payload.id)}`, 'PATCH', payload).catch(() => {});
+        } else {
+          supabaseRestRequest('/rest/v1/job_postings', 'POST', payload).catch(() => {});
+        }
+      } catch (e) {}
+
+      sendJson(res, 200, { success: true, job: savedJob });
+    } catch (err) {
+      sendJson(res, 500, { success: false, message: err.message });
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && urlPath === '/api/jobs/delete') {
+    try {
+      const payload = await parseBody(req);
+      let jobs = readJsonFile(JOB_POSTINGS_FILE, []);
+      jobs = jobs.filter(j => String(j.id) !== String(payload.id));
+      writeJsonFile(JOB_POSTINGS_FILE, jobs);
+
+      // Async sync to Supabase
+      try {
+        supabaseRestRequest(`/rest/v1/job_postings?id=eq.${encodeURIComponent(payload.id)}`, 'DELETE').catch(() => {});
+      } catch (e) {}
+
+      sendJson(res, 200, { success: true, message: 'Position deleted successfully' });
+    } catch (err) {
+      sendJson(res, 500, { success: false, message: err.message });
+    }
     return;
   }
 

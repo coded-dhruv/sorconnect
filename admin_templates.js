@@ -304,120 +304,238 @@ module.exports = {
   getCareersPanel: () => `
   <!-- ==================== TAB 1B: JOB APPLICATIONS & CAREERS ==================== -->
   <section id="careers-panel" class="admin-tab-panel">
-    <!-- Metrics -->
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <div>
-          <div class="metric-label">Total Applications</div>
-          <div class="metric-value" id="careers-stat-total">0</div>
+    <!-- Subtab Navigation -->
+    <div class="admin-subtabs" style="margin-bottom: 20px; display: flex; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+      <button type="button" class="btn-shadcn-outline career-subtab-btn active" data-subtab="career-subpanel-applications" id="btn-subtab-applications" style="padding: 8px 16px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span>Candidate Applications</span>
+        <span class="admin-badge" id="careers-tab-badge" style="background:#e0f2fe; color:#0369a1; font-size:11px;">0</span>
+      </button>
+      <button type="button" class="btn-shadcn-outline career-subtab-btn" data-subtab="career-subpanel-jobs" id="btn-subtab-jobs" style="padding: 8px 16px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <span>Manage Job Openings</span>
+        <span class="admin-badge" id="jobs-tab-badge" style="background:#dcfce7; color:#15803d; font-size:11px;">31</span>
+      </button>
+    </div>
+
+    <!-- SUBPANEL A: Candidate Applications -->
+    <div id="career-subpanel-applications" class="career-subpanel">
+      <!-- Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div>
+            <div class="metric-label">Total Applications</div>
+            <div class="metric-value" id="careers-stat-total">0</div>
+          </div>
+          <div class="metric-icon-wrap" style="background:#f0fdf4; color:#15803d;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
         </div>
-        <div class="metric-icon-wrap" style="background:#f0fdf4; color:#15803d;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+
+        <div class="metric-card">
+          <div>
+            <div class="metric-label">New / Unreviewed</div>
+            <div class="metric-value" id="careers-stat-new" style="color: #2563eb;">0</div>
+          </div>
+          <div class="metric-icon-wrap" style="background:#eff6ff; color:#2563eb;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div>
+            <div class="metric-label">Shortlisted Candidates</div>
+            <div class="metric-value" id="careers-stat-shortlisted" style="color: #15803d;">0</div>
+          </div>
+          <div class="metric-icon-wrap" style="background:#f0fdf4; color:#15803d;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div>
+            <div class="metric-label">Contacted / Interviewing</div>
+            <div class="metric-value" id="careers-stat-contacted" style="color: #d97706;">0</div>
+          </div>
+          <div class="metric-icon-wrap" style="background:#fffbeb; color:#d97706;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
         </div>
       </div>
 
-      <div class="metric-card">
-        <div>
-          <div class="metric-label">New / Unreviewed</div>
-          <div class="metric-value" id="careers-stat-new" style="color: #2563eb;">0</div>
+      <!-- Control Bar -->
+      <div class="admin-control-bar">
+        <div class="control-bar-left">
+          <div class="search-box">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="careers-search" placeholder="Search by candidate name, position, location, email, or notes...">
+          </div>
+
+          <select id="careers-filter-position" class="filter-select">
+            <option value="">All Positions</option>
+          </select>
+
+          <select id="careers-filter-status" class="filter-select">
+            <option value="">All Statuses</option>
+            <option value="New">New</option>
+            <option value="Reviewed">Reviewed</option>
+            <option value="Shortlisted">Shortlisted</option>
+            <option value="Contacted">Contacted</option>
+            <option value="Rejected">Rejected</option>
+          </select>
         </div>
-        <div class="metric-icon-wrap" style="background:#eff6ff; color:#2563eb;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+
+        <div class="control-bar-right">
+          <button type="button" class="btn-shadcn-outline" id="careers-export-btn" title="Export applications to CSV">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Export CSV</span>
+          </button>
+          <button type="button" class="btn-shadcn-outline" id="careers-refresh-btn" title="Refresh Applications">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span>Refresh</span>
+          </button>
         </div>
       </div>
 
-      <div class="metric-card">
-        <div>
-          <div class="metric-label">Shortlisted Candidates</div>
-          <div class="metric-value" id="careers-stat-shortlisted" style="color: #15803d;">0</div>
+      <!-- Applications Table Card -->
+      <div class="admin-card-table">
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 120px;">Applied Date</th>
+                <th>Applicant</th>
+                <th>Position &amp; Experience</th>
+                <th>Contact Details</th>
+                <th>Location &amp; Notice</th>
+                <th>Resume / Portfolio</th>
+                <th>Status</th>
+                <th style="text-align: right; width: 140px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="careers-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
         </div>
-        <div class="metric-icon-wrap" style="background:#f0fdf4; color:#15803d;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <div id="careers-empty" class="admin-empty-state" style="display: none;">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <h4>No applications found</h4>
+          <p>No job applications match your current search or filter criteria.</p>
         </div>
-      </div>
-
-      <div class="metric-card">
-        <div>
-          <div class="metric-label">Contacted / Interviewing</div>
-          <div class="metric-value" id="careers-stat-contacted" style="color: #d97706;">0</div>
-        </div>
-        <div class="metric-icon-wrap" style="background:#fffbeb; color:#d97706;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 22 16.92z"/></svg>
+        <div id="careers-error" class="admin-error-state" style="display: none;">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <h4>Failed to load career applications</h4>
+          <p id="careers-error-msg">Could not connect to database.</p>
+          <button type="button" class="btn-shadcn-outline" onclick="fetchCareers()">Retry</button>
         </div>
       </div>
     </div>
 
-    <!-- Control Bar -->
-    <div class="admin-control-bar">
-      <div class="control-bar-left">
-        <div class="search-box">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="careers-search" placeholder="Search by candidate name, position, location, email, or notes...">
+    <!-- SUBPANEL B: Manage Job Openings -->
+    <div id="career-subpanel-jobs" class="career-subpanel" style="display: none;">
+      <!-- Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div>
+            <div class="metric-label">Total Job Postings</div>
+            <div class="metric-value" id="jobs-stat-total">31</div>
+          </div>
+          <div class="metric-icon-wrap" style="background:#f0fdf4; color:#15803d;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
         </div>
 
-        <select id="careers-filter-position" class="filter-select">
-          <option value="">All Positions</option>
-          <option value="Solar Design & PVsyst Engineer">Solar Design &amp; PVsyst Engineer</option>
-          <option value="Solar Site Electrical & Commissioning Engineer">Solar Site Electrical &amp; Commissioning Engineer</option>
-          <option value="Industrial Solar Project Manager">Industrial Solar Project Manager</option>
-          <option value="Business Development Executive — Commercial Solar">Business Development Executive</option>
-          <option value="Solar O&M & SCADA Telemetry Specialist">Solar O&amp;M Specialist</option>
-          <option value="Open Application / General">Open Application</option>
-        </select>
+        <div class="metric-card">
+          <div>
+            <div class="metric-label">Active Hiring Roles</div>
+            <div class="metric-value" id="jobs-stat-active" style="color: #15803d;">31</div>
+          </div>
+          <div class="metric-icon-wrap" style="background:#dcfce7; color:#15803d;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
 
-        <select id="careers-filter-status" class="filter-select">
-          <option value="">All Statuses</option>
-          <option value="New">New</option>
-          <option value="Reviewed">Reviewed</option>
-          <option value="Shortlisted">Shortlisted</option>
-          <option value="Contacted">Contacted</option>
-          <option value="Rejected">Rejected</option>
-        </select>
+        <div class="metric-card">
+          <div>
+            <div class="metric-label">Departments Covered</div>
+            <div class="metric-value" id="jobs-stat-depts" style="color: #2563eb;">7</div>
+          </div>
+          <div class="metric-icon-wrap" style="background:#eff6ff; color:#2563eb;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+        </div>
       </div>
 
-      <div class="control-bar-right">
-        <button type="button" class="btn-shadcn-outline" id="careers-export-btn" title="Export applications to CSV">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>Export CSV</span>
-        </button>
-        <button type="button" class="btn-shadcn-outline" id="careers-refresh-btn" title="Refresh Applications">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-          <span>Refresh</span>
-        </button>
-      </div>
-    </div>
+      <!-- Control Bar -->
+      <div class="admin-control-bar">
+        <div class="control-bar-left">
+          <div class="search-box">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="jobs-search" placeholder="Search by role title, department, or location...">
+          </div>
 
-    <!-- Applications Table Card -->
-    <div class="admin-card-table">
-      <div class="table-responsive">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th style="width: 120px;">Applied Date</th>
-              <th>Applicant</th>
-              <th>Position &amp; Experience</th>
-              <th>Contact Details</th>
-              <th>Location &amp; Notice</th>
-              <th>Resume / Portfolio</th>
-              <th>Status</th>
-              <th style="text-align: right; width: 140px;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="careers-tbody">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
+          <select id="jobs-filter-dept" class="filter-select">
+            <option value="">All Departments</option>
+            <option value="Engineering & Design">Engineering &amp; Design</option>
+            <option value="Site & Operations">Site &amp; Operations</option>
+            <option value="Quality & Safety">Quality &amp; Safety</option>
+            <option value="Maintenance & O&M">Maintenance &amp; O&M</option>
+            <option value="Sales & Marketing">Sales &amp; Marketing</option>
+            <option value="Office & Administration">Office &amp; Administration</option>
+            <option value="Management & Accounts">Management &amp; Accounts</option>
+          </select>
+
+          <select id="jobs-filter-status" class="filter-select">
+            <option value="">All Statuses</option>
+            <option value="active">Active (Hiring)</option>
+            <option value="inactive">Inactive / Paused</option>
+          </select>
+        </div>
+
+        <div class="control-bar-right">
+          <button type="button" class="btn-shadcn-primary" id="jobs-add-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add Hiring Role</span>
+          </button>
+          <button type="button" class="btn-shadcn-outline" id="jobs-refresh-btn" title="Refresh Job Postings">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
-      <div id="careers-empty" class="admin-empty-state" style="display: none;">
-        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <h4>No applications found</h4>
-        <p>No job applications match your current search or filter criteria.</p>
-      </div>
-      <div id="careers-error" class="admin-error-state" style="display: none;">
-        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <h4>Failed to load career applications</h4>
-        <p id="careers-error-msg">Could not connect to database.</p>
-        <button type="button" class="btn-shadcn-outline" onclick="fetchCareers()">Retry</button>
+
+      <!-- Job Openings Table Card -->
+      <div class="admin-card-table">
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">#</th>
+                <th>Role Title &amp; Department</th>
+                <th>Location</th>
+                <th>Experience</th>
+                <th>Type</th>
+                <th>Hiring Status</th>
+                <th style="text-align: right; width: 140px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="jobs-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+        <div id="jobs-empty" class="admin-empty-state" style="display: none;">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <h4>No hiring positions found</h4>
+          <p>No job postings match your search filter.</p>
+        </div>
+        <div id="jobs-error" class="admin-error-state" style="display: none;">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <h4>Failed to load job postings</h4>
+          <p id="jobs-error-msg">Could not connect to database.</p>
+          <button type="button" class="btn-shadcn-outline" onclick="fetchJobPostings()">Retry</button>
+        </div>
       </div>
     </div>
   </section>
@@ -1901,6 +2019,88 @@ module.exports = {
           </a>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Job Opening / Hiring Role Edit Modal -->
+  <div id="job-edit-modal" class="admin-modal-overlay">
+    <div class="admin-modal-box" style="max-width: 680px;">
+      <div class="admin-modal-header">
+        <h3 id="job-modal-heading">Add New Hiring Role</h3>
+        <button type="button" class="admin-modal-close" onclick="closeAdminModal('job-edit-modal')">&times;</button>
+      </div>
+      <form id="job-edit-form">
+        <input type="hidden" id="job-modal-id">
+        <div class="admin-modal-body">
+          <div id="job-modal-error" class="modal-error-alert" style="display: none;"></div>
+          
+          <div class="modal-form-group">
+            <label for="job-modal-title">Role / Position Title <span class="req">*</span></label>
+            <input type="text" id="job-modal-title" class="form-input" required placeholder="e.g. PV Design Engineer">
+          </div>
+
+          <div class="modal-form-row two-col">
+            <div class="modal-form-group">
+              <label for="job-modal-dept">Department <span class="req">*</span></label>
+              <select id="job-modal-dept" class="filter-select" style="width: 100%;" required>
+                <option value="Engineering & Design">Engineering &amp; Design</option>
+                <option value="Site & Operations">Site &amp; Operations</option>
+                <option value="Quality & Safety">Quality &amp; Safety</option>
+                <option value="Maintenance & O&M">Maintenance &amp; O&M</option>
+                <option value="Sales & Marketing">Sales &amp; Marketing</option>
+                <option value="Office & Administration">Office &amp; Administration</option>
+                <option value="Management & Accounts">Management &amp; Accounts</option>
+                <option value="General Operations">General Operations</option>
+              </select>
+            </div>
+            <div class="modal-form-group">
+              <label for="job-modal-type">Employment Type</label>
+              <select id="job-modal-type" class="filter-select" style="width: 100%;">
+                <option value="Full-time">Full-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Internship">Internship</option>
+                <option value="Part-time">Part-time</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-form-row two-col">
+            <div class="modal-form-group">
+              <label for="job-modal-location">Location / Work Mode <span class="req">*</span></label>
+              <input type="text" id="job-modal-location" class="form-input" required placeholder="e.g. Jaipur, Rajasthan / Pan-India">
+            </div>
+            <div class="modal-form-group">
+              <label for="job-modal-exp">Experience Required <span class="req">*</span></label>
+              <input type="text" id="job-modal-exp" class="form-input" required placeholder="e.g. 2+ Years / Fresher">
+            </div>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="job-modal-desc">Role Overview / Summary <span class="req">*</span></label>
+            <textarea id="job-modal-desc" class="form-textarea" rows="3" required placeholder="Describe core duties, site scope, or responsibilities..."></textarea>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="job-modal-reqs">Key Requirements / Skills <span class="opt">(Comma or newline-separated)</span></label>
+            <textarea id="job-modal-reqs" class="form-textarea" rows="3" placeholder="AutoCAD / PVsyst proficiency&#10;Degree in Electrical Engineering&#10;Valid driver license and site flexibility"></textarea>
+          </div>
+
+          <div class="modal-form-row two-col">
+            <div class="modal-form-group">
+              <label for="job-modal-order">Display Sort Order</label>
+              <input type="number" id="job-modal-order" class="form-input" value="0" min="0" step="1">
+            </div>
+            <div class="modal-form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 26px;">
+              <input type="checkbox" id="job-modal-active" checked style="width: 18px; height: 18px; cursor: pointer;">
+              <label for="job-modal-active" style="margin: 0; cursor: pointer; font-weight: 600;">Active / Accepting Applications</label>
+            </div>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn-shadcn-outline" onclick="closeAdminModal('job-edit-modal')">Cancel</button>
+          <button type="submit" class="btn-shadcn-primary" id="job-modal-save-btn">Save Role</button>
+        </div>
+      </form>
     </div>
   </div>
 

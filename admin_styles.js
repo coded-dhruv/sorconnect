@@ -510,6 +510,23 @@ body.admin-body {
   display: block;
 }
 
+.career-subtab-btn {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.career-subtab-btn.active {
+  background: #15803d !important;
+  color: #ffffff !important;
+  border-color: #15803d !important;
+}
+.career-subtab-btn.active svg {
+  stroke: #ffffff !important;
+}
+.career-subtab-btn.active .admin-badge {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}
+
 /* ==================== SHADCN COMPONENTS ==================== */
 /* Metrics */
 .metrics-grid {

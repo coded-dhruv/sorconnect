@@ -15,6 +15,8 @@ module.exports = {
     let state = {
       submissions: [],
       careers: [],
+      jobs: [],
+      activeCareerSubTab: 'applications',
       services: [],
       partners: [],
       projects: [],
@@ -34,6 +36,7 @@ module.exports = {
       loading: {
         submissions: false,
         careers: false,
+        jobs: false,
         services: false,
         partners: false,
         projects: false,
@@ -357,6 +360,7 @@ module.exports = {
       await Promise.all([
         fetchSubmissions(),
         fetchCareers(),
+        fetchJobPostings(),
         fetchSiteContent(),
         fetchServices(),
         fetchPartners(),
@@ -383,6 +387,7 @@ module.exports = {
         await Promise.all([
           fetchSubmissions(),
           fetchCareers(),
+          fetchJobPostings(),
           fetchSiteContent(),
           fetchServices(),
           fetchPartners(),
@@ -763,6 +768,8 @@ module.exports = {
       const statusVal = statusSelect?.value || '';
 
       if (countBadge) countBadge.textContent = state.careers.length;
+      const tabBadge = document.getElementById('careers-tab-badge');
+      if (tabBadge) tabBadge.textContent = state.careers.length;
       const totalEl = document.getElementById('careers-stat-total');
       if (totalEl) totalEl.textContent = state.careers.length;
 
@@ -1110,6 +1117,411 @@ module.exports = {
       link.remove();
       showToast('Exported ' + state.careers.length + ' applications to CSV.', 'success');
     });
+
+    // ==========================================
+    // 1C. MANAGE HIRING POSITIONS / OPENINGS LOGIC
+    // ==========================================
+    window.switchCareerSubTab = function(subtabId) {
+      state.activeCareerSubTab = subtabId;
+      document.querySelectorAll('.career-subtab-btn').forEach(btn => {
+        if (btn.getAttribute('data-subtab') === subtabId) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      document.querySelectorAll('.career-subpanel').forEach(panel => {
+        if (panel.id === subtabId) {
+          panel.style.display = 'block';
+        } else {
+          panel.style.display = 'none';
+        }
+      });
+      if (subtabId === 'career-subpanel-jobs' && (!state.jobs || state.jobs.length === 0)) {
+        fetchJobPostings();
+      }
+    };
+
+    document.getElementById('btn-subtab-applications')?.addEventListener('click', () => switchCareerSubTab('career-subpanel-applications'));
+    document.getElementById('btn-subtab-jobs')?.addEventListener('click', () => switchCareerSubTab('career-subpanel-jobs'));
+
+    window.fetchJobPostings = async function() {
+      state.loading.jobs = true;
+      setTableSkeleton('jobs-tbody', 7);
+      const errEl = document.getElementById('jobs-error');
+      if (errEl) errEl.style.display = 'none';
+
+      try {
+        const rawJobs = await supabaseQuery('/rest/v1/job_postings?select=*&order=order_index.asc,id.asc');
+        if (Array.isArray(rawJobs) && rawJobs.length > 0) {
+          state.jobs = rawJobs;
+          renderJobPostings();
+          populateCareersFilterPositions();
+          return;
+        }
+      } catch (supErr) {
+        console.warn('Supabase job postings fetch failed, trying local API...', supErr);
+      }
+
+      try {
+        const res = await fetch('/api/jobs');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.jobs)) {
+            state.jobs = data.jobs;
+            renderJobPostings();
+            populateCareersFilterPositions();
+            return;
+          }
+        }
+      } catch (srvErr) {
+        console.error('Server jobs fetch failed:', srvErr);
+      }
+
+      const tbody = document.getElementById('jobs-tbody');
+      if (tbody) tbody.innerHTML = '';
+      if (errEl) errEl.style.display = 'block';
+      state.loading.jobs = false;
+    };
+
+    function renderJobPostings() {
+      const tbody = document.getElementById('jobs-tbody');
+      const emptyState = document.getElementById('jobs-empty');
+      const searchIn = document.getElementById('jobs-search');
+      const deptSelect = document.getElementById('jobs-filter-dept');
+      const statusSelect = document.getElementById('jobs-filter-status');
+
+      if (!tbody) return;
+
+      const totalEl = document.getElementById('jobs-stat-total');
+      const activeEl = document.getElementById('jobs-stat-active');
+      const deptsEl = document.getElementById('jobs-stat-depts');
+      const tabBadge = document.getElementById('jobs-tab-badge');
+
+      const allJobs = state.jobs || [];
+      const activeJobs = allJobs.filter(j => j.active !== false);
+      const uniqueDepts = new Set(allJobs.map(j => j.department).filter(Boolean));
+
+      if (totalEl) totalEl.textContent = allJobs.length;
+      if (activeEl) activeEl.textContent = activeJobs.length;
+      if (deptsEl) deptsEl.textContent = uniqueDepts.size;
+      if (tabBadge) tabBadge.textContent = allJobs.length;
+
+      const searchVal = (searchIn?.value || '').toLowerCase().trim();
+      const deptVal = deptSelect?.value || '';
+      const statusVal = statusSelect?.value || '';
+
+      const filtered = allJobs.filter(j => {
+        if (searchVal) {
+          const matchTitle = (j.title || '').toLowerCase().includes(searchVal);
+          const matchDept = (j.department || '').toLowerCase().includes(searchVal);
+          const matchLoc = (j.location || '').toLowerCase().includes(searchVal);
+          const matchDesc = (j.description || '').toLowerCase().includes(searchVal);
+          if (!matchTitle && !matchDept && !matchLoc && !matchDesc) return false;
+        }
+        if (deptVal && j.department !== deptVal) return false;
+        if (statusVal === 'active' && j.active === false) return false;
+        if (statusVal === 'inactive' && j.active !== false) return false;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+      if (emptyState) emptyState.style.display = 'none';
+
+      tbody.innerHTML = filtered.map((job, idx) => {
+        const isActive = job.active !== false;
+        const statusBadge = isActive
+          ? '<span class="admin-badge badge-green" style="cursor: pointer;" onclick="toggleJobActiveStatus(' + job.id + ')" title="Click to pause hiring">Active (Hiring)</span>'
+          : '<span class="admin-badge badge-slate" style="cursor: pointer;" onclick="toggleJobActiveStatus(' + job.id + ')" title="Click to activate hiring">Paused</span>';
+
+        return '<tr data-job-id="' + escapeHtml(job.id) + '">' +
+          '<td style="font-size: 12px; color: #64748b; font-weight: 600;">' + (idx + 1) + '</td>' +
+          '<td>' +
+            '<div style="font-weight: 700; color: #0f172a; font-size: 14px;">' + escapeHtml(job.title) + '</div>' +
+            '<div style="font-size: 12px; color: #15803d; font-weight: 500;">' + escapeHtml(job.department || 'General') + '</div>' +
+          '</td>' +
+          '<td style="font-size: 12.5px; color: #334155;">' + escapeHtml(job.location || 'Pan-India') + '</td>' +
+          '<td style="font-size: 12.5px; color: #334155; font-weight: 600;">' + escapeHtml(job.experience || 'Experience') + '</td>' +
+          '<td><span class="admin-badge" style="background: #f1f5f9; color: #475569; font-size: 11px;">' + escapeHtml(job.type || 'Full-time') + '</span></td>' +
+          '<td>' + statusBadge + '</td>' +
+          '<td style="text-align: right;">' +
+            '<div style="display: inline-flex; gap: 6px;">' +
+              '<button type="button" class="btn-shadcn-outline btn-edit-job" data-id="' + escapeHtml(job.id) + '" style="padding: 5px 8px;" title="Edit Job Opening"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>' +
+              '<button type="button" class="btn-shadcn-danger btn-delete-job" data-id="' + escapeHtml(job.id) + '" style="padding: 5px 8px;" title="Delete Position"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+
+      tbody.querySelectorAll('.btn-edit-job').forEach(btn => {
+        btn.addEventListener('click', function() {
+          openEditJobModal(this.getAttribute('data-id'));
+        });
+      });
+
+      tbody.querySelectorAll('.btn-delete-job').forEach(btn => {
+        btn.addEventListener('click', function() {
+          deleteJobPosition(this.getAttribute('data-id'));
+        });
+      });
+    }
+
+    function populateCareersFilterPositions() {
+      const posSelect = document.getElementById('careers-filter-position');
+      if (!posSelect) return;
+      const currentVal = posSelect.value;
+      const positions = new Set();
+      (state.jobs || []).forEach(j => { if (j.title) positions.add(j.title); });
+      (state.careers || []).forEach(c => { if (c.position) positions.add(c.position); });
+
+      let optionsHtml = '<option value="">All Positions</option>';
+      Array.from(positions).sort().forEach(pos => {
+        const isSel = (pos === currentVal) ? ' selected' : '';
+        optionsHtml += '<option value="' + escapeHtml(pos) + '"' + isSel + '>' + escapeHtml(pos) + '</option>';
+      });
+      posSelect.innerHTML = optionsHtml;
+    }
+
+    window.openCreateJobModal = function() {
+      const form = document.getElementById('job-edit-form');
+      if (form) form.reset();
+      const heading = document.getElementById('job-modal-heading');
+      if (heading) heading.textContent = 'Add New Hiring Role';
+      const idInput = document.getElementById('job-modal-id');
+      if (idInput) idInput.value = '';
+      const activeCheck = document.getElementById('job-modal-active');
+      if (activeCheck) activeCheck.checked = true;
+      const errBox = document.getElementById('job-modal-error');
+      if (errBox) errBox.style.display = 'none';
+      openAdminModal('job-edit-modal');
+    };
+
+    window.openEditJobModal = function(id) {
+      const job = (state.jobs || []).find(j => String(j.id) === String(id));
+      if (!job) return;
+
+      const heading = document.getElementById('job-modal-heading');
+      if (heading) heading.textContent = 'Edit Hiring Role: ' + job.title;
+
+      const idInput = document.getElementById('job-modal-id');
+      if (idInput) idInput.value = job.id;
+
+      const titleInput = document.getElementById('job-modal-title');
+      if (titleInput) titleInput.value = job.title || '';
+
+      const deptSelect = document.getElementById('job-modal-dept');
+      if (deptSelect) deptSelect.value = job.department || 'Engineering & Design';
+
+      const typeSelect = document.getElementById('job-modal-type');
+      if (typeSelect) typeSelect.value = job.type || 'Full-time';
+
+      const locInput = document.getElementById('job-modal-location');
+      if (locInput) locInput.value = job.location || 'Jaipur, Rajasthan / Pan-India';
+
+      const expInput = document.getElementById('job-modal-exp');
+      if (expInput) expInput.value = job.experience || '2+ Years';
+
+      const descInput = document.getElementById('job-modal-desc');
+      if (descInput) descInput.value = job.description || '';
+
+      const reqsInput = document.getElementById('job-modal-reqs');
+      if (reqsInput) {
+        if (Array.isArray(job.requirements)) {
+          reqsInput.value = job.requirements.join('\n');
+        } else {
+          reqsInput.value = job.requirements || '';
+        }
+      }
+
+      const orderInput = document.getElementById('job-modal-order');
+      if (orderInput) orderInput.value = job.order_index || 0;
+
+      const activeCheck = document.getElementById('job-modal-active');
+      if (activeCheck) activeCheck.checked = (job.active !== false);
+
+      const errBox = document.getElementById('job-modal-error');
+      if (errBox) errBox.style.display = 'none';
+
+      openAdminModal('job-edit-modal');
+    };
+
+    window.saveJobPosition = async function(e) {
+      if (e) e.preventDefault();
+      const saveBtn = document.getElementById('job-modal-save-btn');
+      const errBox = document.getElementById('job-modal-error');
+      if (errBox) errBox.style.display = 'none';
+
+      const idVal = document.getElementById('job-modal-id')?.value;
+      const titleVal = document.getElementById('job-modal-title')?.value.trim();
+      const deptVal = document.getElementById('job-modal-dept')?.value;
+      const typeVal = document.getElementById('job-modal-type')?.value;
+      const locVal = document.getElementById('job-modal-location')?.value.trim();
+      const expVal = document.getElementById('job-modal-exp')?.value.trim();
+      const descVal = document.getElementById('job-modal-desc')?.value.trim();
+      const reqsRaw = document.getElementById('job-modal-reqs')?.value.trim();
+      const orderVal = parseInt(document.getElementById('job-modal-order')?.value, 10) || 0;
+      const activeVal = document.getElementById('job-modal-active')?.checked ?? true;
+
+      if (!titleVal || !descVal || !locVal || !expVal) {
+        if (errBox) {
+          errBox.textContent = 'Please fill out all required fields marked with *';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      const reqsArray = reqsRaw ? reqsRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+
+      const payload = {
+        title: titleVal,
+        department: deptVal,
+        location: locVal,
+        experience: expVal,
+        type: typeVal,
+        description: descVal,
+        requirements: reqsArray,
+        order_index: orderVal,
+        active: activeVal
+      };
+      if (idVal) {
+        payload.id = isNaN(Number(idVal)) ? idVal : Number(idVal);
+      }
+
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+      }
+
+      try {
+        // 1. Save to local server API (job_postings.json)
+        const res = await fetch('/api/jobs/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const resData = await res.json();
+        if (!res.ok) throw new Error(resData.message || 'Failed to save position');
+
+        // 2. Direct Sync to Supabase job_postings table
+        try {
+          if (idVal) {
+            await supabaseQuery('/rest/v1/job_postings?id=eq.' + encodeURIComponent(idVal), {
+              method: 'PATCH',
+              body: JSON.stringify(payload)
+            });
+          } else {
+            await supabaseQuery('/rest/v1/job_postings', {
+              method: 'POST',
+              body: JSON.stringify([payload])
+            });
+          }
+        } catch (supErr) {
+          console.warn('[SUPABASE JOBS SYNC]', supErr);
+        }
+
+        // 3. Update local state
+        const savedJob = resData.job || payload;
+        const existingIdx = (state.jobs || []).findIndex(j => String(j.id) === String(savedJob.id));
+        if (existingIdx !== -1) {
+          state.jobs[existingIdx] = Object.assign({}, state.jobs[existingIdx], savedJob);
+        } else {
+          state.jobs.unshift(savedJob);
+        }
+
+        renderJobPostings();
+        populateCareersFilterPositions();
+        closeAdminModal('job-edit-modal');
+        showToast('✓ Position "' + titleVal + '" saved successfully!', 'success');
+      } catch (err) {
+        if (errBox) {
+          errBox.textContent = err.message || 'Error saving hiring position';
+          errBox.style.display = 'block';
+        }
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Save Role';
+        }
+      }
+    };
+
+    window.deleteJobPosition = async function(id) {
+      const job = (state.jobs || []).find(j => String(j.id) === String(id));
+      const roleName = job ? job.title : 'this position';
+      if (!confirm('Are you sure you want to delete "' + roleName + '"?\n\nThis will remove it from open positions on the careers page.')) {
+        return;
+      }
+
+      const prev = [...(state.jobs || [])];
+      state.jobs = state.jobs.filter(j => String(j.id) !== String(id));
+      renderJobPostings();
+      populateCareersFilterPositions();
+
+      try {
+        // 1. Delete from Supabase
+        try {
+          await supabaseQuery('/rest/v1/job_postings?id=eq.' + encodeURIComponent(id), {
+            method: 'DELETE'
+          });
+        } catch (supErr) {
+          console.warn('[SUPABASE DELETE JOB]', supErr);
+        }
+
+        // 2. Delete from local server API
+        await fetch('/api/jobs/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+
+        showToast('✓ "' + roleName + '" removed successfully.', 'success');
+      } catch (err) {
+        state.jobs = prev;
+        renderJobPostings();
+        populateCareersFilterPositions();
+        showToast('Failed to delete position: ' + err.message, 'error');
+      }
+    };
+
+    window.toggleJobActiveStatus = async function(id) {
+      const job = (state.jobs || []).find(j => String(j.id) === String(id));
+      if (!job) return;
+
+      const newStatus = (job.active === false);
+      job.active = newStatus;
+      renderJobPostings();
+
+      try {
+        await fetch('/api/jobs/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, active: newStatus })
+        });
+        await supabaseQuery('/rest/v1/job_postings?id=eq.' + encodeURIComponent(id), {
+          method: 'PATCH',
+          body: JSON.stringify({ active: newStatus })
+        }).catch(() => {});
+
+        showToast('"' + job.title + '" status changed to ' + (newStatus ? 'Active' : 'Paused') + '.', 'success');
+      } catch (err) {
+        showToast('Failed to update status: ' + err.message, 'error');
+      }
+    };
+
+    // Job Postings Listeners
+    ['jobs-search', 'jobs-filter-dept', 'jobs-filter-status'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', renderJobPostings);
+      if (el) el.addEventListener('change', renderJobPostings);
+    });
+
+    document.getElementById('jobs-add-btn')?.addEventListener('click', openCreateJobModal);
+    document.getElementById('jobs-refresh-btn')?.addEventListener('click', fetchJobPostings);
+    document.getElementById('job-edit-form')?.addEventListener('submit', saveJobPosition);
 
     // ==========================================
     // 2. SERVICES PAGE CMS LOGIC (NEW)

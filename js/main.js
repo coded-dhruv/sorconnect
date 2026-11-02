@@ -849,15 +849,38 @@ document.addEventListener('DOMContentLoaded', function () {
                 <label for="career-position">Position Applied For <span class="req">*</span></label>
                 <select id="career-position" name="position" required>
                   <option value="" disabled selected>Select Target Position</option>
-                  <option value="Solar Design & PVsyst Engineer">Solar Design &amp; PVsyst Engineer</option>
-                  <option value="Turnkey EPC Site Project Engineer">Turnkey EPC Site Project Engineer</option>
-                  <option value="Electrical Supervisor & Commissioning Specialist">Electrical Supervisor &amp; Commissioning Specialist</option>
-                  <option value="Solar Sales & Business Development Manager">Solar Sales &amp; Business Development Manager</option>
-                  <option value="O&M Field Maintenance Engineer">O&amp;M Field Maintenance Engineer</option>
-                  <option value="PM Surya Ghar & PM-KUSUM Liaison Executive">PM Surya Ghar &amp; PM-KUSUM Liaison Executive</option>
-                  <option value="Supply Chain & Procurement Specialist">Supply Chain &amp; Procurement Specialist</option>
-                  <option value="Quality Assurance / CEIG Regulatory Consultant">Quality Assurance / CEIG Regulatory Consultant</option>
-                  <option value="Open Application / Other">Open Application / Other</option>
+                  <option value="PV Design Engineer">PV Design Engineer</option>
+                  <option value="Safety Officer">Safety Officer</option>
+                  <option value="Project Manager">Project Manager</option>
+                  <option value="Site Engineer">Site Engineer</option>
+                  <option value="Site Supervisor">Site Supervisor</option>
+                  <option value="Site Coordinator">Site Coordinator</option>
+                  <option value="Cluster Manager">Cluster Manager</option>
+                  <option value="Quality Engineer">Quality Engineer</option>
+                  <option value="O&M Engineer">O&amp;M Engineer</option>
+                  <option value="Senior Technician">Senior Technician</option>
+                  <option value="Intern Technician">Intern Technician</option>
+                  <option value="Support Staff">Support Staff</option>
+                  <option value="Accountant">Accountant</option>
+                  <option value="Sales Manager">Sales Manager</option>
+                  <option value="Back Office Executive">Back Office Executive</option>
+                  <option value="Telecaller">Telecaller</option>
+                  <option value="Social Media Manager">Social Media Manager</option>
+                  <option value="Digital Marketing Executive">Digital Marketing Executive</option>
+                  <option value="Office Coordinator">Office Coordinator</option>
+                  <option value="Business Development Manager">Business Development Manager</option>
+                  <option value="HSE Officer">HSE Officer</option>
+                  <option value="Purchasing Manager">Purchasing Manager</option>
+                  <option value="Technician">Technician</option>
+                  <option value="Sr. Engineer">Sr. Engineer</option>
+                  <option value="Junior Technician">Junior Technician</option>
+                  <option value="Regional Manager">Regional Manager</option>
+                  <option value="Sales Representative">Sales Representative</option>
+                  <option value="Sales Support">Sales Support</option>
+                  <option value="Installer & Fabricator">Installer &amp; Fabricator</option>
+                  <option value="HR Executive">HR Executive</option>
+                  <option value="Site Incharge">Site Incharge</option>
+                  <option value="Other / Open Application">Other / Open Application</option>
                 </select>
               </div>
               <div class="form-row">
@@ -1054,30 +1077,64 @@ document.addEventListener('DOMContentLoaded', function () {
 
           let resumeUrl = '';
           let resumeName = '';
+          let base64Data = '';
 
-          // Upload resume file if attached
+          // Upload resume file if attached (multi-tier resilient pipeline)
           if (selectedResumeFile) {
             resumeName = selectedResumeFile.name;
             try {
-              const base64Data = await new Promise((resolve, reject) => {
+              base64Data = await new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => resolve(reader.result);
                 reader.onerror = reject;
                 reader.readAsDataURL(selectedResumeFile);
               });
+            } catch (rErr) {
+              console.warn('[CV READER ERROR]', rErr);
+            }
 
-              const uploadRes = await fetch('/api/upload', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filename: resumeName, data: base64Data })
-              });
-              const uploadJson = await uploadRes.json();
-              if (uploadJson && uploadJson.url) {
-                resumeUrl = uploadJson.url;
-                resumeName = uploadJson.filename || resumeName;
-              }
-            } catch (upErr) {
-              console.warn('[CAREERS UPLOAD WARNING]', upErr);
+            const SUPABASE_URL = 'https://znjpzipedsowuyrpotgb.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs';
+
+            // Tier 1: Try Supabase Storage 'uploads' bucket
+            if (base64Data) {
+              try {
+                const cleanExt = (resumeName.split('.').pop() || 'pdf').toLowerCase();
+                const storagePath = `resumes/${Date.now()}_${encodeURIComponent(resumeName.replace(/\s+/g, '_'))}`;
+                const storageRes = await fetch(`${SUPABASE_URL}/storage/v1/object/uploads/${storagePath}`, {
+                  method: 'POST',
+                  headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': selectedResumeFile.type || 'application/octet-stream'
+                  },
+                  body: selectedResumeFile
+                });
+                if (storageRes.ok) {
+                  resumeUrl = `${SUPABASE_URL}/storage/v1/object/public/uploads/${storagePath}`;
+                }
+              } catch (stgErr) {}
+            }
+
+            // Tier 2: Try local server /api/upload
+            if (!resumeUrl && base64Data) {
+              try {
+                const uploadRes = await fetch('/api/upload', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ filename: resumeName, data: base64Data })
+                });
+                const uploadJson = await uploadRes.json();
+                if (uploadJson && uploadJson.url) {
+                  resumeUrl = uploadJson.url;
+                  resumeName = uploadJson.filename || resumeName;
+                }
+              } catch (upErr) {}
+            }
+
+            // Tier 3: Ultimate Database Fallback (store data URL directly in DB so CV is never lost)
+            if (!resumeUrl && base64Data) {
+              resumeUrl = base64Data;
             }
           }
 
@@ -1152,23 +1209,61 @@ document.addEventListener('DOMContentLoaded', function () {
     const overlay = ensureCareersModalExists();
     if (!overlay) return;
 
-    if (preselectedRole) {
-      const positionSelect = overlay.querySelector('#career-position');
-      if (positionSelect) {
-        let matched = false;
-        for (let i = 0; i < positionSelect.options.length; i++) {
-          if (positionSelect.options[i].value.toLowerCase().includes(preselectedRole.toLowerCase()) ||
-              preselectedRole.toLowerCase().includes(positionSelect.options[i].value.toLowerCase())) {
-            positionSelect.selectedIndex = i;
-            matched = true;
-            break;
-          }
-        }
-        if (!matched) {
-          positionSelect.value = 'Open Application / Other';
+    const positionSelect = overlay.querySelector('#career-position');
+    if (preselectedRole && positionSelect) {
+      let matched = false;
+      for (let i = 0; i < positionSelect.options.length; i++) {
+        if (positionSelect.options[i].value.toLowerCase().includes(preselectedRole.toLowerCase()) ||
+            preselectedRole.toLowerCase().includes(positionSelect.options[i].value.toLowerCase())) {
+          positionSelect.selectedIndex = i;
+          matched = true;
+          break;
         }
       }
+      if (!matched) {
+        positionSelect.value = 'Other / Open Application';
+      }
     }
+
+    // Dynamic sync of active job openings from backend
+    (async () => {
+      try {
+        let jobs = [];
+        const res = await fetch('/api/jobs');
+        if (res.ok) {
+          const d = await res.json();
+          if (d && Array.isArray(d.jobs) && d.jobs.length) {
+            jobs = d.jobs.filter(j => j.active !== false);
+          }
+        }
+        if (!jobs.length) {
+          const supRes = await fetch('https://znjpzipedsowuyrpotgb.supabase.co/rest/v1/job_postings?active=eq.true&select=title', {
+            headers: {
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuanB6aXBlZHNvd3V5cnBvdGdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODU5MzIsImV4cCI6MjEwMTY2MTkzMn0.CO9Bvyiio-b2_OFDTyTd1jzGZ13Ezjl7oPwgIVciJxs'
+            }
+          });
+          if (supRes.ok) {
+            const supData = await supRes.json();
+            if (Array.isArray(supData) && supData.length) jobs = supData;
+          }
+        }
+        if (jobs.length && positionSelect) {
+          const currentVal = positionSelect.value || preselectedRole;
+          const seen = new Set();
+          let html = '<option value="" disabled>Select Target Position</option>';
+          jobs.forEach(j => {
+            if (!seen.has(j.title)) {
+              seen.add(j.title);
+              const isSel = (currentVal && (currentVal.toLowerCase() === j.title.toLowerCase())) ? 'selected' : '';
+              html += `<option value="${j.title}" ${isSel}>${j.title}</option>`;
+            }
+          });
+          html += '<option value="Other / Open Application">Other / Open Application</option>';
+          positionSelect.innerHTML = html;
+          if (currentVal) positionSelect.value = currentVal;
+        }
+      } catch (e) {}
+    })();
 
     overlay.classList.add('active');
     overlay.setAttribute('aria-hidden', 'false');
