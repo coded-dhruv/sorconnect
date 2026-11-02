@@ -1331,7 +1331,7 @@ module.exports = {
       const reqsInput = document.getElementById('job-modal-reqs');
       if (reqsInput) {
         if (Array.isArray(job.requirements)) {
-          reqsInput.value = job.requirements.join('\n');
+          reqsInput.value = job.requirements.join('\\n');
         } else {
           reqsInput.value = job.requirements || '';
         }
@@ -1374,7 +1374,7 @@ module.exports = {
         return;
       }
 
-      const reqsArray = reqsRaw ? reqsRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+      const reqsArray = reqsRaw ? reqsRaw.split(/[\\n,]+/).map(s => s.trim()).filter(Boolean) : [];
 
       const payload = {
         title: titleVal,
@@ -1452,7 +1452,7 @@ module.exports = {
     window.deleteJobPosition = async function(id) {
       const job = (state.jobs || []).find(j => String(j.id) === String(id));
       const roleName = job ? job.title : 'this position';
-      if (!confirm('Are you sure you want to delete "' + roleName + '"?\n\nThis will remove it from open positions on the careers page.')) {
+      if (!confirm('Are you sure you want to delete "' + roleName + '"?\\n\\nThis will remove it from open positions on the careers page.')) {
         return;
       }
 
