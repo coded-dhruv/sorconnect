@@ -127,26 +127,6 @@
         <h1>Sor Connect Events, Expos &amp; Industry Summits</h1>
         <p>Explore our upcoming clean energy exhibitions, national conference keynotes, residential PM Surya Ghar
           clinics, and celebrated project milestone celebrations across India.</p>
-
-        <!-- Floating Hero Quick Stats Bar -->
-        <div class="events-hero-stats fade-up">
-          <div class="events-hero-stat-card">
-            <div class="num">200+ <span style="font-size:16px; color: var(--emerald);">MW</span></div>
-            <div class="lbl">Solar Capacity Managed</div>
-          </div>
-          <div class="events-hero-stat-card">
-            <div class="num">130+</div>
-            <div class="lbl">Field Engineers</div>
-          </div>
-          <div class="events-hero-stat-card">
-            <div class="num">13</div>
-            <div class="lbl">States Covered Pan-India</div>
-          </div>
-          <div class="events-hero-stat-card">
-            <div class="num">98.6%</div>
-            <div class="lbl">Average Grid Uptime</div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -465,9 +445,6 @@
 
       function updateCounts() {
         const total = allEvents.length;
-        const totalStat = document.getElementById('stat-total-events');
-        if (totalStat) totalStat.textContent = total + '+';
-
         const bAll = document.getElementById('badge-all-count');
         if (bAll) bAll.textContent = total;
       }
