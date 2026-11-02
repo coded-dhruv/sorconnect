@@ -134,6 +134,13 @@ module.exports = {
             <span>Awards &amp; Recognitions</span>
             <span class="tab-badge" id="awards-count-badge">0</span>
           </button>
+
+          <!-- Events & Expos -->
+          <button type="button" class="admin-tab-btn" data-tab="events-panel">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="15" r="2"/></svg>
+            <span>Events &amp; Expos</span>
+            <span class="tab-badge" id="events-count-badge">0</span>
+          </button>
         </div>
 
         <!-- Sidebar Footer Controls -->
@@ -909,6 +916,132 @@ module.exports = {
         <h4>Failed to load statistics</h4>
         <p id="stats-error-msg">Could not connect to database.</p>
         <button type="button" class="btn-shadcn-outline" onclick="fetchStats()">Retry Fetch</button>
+      </div>
+    </div>
+  </section>
+  `,
+
+  getEventsPanel: () => `
+  <!-- ==================== TAB: EVENTS & EXPOS ==================== -->
+  <section id="events-panel" class="admin-tab-panel">
+    <!-- Notice Banner -->
+    <div style="background: linear-gradient(135deg, #0e2c22 0%, #154734 100%); color: #ffffff; padding: 22px 26px; border-radius: var(--radius); margin-bottom: 24px; box-shadow: 0 4px 14px rgba(14, 44, 34, 0.15);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; color: #6ee7b7; display: block; margin-bottom: 4px;">Expos, Summits &amp; Milestone Events</span>
+          <h2 style="margin: 0; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em;">Events &amp; Expos Management</h2>
+          <p style="margin: 4px 0 0 0; font-size: 13px; color: #d1fae5; max-width: 650px; line-height: 1.5;">
+            Add, update, or remove upcoming solar expos, keynote conference appearances, milestone inaugurations, and community workshops. Real-time updates sync directly to the public website.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn-shadcn-primary" onclick="fetchEvents()" style="background: #ffffff; color: #064e3b; font-weight: 700; border: none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span>Refresh Events</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div>
+          <div class="metric-label">Total Events &amp; Expos</div>
+          <div class="metric-value" id="events-stat-total">0</div>
+        </div>
+        <div class="metric-icon-wrap" style="background:#f0fdf4; color:#15803d;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div>
+          <div class="metric-label">Upcoming Gatherings</div>
+          <div class="metric-value" id="events-stat-upcoming">0</div>
+        </div>
+        <div class="metric-icon-wrap" style="background:#ecfdf5; color:#047857;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div>
+          <div class="metric-label">Past / Completed Milestones</div>
+          <div class="metric-value" id="events-stat-past">0</div>
+        </div>
+        <div class="metric-icon-wrap" style="background:#f1f5f9; color:#475569;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div>
+          <div class="metric-label">Exhibitions &amp; Summits</div>
+          <div class="metric-value" id="events-stat-exhibitions">0</div>
+        </div>
+        <div class="metric-icon-wrap" style="background:#eff6ff; color:#1d4ed8;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="admin-control-bar">
+      <div class="control-bar-left">
+        <div class="search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="events-search" placeholder="Search events by title, venue, city, booth...">
+        </div>
+        <div class="filter-dropdown-wrap">
+          <select id="events-category-filter" class="filter-select">
+            <option value="all">All Categories</option>
+            <option value="Exhibition">Exhibitions &amp; Expos</option>
+            <option value="Conference">Conferences &amp; Summits</option>
+            <option value="Award & Gala">Awards &amp; Galas</option>
+            <option value="Workshop">Workshops &amp; Seminars</option>
+            <option value="Inauguration">Inaugurations &amp; Groundbreakings</option>
+            <option value="Community & CSR">Community &amp; CSR</option>
+          </select>
+        </div>
+        <div class="filter-dropdown-wrap">
+          <select id="events-status-filter" class="filter-select">
+            <option value="all">All Statuses</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="completed">Completed / Past</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-bar-right">
+        <button type="button" class="btn-shadcn-primary" id="btn-open-create-event">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Add New Event</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Events Table Card -->
+    <div class="admin-card-table">
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width: 76px;">Cover</th>
+              <th>Event Title &amp; Details</th>
+              <th>Category</th>
+              <th>Date &amp; Schedule</th>
+              <th>Venue &amp; City</th>
+              <th>Status</th>
+              <th>Photos</th>
+              <th style="text-align: right; width: 140px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="events-table-body">
+            <!-- Populated via client script -->
+          </tbody>
+        </table>
+      </div>
+      <div id="events-empty-state" class="table-empty-state" style="display: none;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <p>No events found matching your filter criteria.</p>
       </div>
     </div>
   </section>
@@ -1848,6 +1981,181 @@ module.exports = {
           <button type="button" class="btn-shadcn-outline" onclick="closeAdminModal('stat-edit-modal')">Cancel</button>
           <button type="submit" class="btn-shadcn-primary" id="btn-save-stat">
             <span>Save Metric</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADD / EDIT EVENT ==================== -->
+  <div id="event-edit-modal" class="admin-modal-overlay">
+    <div class="admin-modal-box" style="max-width: 760px;">
+      <div class="admin-modal-header">
+        <h3 id="event-modal-title">Add New Event / Expo</h3>
+        <button type="button" class="admin-modal-close" onclick="closeAdminModal('event-edit-modal')">&times;</button>
+      </div>
+      <form id="event-form">
+        <div class="admin-modal-body">
+          <div id="event-modal-error" class="modal-error-alert" style="display: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span class="msg-text"></span>
+          </div>
+
+          <input type="hidden" id="event-form-id" name="id">
+
+          <div class="modal-form-row two-col">
+            <div class="modal-form-group">
+              <label for="event-title">Event Title <span style="color:red;">*</span></label>
+              <input type="text" id="event-title" name="title" required placeholder="e.g. Renewable Energy India Expo 2026">
+            </div>
+            <div class="modal-form-group">
+              <label for="event-category">Category <span style="color:red;">*</span></label>
+              <select id="event-category" name="category" required>
+                <option value="Exhibition">Exhibition &amp; Expo</option>
+                <option value="Conference">Conference &amp; Summit</option>
+                <option value="Award & Gala">Award &amp; Gala</option>
+                <option value="Workshop">Workshop &amp; Seminar</option>
+                <option value="Inauguration">Inauguration &amp; Groundbreaking</option>
+                <option value="Community & CSR">Community &amp; CSR</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-form-row three-col">
+            <div class="modal-form-group">
+              <label for="event-date">Start Date <span style="color:red;">*</span></label>
+              <input type="date" id="event-date" name="event_date" required>
+            </div>
+            <div class="modal-form-group">
+              <label for="event-end-date">End Date <span style="font-weight: normal; color: #64748b;">(Optional)</span></label>
+              <input type="date" id="event-end-date" name="end_date">
+            </div>
+            <div class="modal-form-group">
+              <label for="event-status">Status <span style="color:red;">*</span></label>
+              <select id="event-status" name="status" required>
+                <option value="upcoming">Upcoming</option>
+                <option value="completed">Completed / Past</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-form-row two-col">
+            <div class="modal-form-group">
+              <label for="event-time">Time / Hours</label>
+              <input type="text" id="event-time" name="time_schedule" placeholder="e.g. 10:00 AM – 6:00 PM IST">
+            </div>
+            <div class="modal-form-group">
+              <label for="event-booth">Booth / Stall Info</label>
+              <input type="text" id="event-booth" name="booth_info" placeholder="e.g. Hall 3, Booth B-114">
+            </div>
+          </div>
+
+          <div class="modal-form-row two-col">
+            <div class="modal-form-group">
+              <label for="event-venue">Venue Name <span style="color:red;">*</span></label>
+              <input type="text" id="event-venue" name="venue" required placeholder="e.g. India Expo Mart, Greater Noida">
+            </div>
+            <div class="modal-form-group">
+              <label for="event-city">City / State <span style="color:red;">*</span></label>
+              <input type="text" id="event-city" name="city" required placeholder="e.g. Greater Noida, Delhi NCR">
+            </div>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="event-summary">Short Summary (Card Preview) <span style="color:red;">*</span></label>
+            <textarea id="event-summary" name="summary" rows="2" required placeholder="Brief 1-2 sentence overview shown on the event card..."></textarea>
+          </div>
+
+          <div class="modal-form-group">
+            <label for="event-description">Full Description &amp; Highlights</label>
+            <textarea id="event-description" name="description" rows="4" placeholder="Detailed event agenda, key takeaways, booth highlights, topics covered..."></textarea>
+          </div>
+
+          <!-- Cover Image Upload Box -->
+          <div class="media-upload-card" style="margin-bottom: 16px;">
+            <div class="media-upload-header">
+              <div class="media-title-group">
+                <span class="media-label">Event Cover Photo <span style="color:red;">*</span></span>
+                <span class="badge badge-emerald" id="event-image-status">Active Media</span>
+              </div>
+              <div class="media-action-buttons">
+                <label class="btn-shadcn-primary" style="cursor: pointer; height: 32px; font-size: 12px; margin: 0;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  <span>Upload Image</span>
+                  <input type="file" id="event-file" accept="image/*" style="display: none;">
+                </label>
+                <button type="button" class="btn-action-icon danger" id="btn-remove-event-img" title="Clear image">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Dropzone Preview -->
+            <div class="media-dropzone" id="event-dropzone">
+              <div class="media-dropzone-preview" id="event-image-preview">
+                <span class="image-preview-placeholder">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  <span class="drop-title">Click to upload event cover photo or drag and drop</span>
+                  <span class="drop-sub">PNG, JPG, WebP up to 10MB</span>
+                </span>
+              </div>
+              <div class="media-dropzone-overlay">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                <span>Click or Drop New Image to Replace</span>
+              </div>
+            </div>
+
+            <input type="hidden" id="event-image" name="image_url" value="assets/partner-reliance-expo.jpg">
+
+            <!-- Preset Library -->
+            <div style="margin-top: 10px; font-size: 11.5px; font-weight: 600; color: #64748b;">
+              Or select from verified event library:
+            </div>
+            <div class="asset-options-grid" style="margin-top: 6px;">
+              <button type="button" class="asset-option-btn event-preset-btn" data-src="assets/partner-reliance-expo.jpg"><img src="assets/partner-reliance-expo.jpg"> Reliance Expo</button>
+              <button type="button" class="asset-option-btn event-preset-btn" data-src="assets/partner-sungrow-expo.jpg"><img src="assets/partner-sungrow-expo.jpg"> Sungrow Expo</button>
+              <button type="button" class="asset-option-btn event-preset-btn" data-src="assets/team-grand-launch.jpg"><img src="assets/team-grand-launch.jpg"> Grand Launch</button>
+              <button type="button" class="asset-option-btn event-preset-btn" data-src="assets/award-solarquarter-2025-stage.jpg"><img src="assets/award-solarquarter-2025-stage.jpg"> SQ Stage</button>
+              <button type="button" class="asset-option-btn event-preset-btn" data-src="assets/partner-reliance-booth.jpg"><img src="assets/partner-reliance-booth.jpg"> Partner Booth</button>
+              <button type="button" class="asset-option-btn event-preset-btn" data-src="assets/team-reliance-launch.jpg"><img src="assets/team-reliance-launch.jpg"> Team Ceremony</button>
+            </div>
+          </div>
+
+          <!-- Additional Gallery Photos -->
+          <div class="modal-form-group">
+            <label for="event-gallery-input">Additional Gallery Photos (Comma or Newline separated URLs)</label>
+            <textarea id="event-gallery-input" name="gallery_urls" rows="2" placeholder="assets/partner-reliance-expo.jpg, assets/partner-reliance-booth.jpg"></textarea>
+            <span style="font-size: 11.5px; color: #64748b; margin-top: 3px; display: block;">Enter multiple photo paths or URLs separated by commas.</span>
+          </div>
+
+          <div class="modal-form-row three-col">
+            <div class="modal-form-group">
+              <label for="event-organizer">Organizer</label>
+              <input type="text" id="event-organizer" name="organizer" value="Sor Connect" placeholder="e.g. Sor Connect">
+            </div>
+            <div class="modal-form-group">
+              <label for="event-reg-url">Registration / External Link</label>
+              <input type="text" id="event-reg-url" name="registration_url" placeholder="e.g. contact.html">
+            </div>
+            <div class="modal-form-group">
+              <label for="event-order">Display Order</label>
+              <input type="number" id="event-order" name="display_order" min="1" max="99" value="1">
+            </div>
+          </div>
+
+          <div class="modal-form-group" style="margin-top: 8px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600;">
+              <input type="checkbox" id="event-featured" name="featured" style="width: 18px; height: 18px;">
+              <span>Feature this event prominently on the website hero banner</span>
+            </label>
+          </div>
+
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="btn-shadcn-outline" onclick="closeAdminModal('event-edit-modal')">Cancel</button>
+          <button type="submit" class="btn-shadcn-primary" id="btn-save-event">
+            <span>Save Event</span>
           </button>
         </div>
       </form>

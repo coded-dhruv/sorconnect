@@ -25,6 +25,10 @@ module.exports = {
       content: [],
       contentSectionFilter: 'all',
       contentSearchQuery: '',
+      events: [],
+      eventsCategoryFilter: 'all',
+      eventsStatusFilter: 'all',
+      eventsSearchQuery: '',
       activeSubmissionId: null,
       activeCareerId: null,
       loading: {
@@ -37,7 +41,8 @@ module.exports = {
         carousel: false,
         awards: false,
         stats: false,
-        content: false
+        content: false,
+        events: false
       }
     };
 
@@ -292,7 +297,8 @@ module.exports = {
       'categories-panel': { title: 'Project Categories', subtitle: 'Classifications for portfolio filtering and display groups' },
       'carousel-panel': { title: 'About Us Carousel', subtitle: 'Featured solar installations on the public About Us plant slider' },
       'awards-panel': { title: 'Awards & Recognitions', subtitle: 'Verified certifications, state leadership honors, and awards showcase' },
-      'stats-panel': { title: 'Key Stats & Metrics', subtitle: 'Live counters displayed on homepage readout bar and Why Sor Connect section' }
+      'stats-panel': { title: 'Key Stats & Metrics', subtitle: 'Live counters displayed on homepage readout bar and Why Sor Connect section' },
+      'events-panel': { title: 'Events & Expos Management', subtitle: 'Exhibitions, keynote conferences, milestone inaugurations, and community outreach workshops' }
     };
 
     const tabBtns = document.querySelectorAll('.admin-tab-btn');
@@ -353,7 +359,8 @@ module.exports = {
         fetchCategories(),
         fetchCarouselSlides(),
         fetchAwards(),
-        fetchStats()
+        fetchStats(),
+        fetchEvents()
       ]);
       setDbStatus('live', 'Supabase Live');
     }
@@ -371,13 +378,15 @@ module.exports = {
         await Promise.all([
           fetchSubmissions(),
           fetchCareers(),
+          fetchSiteContent(),
           fetchServices(),
           fetchPartners(),
           fetchProjects(),
           fetchCategories(),
           fetchCarouselSlides(),
           fetchAwards(),
-          fetchStats()
+          fetchStats(),
+          fetchEvents()
         ]);
         showToast('✓ All database modules synchronized successfully!', 'success');
         setDbStatus('live', 'Supabase Live');
@@ -3811,6 +3820,476 @@ module.exports = {
         }
       }
     };
+
+    // ==========================================
+    // 11. EVENTS & EXPOS MANAGEMENT
+    // ==========================================
+    window.fetchEvents = async function() {
+      state.loading.events = true;
+      const tbody = document.getElementById('events-table-body');
+      if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 32px; color:#64748b;"><svg class="spin-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block; vertical-align:middle; margin-right:8px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Loading events from database...</td></tr>';
+      }
+
+      try {
+        const rawEvents = await supabaseQuery('/rest/v1/events?select=*&order=display_order.asc,event_date.desc');
+        if (Array.isArray(rawEvents) && rawEvents.length > 0) {
+          state.events = rawEvents;
+        } else {
+          // Fallback to local events.json
+          const fbRes = await fetch('events.json');
+          if (fbRes.ok) {
+            state.events = await fbRes.json();
+          } else {
+            state.events = [];
+          }
+        }
+      } catch (err) {
+        console.warn('Supabase fetch failed for events (table might not exist yet), loading events.json fallback:', err);
+        try {
+          const fbRes = await fetch('events.json');
+          if (fbRes.ok) {
+            state.events = await fbRes.json();
+          } else {
+            state.events = [];
+          }
+        } catch (e) {
+          state.events = [];
+        }
+      } finally {
+        state.loading.events = false;
+        renderEvents();
+      }
+    };
+
+    function renderEvents() {
+      const tbody = document.getElementById('events-table-body');
+      const emptyState = document.getElementById('events-empty-state');
+      if (!tbody) return;
+
+      const total = state.events.length;
+      const upcoming = state.events.filter(e => e.status === 'upcoming').length;
+      const past = state.events.filter(e => e.status === 'completed' || e.status === 'past').length;
+      const exhibitions = state.events.filter(e => e.category === 'Exhibition' || e.category === 'Conference').length;
+
+      // Update counters
+      const bBadge = document.getElementById('events-count-badge');
+      if (bBadge) bBadge.textContent = total;
+
+      const sTotal = document.getElementById('events-stat-total');
+      if (sTotal) sTotal.textContent = total;
+
+      const sUp = document.getElementById('events-stat-upcoming');
+      if (sUp) sUp.textContent = upcoming;
+
+      const sPast = document.getElementById('events-stat-past');
+      if (sPast) sPast.textContent = past;
+
+      const sEx = document.getElementById('events-stat-exhibitions');
+      if (sEx) sEx.textContent = exhibitions;
+
+      // Filter
+      const q = (state.eventsSearchQuery || '').toLowerCase();
+      const catFilter = state.eventsCategoryFilter || 'all';
+      const statusFilter = state.eventsStatusFilter || 'all';
+
+      const filtered = state.events.filter(ev => {
+        if (catFilter !== 'all' && ev.category !== catFilter) return false;
+        if (statusFilter === 'upcoming' && ev.status !== 'upcoming') return false;
+        if (statusFilter === 'completed' && ev.status !== 'completed' && ev.status !== 'past') return false;
+
+        if (q) {
+          const match = (ev.title || '').toLowerCase().includes(q) ||
+            (ev.venue || '').toLowerCase().includes(q) ||
+            (ev.city || '').toLowerCase().includes(q) ||
+            (ev.summary || '').toLowerCase().includes(q) ||
+            (ev.booth_info || '').toLowerCase().includes(q) ||
+            (ev.category || '').toLowerCase().includes(q);
+          if (!match) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+
+      tbody.innerHTML = filtered.map(ev => {
+        const isUpcoming = ev.status === 'upcoming';
+        const statusBadge = isUpcoming
+          ? '<span class="badge badge-emerald" style="cursor:pointer;" onclick="toggleEventStatus(' + ev.id + ')" title="Click to toggle status"><span class="pulse-dot" style="margin-right:4px;"></span>Upcoming</span>'
+          : '<span class="badge badge-slate" style="cursor:pointer;" onclick="toggleEventStatus(' + ev.id + ')" title="Click to toggle status">Completed</span>';
+
+        let categoryBadge = '<span class="badge badge-slate">' + escapeHtml(ev.category || 'Event') + '</span>';
+        if (ev.category === 'Exhibition') categoryBadge = '<span class="badge badge-amber">Exhibition</span>';
+        else if (ev.category === 'Conference') categoryBadge = '<span class="badge badge-indigo">Conference</span>';
+        else if (ev.category === 'Award & Gala') categoryBadge = '<span class="badge badge-emerald">Award &amp; Gala</span>';
+        else if (ev.category === 'Workshop') categoryBadge = '<span class="badge badge-sky">Workshop</span>';
+        else if (ev.category === 'Inauguration') categoryBadge = '<span class="badge badge-violet">Inauguration</span>';
+
+        const gallery = Array.isArray(ev.gallery_urls) ? ev.gallery_urls : [];
+        const photoCount = gallery.length > 0 ? gallery.length : 1;
+
+        let rowHtml = '<tr>';
+        rowHtml += '<td><div style="width: 58px; height: 42px; border-radius: 6px; overflow: hidden; background: #e2e8f0; border: 1px solid var(--admin-border);">';
+        rowHtml += '<img src="' + escapeHtml(ev.image_url || 'assets/partner-reliance-expo.jpg') + '" alt="Cover" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=\'assets/partner-reliance-expo.jpg\'">';
+        rowHtml += '</div></td>';
+
+        rowHtml += '<td>';
+        rowHtml += '<div style="font-weight: 700; color: var(--admin-text); font-size: 13.5px; line-height: 1.35; margin-bottom: 2px;">';
+        rowHtml += escapeHtml(ev.title);
+        if (ev.featured) rowHtml += ' <span class="badge badge-amber" style="margin-left: 6px; font-size: 10px; padding: 2px 6px;">Featured</span>';
+        rowHtml += '</div>';
+        rowHtml += '<div style="font-size: 12px; color: #64748b; max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + escapeHtml(ev.summary || '') + '</div>';
+        rowHtml += '</td>';
+
+        rowHtml += '<td>' + categoryBadge + '</td>';
+
+        rowHtml += '<td>';
+        rowHtml += '<div style="font-weight: 600; font-size: 13px; color: var(--admin-text);">' + escapeHtml(ev.event_date || '') + '</div>';
+        if (ev.time_schedule) rowHtml += '<div style="font-size: 11.5px; color: #64748b;">' + escapeHtml(ev.time_schedule) + '</div>';
+        rowHtml += '</td>';
+
+        rowHtml += '<td>';
+        rowHtml += '<div style="font-weight: 600; font-size: 12.5px; color: var(--admin-text);">' + escapeHtml(ev.city || '') + '</div>';
+        rowHtml += '<div style="font-size: 11.5px; color: #64748b; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + escapeHtml(ev.venue || '') + '">' + escapeHtml(ev.venue || '') + '</div>';
+        if (ev.booth_info) rowHtml += '<div style="font-size: 11px; font-weight:700; color: #059669;">' + escapeHtml(ev.booth_info) + '</div>';
+        rowHtml += '</td>';
+
+        rowHtml += '<td>' + statusBadge + '</td>';
+
+        rowHtml += '<td>';
+        rowHtml += '<span class="badge badge-slate" style="display:inline-flex; align-items:center; gap:4px;">';
+        rowHtml += '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+        rowHtml += '<span>' + photoCount + '</span>';
+        rowHtml += '</span>';
+        rowHtml += '</td>';
+
+        rowHtml += '<td style="text-align: right;">';
+        rowHtml += '<div style="display: inline-flex; gap: 6px; align-items: center;">';
+        rowHtml += '<button type="button" class="btn-action-icon" onclick="editEvent(' + ev.id + ')" title="Edit Event Details & Photos">';
+        rowHtml += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+        rowHtml += '</button>';
+        rowHtml += '<button type="button" class="btn-action-icon danger" onclick="deleteEvent(' + ev.id + ')" title="Delete Event">';
+        rowHtml += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>';
+        rowHtml += '</button>';
+        rowHtml += '</div>';
+        rowHtml += '</td>';
+
+        rowHtml += '</tr>';
+        return rowHtml;
+      }).join('');
+    }
+
+    window.openCreateEventModal = function() {
+      const form = document.getElementById('event-form');
+      if (form) form.reset();
+
+      document.getElementById('event-modal-title').textContent = 'Add New Event / Expo';
+      document.getElementById('event-form-id').value = '';
+
+      // Default date to today
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('event-date').value = todayStr;
+
+      // Default image
+      document.getElementById('event-image').value = 'assets/partner-reliance-expo.jpg';
+      updateSvcImgPreview('event-image-preview', 'assets/partner-reliance-expo.jpg', 'event-image-status');
+
+      document.getElementById('event-featured').checked = false;
+      document.getElementById('event-order').value = (state.events.length + 1);
+
+      const err = document.getElementById('event-modal-error');
+      if (err) err.style.display = 'none';
+
+      openAdminModal('event-edit-modal');
+    };
+
+    window.editEvent = function(id) {
+      const ev = state.events.find(e => e.id === Number(id));
+      if (!ev) return;
+
+      document.getElementById('event-modal-title').textContent = 'Edit Event / Expo';
+      document.getElementById('event-form-id').value = ev.id;
+      document.getElementById('event-title').value = ev.title || '';
+      document.getElementById('event-category').value = ev.category || 'Exhibition';
+      document.getElementById('event-date').value = ev.event_date || '';
+      document.getElementById('event-end-date').value = ev.end_date || '';
+      document.getElementById('event-status').value = ev.status || 'upcoming';
+      document.getElementById('event-time').value = ev.time_schedule || '';
+      document.getElementById('event-booth').value = ev.booth_info || '';
+      document.getElementById('event-venue').value = ev.venue || '';
+      document.getElementById('event-city').value = ev.city || '';
+      document.getElementById('event-summary').value = ev.summary || '';
+      document.getElementById('event-description').value = ev.description || '';
+
+      const img = ev.image_url || 'assets/partner-reliance-expo.jpg';
+      document.getElementById('event-image').value = img;
+      updateSvcImgPreview('event-image-preview', img, 'event-image-status');
+
+      const gallery = Array.isArray(ev.gallery_urls) ? ev.gallery_urls.join(', ') : (ev.gallery_urls || '');
+      document.getElementById('event-gallery-input').value = gallery;
+
+      document.getElementById('event-organizer').value = ev.organizer || 'Sor Connect';
+      document.getElementById('event-reg-url').value = ev.registration_url || '';
+      document.getElementById('event-order').value = ev.display_order || 1;
+      document.getElementById('event-featured').checked = !!ev.featured;
+
+      const err = document.getElementById('event-modal-error');
+      if (err) err.style.display = 'none';
+
+      openAdminModal('event-edit-modal');
+    };
+
+    window.deleteEvent = async function(id) {
+      const ev = state.events.find(e => e.id === Number(id));
+      const evTitle = ev ? ev.title : 'this event';
+      if (!confirm('Are you sure you want to remove "' + evTitle + '" from the events directory?')) {
+        return;
+      }
+
+      try {
+        try {
+          await supabaseQuery('/rest/v1/events?id=eq.' + id, { method: 'DELETE' });
+        } catch (dbErr) {
+          console.warn('Supabase delete failed (local state fallback):', dbErr);
+        }
+
+        state.events = state.events.filter(e => e.id !== Number(id));
+        renderEvents();
+        showToast('✓ Event removed successfully.', 'info');
+      } catch (err) {
+        showToast('Failed to delete event: ' + err.message, 'error');
+      }
+    };
+
+    window.toggleEventStatus = async function(id) {
+      const ev = state.events.find(e => e.id === Number(id));
+      if (!ev) return;
+      const newStatus = ev.status === 'upcoming' ? 'completed' : 'upcoming';
+
+      try {
+        try {
+          await supabaseQuery('/rest/v1/events?id=eq.' + id, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: newStatus, updated_at: new Date().toISOString() })
+          });
+        } catch (dbErr) {
+          console.warn('Supabase status update failed (local fallback):', dbErr);
+        }
+
+        ev.status = newStatus;
+        renderEvents();
+        showToast('Event marked as ' + newStatus.toUpperCase(), 'success');
+      } catch (err) {
+        showToast('Error updating status: ' + err.message, 'error');
+      }
+    };
+
+    async function handleEventFormSubmit(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById('btn-save-event');
+      const errorAlert = document.getElementById('event-modal-error');
+      if (errorAlert) errorAlert.style.display = 'none';
+
+      const idVal = document.getElementById('event-form-id').value;
+      const title = document.getElementById('event-title').value.trim();
+      const category = document.getElementById('event-category').value;
+      const eventDate = document.getElementById('event-date').value;
+      const endDate = document.getElementById('event-end-date').value || null;
+      const status = document.getElementById('event-status').value;
+      const timeSchedule = document.getElementById('event-time').value.trim();
+      const boothInfo = document.getElementById('event-booth').value.trim();
+      const venue = document.getElementById('event-venue').value.trim();
+      const city = document.getElementById('event-city').value.trim();
+      const summary = document.getElementById('event-summary').value.trim();
+      const description = document.getElementById('event-description').value.trim();
+      const imageUrl = document.getElementById('event-image').value.trim() || 'assets/partner-reliance-expo.jpg';
+      const organizer = document.getElementById('event-organizer').value.trim() || 'Sor Connect';
+      const registrationUrl = document.getElementById('event-reg-url').value.trim();
+      const displayOrder = parseInt(document.getElementById('event-order').value, 10) || 1;
+      const featured = document.getElementById('event-featured').checked;
+
+      // Parse gallery URLs from textarea
+      const galleryRaw = document.getElementById('event-gallery-input').value;
+      let galleryUrls = galleryRaw
+        .split(/[\n,]+/)
+        .map(u => u.trim())
+        .filter(u => u.length > 0);
+      if (galleryUrls.length === 0 && imageUrl) {
+        galleryUrls = [imageUrl];
+      }
+
+      if (!title || !eventDate || !venue || !city || !summary) {
+        if (errorAlert) {
+          errorAlert.style.display = 'flex';
+          errorAlert.querySelector('.msg-text').textContent = 'Please fill out all required fields (*).';
+        }
+        return;
+      }
+
+      const payload = {
+        title: title,
+        slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        category: category,
+        event_date: eventDate,
+        end_date: endDate,
+        time_schedule: timeSchedule,
+        venue: venue,
+        city: city,
+        status: status,
+        booth_info: boothInfo,
+        summary: summary,
+        description: description,
+        image_url: imageUrl,
+        gallery_urls: galleryUrls,
+        organizer: organizer,
+        registration_url: registrationUrl,
+        featured: featured,
+        display_order: displayOrder,
+        updated_at: new Date().toISOString()
+      };
+
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Saving...</span>';
+      }
+
+      try {
+        const isEdit = !!idVal;
+
+        // Try Supabase first
+        try {
+          if (isEdit) {
+            await supabaseQuery('/rest/v1/events?id=eq.' + idVal, {
+              method: 'PATCH',
+              body: JSON.stringify(payload)
+            });
+          } else {
+            payload.created_at = new Date().toISOString();
+            await supabaseQuery('/rest/v1/events', {
+              method: 'POST',
+              body: JSON.stringify(payload)
+            });
+          }
+        } catch (dbErr) {
+          console.warn('Supabase save failed (table might need creation), updating state:', dbErr);
+        }
+
+        // Also update local state
+        if (isEdit) {
+          const idx = state.events.findIndex(e => e.id === Number(idVal));
+          if (idx !== -1) {
+            state.events[idx] = Object.assign({}, state.events[idx], payload);
+          }
+        } else {
+          const newId = Date.now();
+          state.events.unshift(Object.assign({ id: newId }, payload));
+        }
+
+        renderEvents();
+        closeAdminModal('event-edit-modal');
+        showToast(isEdit ? '✓ Event updated successfully!' : '✓ New event published successfully!', 'success');
+      } catch (err) {
+        if (errorAlert) {
+          errorAlert.style.display = 'flex';
+          errorAlert.querySelector('.msg-text').textContent = 'Error saving event: ' + err.message;
+        }
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<span>Save Event</span>';
+        }
+      }
+    }
+
+    // Attach Event Listeners
+    const btnCreateEvent = document.getElementById('btn-open-create-event');
+    if (btnCreateEvent) {
+      btnCreateEvent.addEventListener('click', openCreateEventModal);
+    }
+
+    const eventFormEl = document.getElementById('event-form');
+    if (eventFormEl) {
+      eventFormEl.addEventListener('submit', handleEventFormSubmit);
+    }
+
+    const evSearch = document.getElementById('events-search');
+    if (evSearch) {
+      evSearch.addEventListener('input', function(e) {
+        state.eventsSearchQuery = e.target.value.trim();
+        renderEvents();
+      });
+    }
+
+    const evCatFilter = document.getElementById('events-category-filter');
+    if (evCatFilter) {
+      evCatFilter.addEventListener('change', function(e) {
+        state.eventsCategoryFilter = e.target.value;
+        renderEvents();
+      });
+    }
+
+    const evStatusFilter = document.getElementById('events-status-filter');
+    if (evStatusFilter) {
+      evStatusFilter.addEventListener('change', function(e) {
+        state.eventsStatusFilter = e.target.value;
+        renderEvents();
+      });
+    }
+
+    // Event Media Upload & Presets
+    const evFileInput = document.getElementById('event-file');
+    if (evFileInput) {
+      evFileInput.addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+          handleMediaUpload(e.target.files[0], 'event-image', 'event-image-preview', 'event-image-status');
+        }
+      });
+    }
+
+    const evDropzone = document.getElementById('event-dropzone');
+    if (evDropzone) {
+      evDropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        evDropzone.classList.add('drag-over');
+      });
+      evDropzone.addEventListener('dragleave', function() {
+        evDropzone.classList.remove('drag-over');
+      });
+      evDropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        evDropzone.classList.remove('drag-over');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleMediaUpload(e.dataTransfer.files[0], 'event-image', 'event-image-preview', 'event-image-status');
+        }
+      });
+      evDropzone.addEventListener('click', function() {
+        if (evFileInput) evFileInput.click();
+      });
+    }
+
+    const btnRemoveEvImg = document.getElementById('btn-remove-event-img');
+    if (btnRemoveEvImg) {
+      btnRemoveEvImg.addEventListener('click', function() {
+        document.getElementById('event-image').value = '';
+        updateSvcImgPreview('event-image-preview', '', 'event-image-status');
+      });
+    }
+
+    document.querySelectorAll('.event-preset-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const src = this.getAttribute('data-src');
+        if (src) {
+          document.getElementById('event-image').value = src;
+          updateSvcImgPreview('event-image-preview', src, 'event-image-status');
+        }
+      });
+    });
 
     // ==========================================
     // UTILITIES

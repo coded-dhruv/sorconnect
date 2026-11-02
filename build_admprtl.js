@@ -16,7 +16,8 @@ const panelsHtml = [
   templates.getCategoriesPanel(),
   templates.getCarouselPanel(),
   templates.getAwardsPanel(),
-  templates.getStatsPanel()
+  templates.getStatsPanel(),
+  templates.getEventsPanel()
 ].join('\n');
 
 const fullHtml = `<!DOCTYPE html>
