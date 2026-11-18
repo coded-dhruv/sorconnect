@@ -1177,6 +1177,9 @@ module.exports = {
       <button type="button" class="content-subnav-btn" data-filter="about_page" onclick="filterContentSection('about_page')">
         <span>🏢 About Us Page &amp; Vision</span>
       </button>
+      <button type="button" class="content-subnav-btn" data-filter="about_team" onclick="filterContentSection('about_team')">
+        <span>👥 Team Execution Photos</span>
+      </button>
       <button type="button" class="content-subnav-btn" data-filter="contact_global" onclick="filterContentSection('contact_global')">
         <span>📞 Contact &amp; Global Info</span>
       </button>

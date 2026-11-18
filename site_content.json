@@ -498,5 +498,45 @@
     "stat_suffix": "services.html",
     "description": "Bottom button label and target page link",
     "display_order": 50
+  },
+  {
+    "id": "about_team_heading",
+    "section": "about_team",
+    "section_name": "About Us: Team Execution Photos",
+    "label": "Team Section Heading & Description",
+    "stat_value": "130+ skilled minds driving on-ground execution.",
+    "stat_suffix": "Our People & Culture",
+    "description": "Behind every megawatt of clean energy we generate is a multidisciplinary team of solar engineers, structural designers, project managers, and field technicians working across 13 Indian states.",
+    "display_order": 51
+  },
+  {
+    "id": "about_team_img_main",
+    "section": "about_team",
+    "section_name": "About Us: Team Execution Photos",
+    "label": "Primary Team Photo (Large Left)",
+    "stat_value": "assets/our-team.jpg",
+    "stat_suffix": "Sor Connect Engineering & Operations Team",
+    "description": "130+ dedicated solar specialists driving excellence across 13 Indian states",
+    "display_order": 52
+  },
+  {
+    "id": "about_team_img_side1",
+    "section": "about_team",
+    "section_name": "About Us: Team Execution Photos",
+    "label": "Top-Right Team Photo (Reliance Launch)",
+    "stat_value": "assets/team-reliance-launch.jpg",
+    "stat_suffix": "Sor Connect Reliance New Energy Partner Team",
+    "description": "🤝 Reliance New Energy Launch Team",
+    "display_order": 53
+  },
+  {
+    "id": "about_team_img_side2",
+    "section": "about_team",
+    "section_name": "About Us: Team Execution Photos",
+    "label": "Bottom-Right Team Photo (Sungrow Launch)",
+    "stat_value": "assets/team-sungrow-launch.jpg",
+    "stat_suffix": "Sor Connect Sungrow Authorized Channel Partner Team",
+    "description": "⚡ Sungrow Authorized Partner Team",
+    "display_order": 54
   }
 ]

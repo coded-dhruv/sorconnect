@@ -4046,6 +4046,7 @@ module.exports = {
         else if (item.section === 'home_about') badgeStyle = 'background:#e0e7ff; color:#4338ca;';
         else if (item.section === 'process_steps') badgeStyle = 'background:#fce7f3; color:#be185d;';
         else if (item.section === 'about_page') badgeStyle = 'background:#ccfbf1; color:#0f766e;';
+        else if (item.section === 'about_team') badgeStyle = 'background:#fef9c3; color:#854d0e;';
         else if (item.section === 'contact_global') badgeStyle = 'background:#dcfce7; color:#15803d;';
 
         const isLongText = (item.stat_value && item.stat_value.length > 80) || (item.id && item.id.includes('desc'));
@@ -4087,12 +4088,18 @@ module.exports = {
         }
 
         // Secondary Suffix / Link Field
-        if (item.stat_suffix || (item.id && (item.id.includes('btn') || item.id.includes('phone') || item.id.includes('email') || item.id.includes('proc_') || item.id.includes('svc_') || item.id.includes('mission') || item.id.includes('vision') || item.id.includes('social')))) {
+        if (item.stat_suffix || (item.id && (item.id.includes('btn') || item.id.includes('phone') || item.id.includes('email') || item.id.includes('proc_') || item.id.includes('svc_') || item.id.includes('mission') || item.id.includes('vision') || item.id.includes('social') || item.id.includes('about_team')))) {
           let suffixLabel = 'Link Destination / WhatsApp URL / Alt Text';
           if (item.id && (item.id.includes('proc_') || item.id.includes('svc_card'))) {
             suffixLabel = 'Card Photo Path / Image URL';
           } else if (item.id && (item.id.includes('mission') || item.id.includes('vision'))) {
             suffixLabel = 'Mission / Vision Statement';
+          } else if (item.id && item.id.includes('about_team_img_main')) {
+            suffixLabel = 'Overlay Card Title / Alt Text';
+          } else if (item.id && item.id.includes('about_team_heading')) {
+            suffixLabel = 'Eyebrow Tag Text';
+          } else if (item.id && (item.id.includes('about_team_img_side1') || item.id.includes('about_team_img_side2'))) {
+            suffixLabel = 'Image Alt Text';
           }
           cardHtml += '<div class="content-field-row">';
           cardHtml += '<label>' + suffixLabel + '</label>';
@@ -4106,7 +4113,14 @@ module.exports = {
 
         // Narrative / Supporting Notes
         if (item.description && !item.id.includes('mission') && !item.id.includes('vision')) {
-          const descLabel = (item.id.includes('proc_') || item.id.includes('svc_card')) ? 'Card Subtitle / Description Text' : 'Description / Subtitle';
+          let descLabel = (item.id.includes('proc_') || item.id.includes('svc_card')) ? 'Card Subtitle / Description Text' : 'Description / Subtitle';
+          if (item.id && item.id.includes('about_team_img_side')) {
+            descLabel = 'Photo Badge Caption (with Emoji/Icon)';
+          } else if (item.id && item.id.includes('about_team_img_main')) {
+            descLabel = 'Overlay Card Subtitle';
+          } else if (item.id && item.id.includes('about_team_heading')) {
+            descLabel = 'Section Description Paragraph';
+          }
           cardHtml += '<div class="content-field-row">';
           cardHtml += '<label>' + descLabel + '</label>';
           cardHtml += '<textarea id="desc_' + escapeHtml(item.id) + '" rows="2">' + escapeHtml(item.description) + '</textarea>';
