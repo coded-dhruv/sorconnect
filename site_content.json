@@ -538,5 +538,15 @@
     "stat_suffix": "Sor Connect Sungrow Authorized Channel Partner Team",
     "description": "⚡ Sungrow Authorized Partner Team",
     "display_order": 54
+  },
+  {
+    "id": "about_director_img",
+    "section": "about_page",
+    "section_name": "About Us Page Content",
+    "label": "Director Portrait Photo",
+    "stat_value": "assets/director.jpeg",
+    "stat_suffix": "Vivek Jain, Founder & Managing Director of Sor Connect",
+    "description": "Executive portrait of Vivek Jain displayed in the Director Message block on about.html",
+    "display_order": 55
   }
 ]
